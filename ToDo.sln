@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Core", "ToDo.Core\ToDo.Core.csproj", "{247D1BF7-B464-43A8-8775-2A11500163E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDo.Client", "ToDo.Client\ToDo.Client.csproj", "{E4E97CC4-5846-4884-8B42-D7F2866FDE81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innouvous.Utils.MVVM", "..\..\..\Visual Studio 2013\Projects\Innouvous.Utils\Innouvous.Utils.MVVM\Innouvous.Utils.MVVM.csproj", "{B90D1BD6-DB68-416C-9150-BA4E3C73A3F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innouvous.Utils.MessageBoxFactory", "..\..\..\Visual Studio 2013\Projects\Innouvous.Utils\Innouvous.Utils.MessageBoxFactory\Innouvous.Utils.MessageBoxFactory.csproj", "{6BDDD1F2-3BC0-431D-923D-CE76681A3851}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innouvous.Utils.ResourceDictionaries", "..\..\..\Visual Studio 2013\Projects\Innouvous.Utils\Innouvous.Utils.ResourceDictionaries\Innouvous.Utils.ResourceDictionaries.csproj", "{8F93514E-288C-4852-ACC6-E6DFD2BC9407}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innouvous.Utils.Dialogs", "..\..\..\Visual Studio 2013\Projects\Innouvous.Utils\Innouvous.Utils.Dialogs\Innouvous.Utils.Dialogs.csproj", "{2B0E7F06-EDF2-4C54-A3BE-BD303186F9CB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{247D1BF7-B464-43A8-8775-2A11500163E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{247D1BF7-B464-43A8-8775-2A11500163E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{247D1BF7-B464-43A8-8775-2A11500163E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{247D1BF7-B464-43A8-8775-2A11500163E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4E97CC4-5846-4884-8B42-D7F2866FDE81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4E97CC4-5846-4884-8B42-D7F2866FDE81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4E97CC4-5846-4884-8B42-D7F2866FDE81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4E97CC4-5846-4884-8B42-D7F2866FDE81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B90D1BD6-DB68-416C-9150-BA4E3C73A3F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B90D1BD6-DB68-416C-9150-BA4E3C73A3F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B90D1BD6-DB68-416C-9150-BA4E3C73A3F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B90D1BD6-DB68-416C-9150-BA4E3C73A3F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BDDD1F2-3BC0-431D-923D-CE76681A3851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BDDD1F2-3BC0-431D-923D-CE76681A3851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BDDD1F2-3BC0-431D-923D-CE76681A3851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BDDD1F2-3BC0-431D-923D-CE76681A3851}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F93514E-288C-4852-ACC6-E6DFD2BC9407}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F93514E-288C-4852-ACC6-E6DFD2BC9407}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F93514E-288C-4852-ACC6-E6DFD2BC9407}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F93514E-288C-4852-ACC6-E6DFD2BC9407}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B0E7F06-EDF2-4C54-A3BE-BD303186F9CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B0E7F06-EDF2-4C54-A3BE-BD303186F9CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B0E7F06-EDF2-4C54-A3BE-BD303186F9CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B0E7F06-EDF2-4C54-A3BE-BD303186F9CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
