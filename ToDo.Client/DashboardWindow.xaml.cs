@@ -10,24 +10,22 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ToDo.Client.ViewModels;
 
 namespace ToDo.Client
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for DashboardWindow.xaml
     /// </summary>
-    public partial class LoadWindow : Window
+    public partial class DashboardWindow : Window
     {
-        private readonly LoadWindowViewModel vm;
-        public LoadWindow()
+        private string databasePath;
+        
+        public DashboardWindow(string databasePath)
         {
-            InitializeComponent();
+            this.databasePath = databasePath;
 
-            vm =  new LoadWindowViewModel(this);
-            this.DataContext = vm;
+            InitializeComponent();
         }
     }
 }
