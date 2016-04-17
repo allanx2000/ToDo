@@ -18,7 +18,15 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Row="0" Grid.ColumnSpan="2">
-            <Label>General Statistics</Label>    
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <GroupBox Grid.Row="0" Header="Coming Due"></GroupBox>
+                <GroupBox Grid.Row="1" Header="Stats"></GroupBox>
+            </Grid>
         </Grid>
                 
         <GroupBox Grid.Row="1" Grid.Column="0" Header="Lists">
@@ -28,15 +36,39 @@
                     <Button Command="{Binding EditListCommand}">Edit</Button>
                     <Button>Delete</Button>
                 </StackPanel>
-                <ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" ></ListBox>
+                
+                <ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label FontWeight="Bold" Foreground="{Binding TitleColor}">
+                                    <TextBlock Text="{Binding Name}"/>
+                                </Label>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </DockPanel>
         </GroupBox>
        
         <Grid Grid.Row="1" Grid.Column="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <GroupBox Grid.Row="0" Header="Tasks">
+                <!--- Tree, Hide Completed, other options-->
+            </GroupBox>
+
+            <GroupBox Grid.Row="1" Header="Details">
+                
+            </GroupBox>
         </Grid>
     </Grid>
 </Window>

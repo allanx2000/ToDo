@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ToDo.Client.ViewModels;
 
 namespace ToDo.Client
 {
@@ -19,13 +20,13 @@ namespace ToDo.Client
     /// </summary>
     public partial class DashboardWindow : Window
     {
-        private string databasePath;
-        
-        public DashboardWindow(string databasePath)
+        private readonly DashboardWindowViewModel vm;
+        public DashboardWindow()
         {
-            this.databasePath = databasePath;
-
             InitializeComponent();
+
+            vm = new DashboardWindowViewModel();
+            this.DataContext = vm;
         }
     }
 }

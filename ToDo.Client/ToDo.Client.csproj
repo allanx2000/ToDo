@@ -147,15 +147,17 @@
     <Compile Include="Core\Lists\TaskList.cs" />
     <Compile Include="Core\Lists\ListType.cs" />
     <Compile Include="Core\Tasks\ProjectTaskType.cs" />
-    <Compile Include="Core\Tasks\RecurringTaskItem.cs" />
     <Compile Include="Core\Tasks\TaskFrequency.cs" />
     <Compile Include="Core\Tasks\TaskItem.cs" />
+    <Compile Include="ViewModels\TaskListViewModel.cs" />
     <Compile Include="DashboardWindow.xaml.cs">
       <DependentUpon>DashboardWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="EditListWindow.xaml.cs">
       <DependentUpon>EditListWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\DashboardWindowViewModel.cs" />
+    <Compile Include="ViewModels\EditListWindowViewModel.cs" />
     <Compile Include="ViewModels\LoadWindowViewModel.cs" />
     <Compile Include="Workspace.cs" />
     <Page Include="DashboardWindow.xaml">

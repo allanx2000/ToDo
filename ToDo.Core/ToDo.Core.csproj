@@ -43,6 +43,7 @@
     <Compile Include="Comment.cs" />
     <Compile Include="IDataStore.cs" />
     <Compile Include="Lists\BaseList.cs" />
+    <Compile Include="Lists\Project.cs" />
     <Compile Include="Lists\SimpleList.cs" />
     <Compile Include="Tasks\RecurringTaskItem.cs" />
     <Compile Include="Tasks\TaskItem.cs" />

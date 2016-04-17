@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using ToDo.Client.Core.Lists;
 
 namespace ToDo.Client.ViewModels
 {
     class LoadWindowViewModel : ViewModel
     {
-        private string dbPath;
+        private string workspacePath;
         private Window window;
 
         public LoadWindowViewModel(Window window)
@@ -21,12 +22,12 @@ namespace ToDo.Client.ViewModels
             this.window = window;
         }
 
-        public string DatabasePath
+        public string WorkspacePath
         {
-            get { return dbPath; }
+            get { return workspacePath; }
             set
             {
-                dbPath = value;
+                workspacePath = value;
                 RaisePropertyChanged();
             }
         }
@@ -42,40 +43,55 @@ namespace ToDo.Client.ViewModels
             fd.ShowDialog();
 
             if (!String.IsNullOrEmpty(fd.SelectedPath))
-                DatabasePath = fd.SelectedPath;
+                WorkspacePath = fd.SelectedPath;
         }
-
 
         public ICommand LoadCommand
         {
             get { return new CommandHelper(Load); }
         }
 
+        private const string DatabaseFile = "db.sqlite";
+        private string GetDbFilePath(string folder)
+        {
+            return Path.Combine(folder, DatabaseFile);
+        }
+
         public void Load()
         {
             try
             {
-                if (String.IsNullOrEmpty(DatabasePath))
+                if (string.IsNullOrEmpty(WorkspacePath))
                     throw new Exception("The path cannot be empty");
-               
-                if (Directory.Exists(DatabasePath)) //Attempt to load
-                {
 
-                }
-                else //Create
-                {
-                    Directory.CreateDirectory(DatabasePath);
-                }
+                string dbFile = GetDbFilePath(WorkspacePath);
 
-                DashboardWindow db = new DashboardWindow(DatabasePath);
-                db.Show();
-                window.Close();
+                if (!Directory.Exists(WorkspacePath))
+                {
+                    Directory.CreateDirectory(WorkspacePath);
+                }
+                else
+                    ValidateWorkspace(workspacePath);
+
+                Workspace.LoadWorkspace(workspacePath, dbFile);
                 
+                DashboardWindow dashboard = new DashboardWindow();
+                dashboard.Show();
+                window.Close();
+
             }
             catch (Exception e)
             {
                 MessageBoxFactory.ShowError(e);
 
+            }
+        }
+
+        private void ValidateWorkspace(string workspacePath)
+        {
+            if (!File.Exists(GetDbFilePath(workspacePath)))
+            {
+                throw new Exception("The workspace is invalid.");
             }
         }
     }
