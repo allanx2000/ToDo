@@ -32,6 +32,22 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        public int Completed
+        {
+            get
+            {
+                return Data.TaskItems == null ? 0 : (from t in Data.TaskItems where t.Completed != null select t).Count();
+            }
+        }
+
+        public int Remaining
+        {
+            get
+            {
+                return Data.TaskItems == null? 0 : (from t in Data.TaskItems where t.Completed == null select t).Count();
+            }
+        }
+
         public SolidColorBrush TitleColor
         {
             get

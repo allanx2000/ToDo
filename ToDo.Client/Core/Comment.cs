@@ -8,7 +8,7 @@ namespace ToDo.Client.Core
     public class Comment
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int CommentID { get; set; }
         public DateTime Created { get; set; }
         public string Text { get; set; }
 

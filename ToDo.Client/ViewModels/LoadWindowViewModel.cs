@@ -14,7 +14,7 @@ namespace ToDo.Client.ViewModels
 {
     class LoadWindowViewModel : ViewModel
     {
-        private string workspacePath;
+        private string workspacePath = @"C:\ToDo";
         private Window window;
 
         public LoadWindowViewModel(Window window)

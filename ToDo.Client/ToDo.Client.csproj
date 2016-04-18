@@ -142,6 +142,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="API.cs" />
     <Compile Include="Core\Comment.cs" />
     <Compile Include="Core\IDataStore.cs" />
     <Compile Include="Core\Lists\TaskList.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Core\Tasks\ProjectTaskType.cs" />
     <Compile Include="Core\Tasks\TaskFrequency.cs" />
     <Compile Include="Core\Tasks\TaskItem.cs" />
+    <Compile Include="ViewModels\TaskItemViewModel.cs" />
     <Compile Include="ViewModels\TaskListViewModel.cs" />
     <Compile Include="DashboardWindow.xaml.cs">
       <DependentUpon>DashboardWindow.xaml</DependentUpon>

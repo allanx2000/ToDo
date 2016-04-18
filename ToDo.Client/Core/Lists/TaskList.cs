@@ -12,7 +12,7 @@ namespace ToDo.Client.Core.Lists
     public class TaskList
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        public int TaskListID { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -24,7 +24,7 @@ namespace ToDo.Client.Core.Lists
         [Required]
         public ListType Type { get; set; }
 
-        public virtual List<TaskItem> Tasks
+        public ICollection<TaskItem> TaskItems
         {
             get; set;
         }

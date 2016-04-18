@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
+        xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
         Title="DashboardWindow" Height="800" Width="800">
     <Grid>
@@ -13,7 +14,7 @@
         </Grid.RowDefinitions>
         
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="230"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
@@ -35,9 +36,11 @@
                     <Button Command="{Binding AddListCommand}">Add</Button>
                     <Button Command="{Binding EditListCommand}">Edit</Button>
                     <Button>Delete</Button>
+
+                    <Button Command="{Binding AddTaskCommand}">Add Task</Button>
                 </StackPanel>
                 
-                <ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" >
+                <ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -46,9 +49,23 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Label FontWeight="Bold" Foreground="{Binding TitleColor}">
+                                <Label Grid.Row="0" FontWeight="Bold" Foreground="{Binding TitleColor}">
                                     <TextBlock Text="{Binding Name}"/>
                                 </Label>
+
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0">Completed:</Label>
+                                    <Label Grid.Column="1" Content="{Binding Completed}"/>
+                                    <Label Grid.Column="2">Remaining:</Label>
+                                    <Label Grid.Column="3" Content="{Binding Remaining}"/>
+                                </Grid>
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -64,6 +81,28 @@
 
             <GroupBox Grid.Row="0" Header="Tasks">
                 <!--- Tree, Hide Completed, other options-->
+                <TreeView Grid.Column="0"
+                    ItemsSource="{Binding Tasks}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="{x:Type TreeViewItem}">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate x:Name="DataTemplate" ItemsSource="{Binding Children}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Label>
+                                    <TextBlock Style="{Binding TextStyle}" Text="{Binding Name}"/>
+                                </Label>
+                            </Grid>
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
             </GroupBox>
 
             <GroupBox Grid.Row="1" Header="Details">

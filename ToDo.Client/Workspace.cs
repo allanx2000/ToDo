@@ -11,8 +11,9 @@ using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client
 {
-    public class Workspace : DbContext
-    {
+    public partial class Workspace : DbContext
+    {   
+
         private static Workspace instance;
 
         public static void LoadWorkspace(string workspacePath, string dbFile)
@@ -50,8 +51,10 @@ namespace ToDo.Client
             var connection = new SqliteConnection(connectionString);
 
             optionsBuilder.UseSqlite(connection);
-            
+
         }
+
+        
 
         //TODO: Add Seed(...) and Unique indexes
 

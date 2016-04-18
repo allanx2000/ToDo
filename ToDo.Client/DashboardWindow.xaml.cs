@@ -28,5 +28,10 @@ namespace ToDo.Client
             vm = new DashboardWindowViewModel();
             this.DataContext = vm;
         }
+
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
+        }
     }
 }
