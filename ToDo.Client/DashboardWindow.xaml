@@ -12,7 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="230"/>
             <ColumnDefinition Width="3*"/>
@@ -29,7 +29,7 @@
                 <GroupBox Grid.Row="1" Header="Stats"></GroupBox>
             </Grid>
         </Grid>
-                
+
         <GroupBox Grid.Row="1" Grid.Column="0" Header="Lists">
             <DockPanel LastChildFill="True">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
@@ -37,9 +37,8 @@
                     <Button Command="{Binding EditListCommand}">Edit</Button>
                     <Button>Delete</Button>
 
-                    <Button Command="{Binding AddTaskCommand}">Add Task</Button>
                 </StackPanel>
-                
+
                 <ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -72,7 +71,7 @@
                 </ListBox>
             </DockPanel>
         </GroupBox>
-       
+
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition />
@@ -80,33 +79,56 @@
             </Grid.RowDefinitions>
 
             <GroupBox Grid.Row="0" Header="Tasks">
-                <!--- Tree, Hide Completed, other options-->
-                <TreeView Grid.Column="0"
-                    ItemsSource="{Binding Tasks}" SelectedItemChanged="TreeView_SelectedItemChanged">
-                    <TreeView.ItemContainerStyle>
-                        <Style TargetType="{x:Type TreeViewItem}">
-                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                        </Style>
-                    </TreeView.ItemContainerStyle>
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate x:Name="DataTemplate" ItemsSource="{Binding Children}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
+                <DockPanel LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Right">
+                        <StackPanel.Resources>
+                            <Style TargetType="Separator">
+                                <Setter Property="Margin" Value="5"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Label FontWeight="Bold" >New...</Label>
+                        <Button Command="{Binding AddTaskCommand}">Task</Button>
+                        <Button Command="{Binding AddSubTaskCommand}">Subtask</Button>
+                        <Separator/>
+                        <Button Command="{Binding EditTaskCommand}">Edit</Button>
+                        <Button>
+                            <TextBlock TextAlignment="Center">Mark<LineBreak/>Completed</TextBlock>
+                        </Button>
+                        <Separator/>
+                        <Button>Up</Button>
+                        <Button>Down</Button>
 
-                                <Label>
-                                    <TextBlock Style="{Binding TextStyle}" Text="{Binding Name}"/>
-                                </Label>
-                            </Grid>
-                        </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>
+                        
+
+                    </StackPanel>
+                    <!--- Tree, Hide Completed, other options-->
+                    <TreeView
+                    ItemsSource="{Binding Tasks}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate x:Name="DataTemplate" ItemsSource="{Binding Children}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label>
+                                        <TextBlock Style="{Binding TextStyle}" Text="{Binding Name}"/>
+                                    </Label>
+                                </Grid>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </DockPanel>
             </GroupBox>
 
             <GroupBox Grid.Row="1" Header="Details">
-                
+
             </GroupBox>
         </Grid>
     </Grid>

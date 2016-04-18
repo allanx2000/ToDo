@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:ToDo.Client"
              StartupUri="LoadWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="pack://application:,,,/Innouvous.Utils.ResourceDictionaries;component/GenericDictionary.xaml"/>
+        <ResourceDictionary Source="pack://application:,,,/Innouvous.Utils.ResourceDictionaries;component/GenericDictionary45.xaml"/>
     </Application.Resources>
 </Application>

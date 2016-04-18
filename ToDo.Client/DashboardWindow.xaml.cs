@@ -31,7 +31,8 @@ namespace ToDo.Client
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-
+            var task = e.NewValue as TaskItemViewModel;
+            vm.SelectedTask = task == null? null : task.Data;
         }
     }
 }

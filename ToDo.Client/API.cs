@@ -23,8 +23,39 @@ namespace ToDo.Client
 
             public static IEnumerable<TaskList> GetLists()
             {
-                return DB.Lists.Include(x => x.TaskItems);
+                var query = DB.Lists
+                    .Include(x => x.TaskItems);
+                return query;
             }
+
+            public static TaskItem GetTaskItem(int id)
+            {
+                var query = DB.Tasks
+                    .Include(x => x.Parent)
+                    .Include(x => x.Children)
+                    .Include(x => x.Comments)
+                    .Include(x => x.Frequency)
+                    .Where(x => x.ListID == id);
+
+                return query.FirstOrDefault();
+            }
+
+            public static ICollection<TaskItem> GetRootTaskItems(TaskList list)
+            {
+                var query = DB.Tasks
+                    .Where(x => x.ParentID == null && x.ListID == list.TaskListID)
+                    .OrderBy(x => x.Order);
+
+                List<TaskItem> tasks = new List<TaskItem>();
+
+                foreach (var t in query.ToList())
+                {
+                    tasks.Add(GetTaskItem(t.TaskItemID));
+                }
+
+                return tasks;
+            }
+            
         }
     }
 }
