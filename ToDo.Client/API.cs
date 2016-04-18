@@ -32,12 +32,30 @@ namespace ToDo.Client
             {
                 var query = DB.Tasks
                     .Include(x => x.Parent)
-                    .Include(x => x.Children)
+                    //.Include(x => x.Children)
                     .Include(x => x.Comments)
-                    .Include(x => x.Frequency)
-                    .Where(x => x.ListID == id);
+                    //.Include(x => x.Frequency) TODO: Add back, FK removed?
+                    .Where(x => x.TaskItemID == id);
 
-                return query.FirstOrDefault();
+                var item = query.FirstOrDefault();
+
+                //Add Children
+                if (item != null)
+                {
+                    var children = DB.Tasks.Where(x => x.ParentID == item.TaskItemID).ToList();
+
+                    if (children.Count > 0)
+                    {
+                        item.Children = new List<TaskItem>();
+
+                        foreach (var i in children)
+                        {
+                            item.Children.Add(i);
+                        }
+                    }
+                }
+
+                return item;
             }
 
             public static ICollection<TaskItem> GetRootTaskItems(TaskList list)

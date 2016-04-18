@@ -7,6 +7,18 @@
         mc:Ignorable="d"
         Title="{Binding Title, FallbackValue='Edit Task'}" SizeToContent="Height" Width="500">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
+                <Setter Property="Margin" Value="5"/>
+                <Setter Property="Width" Value="120"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </Style>
+            <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+            </Style>
+        </Grid.Resources>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
@@ -15,6 +27,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="150"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -43,25 +56,16 @@
         <ComboBox Grid.Row="3" Grid.Column="1" Width="100" HorizontalAlignment="Left"
                   SelectedItem="{Binding Priority}" ItemsSource="{Binding Priorities}"/>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.ColumnSpan="2">
-            <StackPanel.Resources>
-                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                </Style>
-            </StackPanel.Resources>
-            
-            <CheckBox IsChecked="{Binding HasRepeat}">Repeat:</CheckBox>
-            <ComboBox Width="100" IsEnabled="{Binding HasRepeat}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
+        <CheckBox Grid.Row="4" Grid.Column="0" IsChecked="{Binding HasRepeat}">Repeat:</CheckBox>
+        <ComboBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding HasRepeat}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
 
-            <Label Width="40"/>
+        <CheckBox Grid.Row="5" Grid.Column="0"  IsChecked="{Binding HasDueDate}">Due Date:</CheckBox>
+        <DatePicker Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" IsEnabled="{Binding HasDueDate}" />
 
-            <CheckBox IsChecked="{Binding HasDueDate}">Due Date:</CheckBox>
-            <DatePicker IsEnabled="{Binding HasDueDate}" VerticalAlignment="Center" Width="150" />
-        </StackPanel>
+        <CheckBox Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Completed}">Completed</CheckBox>
+        <DatePicker Grid.Row="6" Grid.Column="1" SelectedDate="{Binding CompletedDate}"/>
 
-        <CheckBox Grid.Row="5" Grid.ColumnSpan="2" IsChecked="{Binding Completed}">Completed</CheckBox>
-        
-        <StackPanel Grid.Row="6" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Command="{Binding SaveCommand}">Save</Button>
             <Button Command="{Binding CancelCommand}">Cancel</Button>
         </StackPanel>

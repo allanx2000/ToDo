@@ -16,7 +16,7 @@ namespace ToDo.Client.ViewModels
     {
         private static Style Complete, Incomplete;
 
-        TaskItemViewModel()
+        static TaskItemViewModel()
         {
             var bold = FontWeights.Bold;
             var current = Application.Current.FindResource(typeof(Label)) as Style;
@@ -25,7 +25,7 @@ namespace ToDo.Client.ViewModels
             //Complete.BasedOn = current;
             Complete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
             Complete.Setters.Add(new Setter(TextBlock.TextDecorationsProperty, TextDecorations.Strikethrough));
-            Complete.Setters.Add(new Setter(TextBlock.ForegroundProperty, Colors.Gray));
+            Complete.Setters.Add(new Setter(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.LightGray)));
 
             Incomplete = new Style(typeof(TextBlock));
             //Incomplete.BasedOn = current;
@@ -35,6 +35,32 @@ namespace ToDo.Client.ViewModels
         public TaskItemViewModel(TaskItem item)
         {
             data = item;
+
+            if (data.Children != null)
+            {
+                children = new List<TaskItemViewModel>();
+                foreach (var c in data.Children)
+                {
+                    children.Add(new TaskItemViewModel(c));
+                }
+            }
+        }
+
+        public bool IsComplete
+        {
+            get
+            {
+                return Data.Completed != null;
+            }
+        }
+
+        private List<TaskItemViewModel> children;
+        public ICollection<TaskItemViewModel> Children
+        {
+            get
+            {
+                return children;
+            }
         }
 
         private TaskItem data;
