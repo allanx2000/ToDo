@@ -80,6 +80,10 @@
 
             <GroupBox Grid.Row="0" Header="Tasks">
                 <DockPanel LastChildFill="True">
+                    <DockPanel.Resources>
+                        <ResourceDictionary Source="TreeListDictionary.xaml"/>
+                    </DockPanel.Resources>
+                    
                     <StackPanel DockPanel.Dock="Right">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">
@@ -102,14 +106,20 @@
 
 
                     </StackPanel>
-                    <!--- Tree, Hide Completed, other options-->
+                    <!--<local:TasksTree ItemsSource="{Binding TasksItems}" />-->
                     <TreeView
-                    ItemsSource="{Binding Tasks}" SelectedItemChanged="TreeView_SelectedItemChanged">
+                        ItemsSource="{Binding Tasks}"
+                        ItemTemplate="{StaticResource TreeViewDataTemplate}"
+                        ItemContainerStyle="{StaticResource TreeViewContainerStyle}"
+                        SelectedItemChanged="TreeView_SelectedItemChanged">
+                        <!--
                         <TreeView.ItemContainerStyle>
                             <Style TargetType="{x:Type TreeViewItem}">
                                 <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
                             </Style>
                         </TreeView.ItemContainerStyle>
+                        -->
+                        <!--
                         <TreeView.ItemTemplate>
                             <HierarchicalDataTemplate x:Name="DataTemplate" ItemsSource="{Binding Children}">
                                 <Grid>
@@ -124,7 +134,9 @@
                                 </Grid>
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
+                        -->
                     </TreeView>
+                    
                 </DockPanel>
             </GroupBox>
 

@@ -153,6 +153,9 @@
     <Compile Include="EditTaskWindow.xaml.cs">
       <DependentUpon>EditTaskWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TasksTree.xaml.cs">
+      <DependentUpon>TasksTree.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\TaskItemViewModel.cs" />
     <Compile Include="ViewModels\TaskListViewModel.cs" />
@@ -190,6 +193,14 @@
       <DependentUpon>LoadWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="TasksTree.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TreeListDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

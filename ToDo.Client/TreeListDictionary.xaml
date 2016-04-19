@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:ToDo.Client">
+
+    <Style x:Key="TreeViewContainerStyle" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
+    </Style>
+    
+
+    <HierarchicalDataTemplate x:Key="TreeViewDataTemplate" ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Label>
+                    <TextBlock Style="{Binding TextStyle}" Text="{Binding DisplayName}"/>
+                </Label>
+            </Grid>
+        </HierarchicalDataTemplate>
+    
+</ResourceDictionary>

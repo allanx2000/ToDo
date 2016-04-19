@@ -1,5 +1,4 @@
 ﻿-Parent Task Selector
--List numbers not updated on change, need to add update function.
--Delete
--Mark Completed
 -Reorder? How if view sorted by Completed?
+-Save Last DB Path
+-Due Date/Reminder Checker
