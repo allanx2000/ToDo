@@ -47,8 +47,5 @@ namespace ToDo.Client.Core.Tasks
         public int ListID { get; set; }
         public virtual TaskList List { get; set; }
 
-
-
-
     }
 }

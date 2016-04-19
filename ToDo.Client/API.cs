@@ -73,7 +73,63 @@ namespace ToDo.Client
 
                 return tasks;
             }
-            
+
+            public static void DeleteTask(TaskItem task)
+            {
+                //List<TaskItem> children = new List<TaskItem>();
+                int? parentId = task.ParentID;
+                int listId = task.ListID;
+
+                DeleteChildren(task.Children);
+
+                DB.Tasks.Remove(task);
+                DB.SaveChanges();
+
+                ICollection<TaskItem> remaining;
+
+                remaining = (from t in DB.Tasks
+                             where t.ParentID == parentId
+                             orderby t.Order ascending
+                             select t).ToList();
+
+                int ctr = 1;
+                foreach (var t in remaining)
+                {
+                    t.Order = ctr++;
+                }
+
+                DB.SaveChanges();
+
+            }
+
+            private static void DeleteChildren(ICollection<TaskItem> children)
+            {
+                if (children == null)
+                    return;
+
+                foreach (var c in children)
+                {
+                    DeleteChildren(c.Children);
+
+                    DB.Tasks.Remove(c);
+                }
+
+                DB.SaveChanges();
+            }
+
+            public static int GetNextOrder(TaskList list, TaskItem parent)
+            {
+                int order;
+                if (parent != null)
+                    order = (from t in DB.Tasks
+                             where t.ParentID == parent.TaskItemID
+                             select t.Order).Max();
+                else
+                    order = (from t in DB.Tasks
+                             where t.ListID == list.TaskListID
+                             select t.Order).Max();
+                return order + 1;
+            }
         }
     }
 }

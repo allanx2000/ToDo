@@ -18,6 +18,7 @@ namespace ToDo.Client.ViewModels
 
         private TaskItem parent;
         private TaskItem existing;
+        private TaskList list;
         private Window window;
 
         private void Initialize(Window window)
@@ -58,7 +59,8 @@ namespace ToDo.Client.ViewModels
                 Name = existing.Title;
                 Details = existing.Description;
                 //TODO: Add Edit Comments row | existing.Comments
-                Completed = existing.Completed != null;
+                HasCompleted = existing.Completed != null;
+                Completed = existing.Completed;
 
                 Priority = existing.Priority;
 
@@ -153,7 +155,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return parent == null ? "" : parent.Title;
+                return parent == null ? "(None)" : parent.Title;
             }
         }
 
@@ -227,16 +229,36 @@ namespace ToDo.Client.ViewModels
 
         public bool Cancelled { get; private set; }
 
-        private bool completed;
-        private TaskList list;
 
-        public bool Completed
+        private DateTime? completed;
+        public DateTime? Completed
         {
-            get { return completed; }
+            get
+            {
+                return completed;
+            }
+            set
+            {
+                completed = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool hasCompleted;
+        
+        public bool HasCompleted
+        {
+            get { return hasCompleted; }
             set
             {
                 //TODO: Need to add a DatePicker?
-                completed = value;
+                hasCompleted = value;
+                
+                if (!hasCompleted)
+                    Completed = null;
+                else if (Completed == null)
+                    Completed = DateTime.Today;
+
                 RaisePropertyChanged();
             }
         }
@@ -269,6 +291,9 @@ namespace ToDo.Client.ViewModels
                     throw new Exception("Name cannot be empty.");
                 else if (Priority == null)
                     throw new Exception("Priority is required.");
+                else if (HasCompleted && Completed == null)
+                    throw new Exception("Completed Date not set.");
+
 
                 var sameName = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == Name);
                 if (sameName == null || (existing != null && sameName.TaskItemID == existing.TaskItemID))
@@ -284,15 +309,17 @@ namespace ToDo.Client.ViewModels
                 TaskItem item = isExisting ? existing : new TaskItem();
 
                 if (!isExisting)
+                {
                     item.Created = now;
+                    item.Order = Workspace.API.GetNextOrder(list, parent);
+                }
 
                 item.Title = Name;
                 item.Description = Details;
 
-                if (Completed)
+                if (HasCompleted)
                 {
-                    if (item.Completed == null)
-                        item.Completed = now;
+                    item.Completed = Completed.Value;
                 }
                 else
                     item.Completed = null;

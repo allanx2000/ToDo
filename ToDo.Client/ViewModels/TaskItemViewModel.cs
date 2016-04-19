@@ -68,6 +68,14 @@ namespace ToDo.Client.ViewModels
         {
             get { return data; }
         }
+        
+        public string DisplayName
+        {
+            get
+            {
+                return Data.Order + ". " + data.Title;
+            }
+        }
 
         public string Name
         {

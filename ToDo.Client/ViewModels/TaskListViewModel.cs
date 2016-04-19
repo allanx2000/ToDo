@@ -68,5 +68,10 @@ namespace ToDo.Client.ViewModels
             this.list = list;
         }
 
+        public void Update()
+        {
+            RaisePropertyChanged("Remaining");
+            RaisePropertyChanged("Completed");
+        }
     }
 }

@@ -74,8 +74,8 @@
 
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <GroupBox Grid.Row="0" Header="Tasks">
@@ -91,14 +91,15 @@
                         <Button Command="{Binding AddSubTaskCommand}">Subtask</Button>
                         <Separator/>
                         <Button Command="{Binding EditTaskCommand}">Edit</Button>
-                        <Button>
+                        <Button Command="{Binding MarkCompletedCommand}">
                             <TextBlock TextAlignment="Center">Mark<LineBreak/>Completed</TextBlock>
                         </Button>
                         <Separator/>
                         <Button>Up</Button>
                         <Button>Down</Button>
+                        <Separator/>
+                        <Button FontWeight="Bold" Foreground="Red" Command="{Binding DeleteItemCommand}">Delete</Button>
 
-                        
 
                     </StackPanel>
                     <!--- Tree, Hide Completed, other options-->
@@ -118,7 +119,7 @@
                                     </Grid.RowDefinitions>
 
                                     <Label>
-                                        <TextBlock Style="{Binding TextStyle}" Text="{Binding Name}"/>
+                                        <TextBlock Style="{Binding TextStyle}" Text="{Binding DisplayName}"/>
                                     </Label>
                                 </Grid>
                             </HierarchicalDataTemplate>

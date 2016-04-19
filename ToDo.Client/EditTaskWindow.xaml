@@ -42,6 +42,7 @@
         <TextBox  Grid.Row="1" Grid.Column="1"
                   Text="{Binding Details}" AcceptsReturn="True" 
                   Style="{StaticResource MultilineTextBox}"
+                  Margin="5"
                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  />
 
@@ -51,24 +52,39 @@
             <Button DockPanel.Dock="Right">Select...</Button>
             <Label Content="{Binding ParentText, FallbackValue=Parent}"/>
         </DockPanel>
-        
+
         <Label Style="{StaticResource GridField}" Grid.Row="3" Grid.Column="0" >Priority:</Label>
         <ComboBox Grid.Row="3" Grid.Column="1" Width="100" HorizontalAlignment="Left"
                   SelectedItem="{Binding Priority}" ItemsSource="{Binding Priorities}"/>
 
-        <CheckBox Grid.Row="4" Grid.Column="0" IsChecked="{Binding HasRepeat}">Repeat:</CheckBox>
-        <ComboBox Grid.Row="4" Grid.Column="1" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding HasRepeat}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
+        <Grid Grid.Row="4" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <CheckBox Grid.Row="5" Grid.Column="0"  IsChecked="{Binding HasDueDate}">Due Date:</CheckBox>
-        <DatePicker Grid.Row="5" Grid.Column="1" HorizontalAlignment="Left" IsEnabled="{Binding HasDueDate}" />
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasRepeat}">Repeat:</CheckBox>
+            <ComboBox Grid.Row="0" Grid.Column="1" HorizontalAlignment="Left" Width="100" IsEnabled="{Binding HasRepeat}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
 
-        <CheckBox Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding Completed}">Completed</CheckBox>
-        <DatePicker Grid.Row="6" Grid.Column="1" SelectedDate="{Binding CompletedDate}"/>
+            <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasDueDate}">Due Date:</CheckBox>
+            <DatePicker Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" IsEnabled="{Binding HasDueDate}" />
 
+            <CheckBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding HasCompleted}">Completed</CheckBox>
+            <DatePicker Grid.Row="2" Grid.Column="1" IsEnabled="{Binding HasCompleted}" SelectedDate="{Binding Completed}"/>
+
+        </Grid>
+
+        
         <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Command="{Binding SaveCommand}">Save</Button>
             <Button Command="{Binding CancelCommand}">Cancel</Button>
         </StackPanel>
-        
+
     </Grid>
 </Window>
