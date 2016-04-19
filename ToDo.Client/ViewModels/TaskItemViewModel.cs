@@ -1,11 +1,13 @@
 ﻿using Innouvous.Utils.MVVM;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using ToDo.Client.Core.Tasks;
 using ToDo.Client.Properties;
@@ -41,9 +43,17 @@ namespace ToDo.Client.ViewModels
                 children = new List<TaskItemViewModel>();
                 foreach (var c in data.Children)
                 {
-                    children.Add(new TaskItemViewModel(c));
+                    var vm = new TaskItemViewModel(c);
+                    vm.Parent = this;
+
+                    children.Add(vm);
                 }
             }
+
+            viewSource = new CollectionViewSource();
+            viewSource.Source = children;
+            viewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
+
         }
 
         public bool IsComplete
@@ -51,6 +61,15 @@ namespace ToDo.Client.ViewModels
             get
             {
                 return Data.Completed != null;
+            }
+        }
+
+        public CollectionViewSource viewSource;
+        public ICollectionView ChildrenView
+        {
+            get
+            {
+                return viewSource.View;
             }
         }
 
@@ -111,5 +130,7 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
+
+        public TaskItemViewModel Parent { get; set; }
     }
 }

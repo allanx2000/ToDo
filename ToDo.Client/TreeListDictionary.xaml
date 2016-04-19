@@ -7,7 +7,7 @@
     </Style>
     
 
-    <HierarchicalDataTemplate x:Key="TreeViewDataTemplate" ItemsSource="{Binding Children}">
+    <HierarchicalDataTemplate x:Key="TreeViewDataTemplate" ItemsSource="{Binding ChildrenView}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

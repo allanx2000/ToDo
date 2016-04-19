@@ -130,6 +130,42 @@ namespace ToDo.Client
                              select t.Order).Max();
                 return order + 1;
             }
+
+            public static bool MoveDown(TaskItem task)
+            {
+                if (task == null)
+                    return false;
+                else if (task.Order == GetNextOrder(task.List, task.Parent) - 1)
+                    return false;
+
+                TaskItem next = DB.Tasks.FirstOrDefault(x => 
+                    x.Order == task.Order + 1
+                    && x.ParentID == task.ParentID
+                    );
+                next.Order -= 1;
+                task.Order += 1;
+
+                DB.SaveChanges();
+
+                return true;
+            }
+
+            public static bool MoveUp(TaskItem task)
+            {
+                if (task == null || task.Order == 1)
+                    return false;
+
+                TaskItem prev = DB.Tasks.FirstOrDefault(x => 
+                    x.ParentID == task.ParentID
+                    && x.Order == task.Order - 1);
+
+                prev.Order += 1;
+                task.Order -= 1;
+
+                DB.SaveChanges();
+
+                return true;
+            }
         }
     }
 }

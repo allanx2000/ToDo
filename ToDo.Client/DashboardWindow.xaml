@@ -99,8 +99,8 @@
                             <TextBlock TextAlignment="Center">Mark<LineBreak/>Completed</TextBlock>
                         </Button>
                         <Separator/>
-                        <Button>Up</Button>
-                        <Button>Down</Button>
+                        <Button Command="{Binding MoveUpCommand}">Up</Button>
+                        <Button Command="{Binding MoveDownCommand}">Down</Button>
                         <Separator/>
                         <Button FontWeight="Bold" Foreground="Red" Command="{Binding DeleteItemCommand}">Delete</Button>
 

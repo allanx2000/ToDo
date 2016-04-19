@@ -1,4 +1,4 @@
 ﻿-Parent Task Selector
--Reorder? How if view sorted by Completed?
 -Save Last DB Path
 -Due Date/Reminder Checker
+-Clean Code
