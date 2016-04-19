@@ -11,7 +11,23 @@ namespace ToDo.Client.ViewModels
 {
     public class TaskListViewModel : ViewModel
     {
+        private static SolidColorBrush projectColor = new SolidColorBrush(Colors.DarkRed);
+        private static SolidColorBrush todoColor = new SolidColorBrush(Colors.Black);
+        
         private TaskList list;
+
+        public TaskListViewModel(TaskList list)
+        {
+            this.list = list;
+        }
+
+        public void Update()
+        {
+            RaisePropertyChanged("Remaining");
+            RaisePropertyChanged("Completed");
+        }
+
+        #region Properties
 
         public TaskList Data
         {
@@ -20,10 +36,7 @@ namespace ToDo.Client.ViewModels
                 return list;
             }
         }
-
-        private static SolidColorBrush projectColor = new SolidColorBrush(Colors.DarkRed);
-        private static SolidColorBrush todoColor = new SolidColorBrush(Colors.Black);
-
+        
         public string Name
         {
             get
@@ -63,15 +76,6 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        public TaskListViewModel(TaskList list)
-        {
-            this.list = list;
-        }
-
-        public void Update()
-        {
-            RaisePropertyChanged("Remaining");
-            RaisePropertyChanged("Completed");
-        }
+        #endregion
     }
 }

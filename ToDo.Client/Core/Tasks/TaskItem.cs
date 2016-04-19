@@ -28,10 +28,12 @@ namespace ToDo.Client.Core.Tasks
         public DateTime? Completed { get; set; }
         public DateTime? DueDate { get; set; }
 
+        //TODO: Add a StartDate Field
         public DateTime? NextReminder { get; set; }
 
         public int? FrequencyId { get; set; }
-        public virtual TaskFrequency? Frequency { get; set; }
+        public TaskFrequency? Frequency { get; set; }
+        //TODO: Add Clear if HasFrequency == false
 
         //Navigation/References
         public ICollection<Comment> Comments { get; set; }

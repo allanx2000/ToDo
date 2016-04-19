@@ -1,4 +1,6 @@
 ﻿-Parent Task Selector
--Save Last DB Path
 -Due Date/Reminder Checker
--Clean Code
+-Implement Frequencies
+	-Add a StartDate field
+	-Clear NextTime if !HasFrequency
+

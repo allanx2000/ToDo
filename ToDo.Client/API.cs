@@ -21,6 +21,10 @@ namespace ToDo.Client
                 }
             }
 
+            /// <summary>
+            /// Get Lists and include TaskItems
+            /// </summary>
+            /// <returns></returns>
             public static IEnumerable<TaskList> GetLists()
             {
                 var query = DB.Lists
@@ -32,9 +36,8 @@ namespace ToDo.Client
             {
                 var query = DB.Tasks
                     .Include(x => x.Parent)
-                    //.Include(x => x.Children)
                     .Include(x => x.Comments)
-                    //.Include(x => x.Frequency) TODO: Add back, FK removed?
+                    .Include(x => x.Frequency) //TODO: Add back, FK removed?
                     .Where(x => x.TaskItemID == id);
 
                 var item = query.FirstOrDefault();

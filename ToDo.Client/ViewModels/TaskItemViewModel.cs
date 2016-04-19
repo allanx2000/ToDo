@@ -20,17 +20,16 @@ namespace ToDo.Client.ViewModels
 
         static TaskItemViewModel()
         {
+            //Create Styles
             var bold = FontWeights.Bold;
-            var current = Application.Current.FindResource(typeof(Label)) as Style;
+            //var current = Application.Current.FindResource(typeof(Label)) as Style;
             
             Complete = new Style(typeof(TextBlock));
-            //Complete.BasedOn = current;
             Complete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
             Complete.Setters.Add(new Setter(TextBlock.TextDecorationsProperty, TextDecorations.Strikethrough));
             Complete.Setters.Add(new Setter(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.LightGray)));
 
             Incomplete = new Style(typeof(TextBlock));
-            //Incomplete.BasedOn = current;
             Incomplete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
         }
 
@@ -38,6 +37,7 @@ namespace ToDo.Client.ViewModels
         {
             data = item;
 
+            //Create children view models
             if (data.Children != null)
             {
                 children = new List<TaskItemViewModel>();
@@ -50,26 +50,20 @@ namespace ToDo.Client.ViewModels
                 }
             }
 
-            viewSource = new CollectionViewSource();
-            viewSource.Source = children;
-            viewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
-
+            childrenViewSource = new CollectionViewSource();
+            childrenViewSource.Source = children;
+            childrenViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
         }
 
-        public bool IsComplete
-        {
-            get
-            {
-                return Data.Completed != null;
-            }
-        }
+        #region Properties
+        public TaskItemViewModel Parent { get; set; }
 
-        public CollectionViewSource viewSource;
+        public CollectionViewSource childrenViewSource;
         public ICollectionView ChildrenView
         {
             get
             {
-                return viewSource.View;
+                return childrenViewSource.View;
             }
         }
 
@@ -87,7 +81,15 @@ namespace ToDo.Client.ViewModels
         {
             get { return data; }
         }
-        
+
+        public bool IsComplete
+        {
+            get
+            {
+                return Data.Completed != null;
+            }
+        }
+
         public string DisplayName
         {
             get
@@ -131,6 +133,6 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        public TaskItemViewModel Parent { get; set; }
+        #endregion
     }
 }

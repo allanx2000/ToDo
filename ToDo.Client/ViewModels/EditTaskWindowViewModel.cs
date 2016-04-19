@@ -14,12 +14,16 @@ namespace ToDo.Client.ViewModels
 {
     public class EditTaskWindowViewModel : ViewModel
     {
-        static List<int> priorities;
+        static List<int> PrioritiesList;
 
         private TaskItem parent;
         private TaskItem existing;
+
         private TaskList list;
+
         private Window window;
+
+        public bool Cancelled { get; private set; }
 
         private void Initialize(Window window)
         {
@@ -72,9 +76,10 @@ namespace ToDo.Client.ViewModels
                     SelectedFrequency = existing.Frequency.ToString();
 
                 SetParent(existing.Parent);
-
             }
         }
+
+        #region Properties and Commands
 
         private string selectedFrequency;
         public string SelectedFrequency
@@ -121,7 +126,7 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private int? priority = null;
+        private int? priority = 3;
         public int? Priority
         {
             get
@@ -139,15 +144,15 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                if (priorities == null)
+                if (PrioritiesList == null)
                 {
-                    priorities = new List<int>();
+                    PrioritiesList = new List<int>();
 
                     for (int i = 1; i <= 5; i++)
-                        priorities.Add(i);
+                        PrioritiesList.Add(i);
                 }
 
-                return priorities;
+                return PrioritiesList;
             }
         }
 
@@ -227,8 +232,7 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        public bool Cancelled { get; private set; }
-
+        
 
         private DateTime? completed;
         public DateTime? Completed
@@ -336,6 +340,7 @@ namespace ToDo.Client.ViewModels
 
                 item.Updated = now;
 
+                //TODO: Implement
                 if (HasRepeat)
                 {
 
@@ -345,7 +350,7 @@ namespace ToDo.Client.ViewModels
 
                 }
 
-                if (!isExisting)
+                if (!isExisting) //Set ListId
                 {
                     item.List = list;
                     Workspace.Instance.Tasks.Add(item);
@@ -361,5 +366,7 @@ namespace ToDo.Client.ViewModels
                 MessageBoxFactory.ShowError(e);
             }
         }
+
+        #endregion
     }
 }

@@ -14,12 +14,15 @@ namespace ToDo.Client.ViewModels
 {
     class LoadWindowViewModel : ViewModel
     {
-        private string workspacePath = @"C:\ToDo";
+        private readonly Properties.Settings Settings = Properties.Settings.Default;
+
+        private string workspacePath; 
         private Window window;
 
         public LoadWindowViewModel(Window window)
         {
             this.window = window;
+            workspacePath = Settings.LastPath;
         }
 
         public string WorkspacePath
@@ -74,7 +77,10 @@ namespace ToDo.Client.ViewModels
                     ValidateWorkspace(workspacePath);
 
                 Workspace.LoadWorkspace(workspacePath, dbFile);
-                
+
+                Settings.LastPath = WorkspacePath;
+                Settings.Save();
+
                 DashboardWindow dashboard = new DashboardWindow();
                 dashboard.Show();
                 window.Close();
