@@ -153,7 +153,11 @@
     <Compile Include="EditTaskWindow.xaml.cs">
       <DependentUpon>EditTaskWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ParentSelectWindow.xaml.cs">
+      <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
+    <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
     <Compile Include="ViewModels\TaskItemViewModel.cs" />
     <Compile Include="ViewModels\TaskListViewModel.cs" />
     <Compile Include="DashboardWindow.xaml.cs">
@@ -190,6 +194,10 @@
       <DependentUpon>LoadWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ParentSelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="TreeListDictionary.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

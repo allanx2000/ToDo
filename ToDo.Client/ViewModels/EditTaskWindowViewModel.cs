@@ -266,7 +266,6 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
-
         public ICommand CancelCommand
         {
             get
@@ -276,6 +275,31 @@ namespace ToDo.Client.ViewModels
                     Cancelled = true;
                     window.Close();
                 });
+            }
+        }
+
+        public ICommand SelectParentCommand
+        {
+            get
+            {
+                return new CommandHelper(SelectParent);
+            }
+        }
+
+        private void SelectParent()
+        {
+            int listId = existing == null ? list.TaskListID : existing.ListID;
+            int? currentTaskId = existing == null ? null : (int?)existing.TaskItemID;
+
+            var window = new ParentSelectWindow(listId, currentTaskId);
+            window.ShowDialog();
+
+            if (!window.Cancelled)
+            {
+                if (window.SelectedItem == null)
+                    SetParent(null);
+                else
+                    SetParent(window.SelectedItem.Data); 
             }
         }
 
@@ -333,9 +357,15 @@ namespace ToDo.Client.ViewModels
                 if (HasDueDate)
                     item.DueDate = DueDate;
 
-                if (parent != null)
+                int? oldParentId = null;
+                bool parentChanged = ParentChanged(item, parent);
+                if (parentChanged)
                 {
+                    oldParentId = item.ParentID;
+
+                    item.Order = Workspace.API.GetNextOrder(list, parent);
                     item.Parent = parent;
+                    
                 }
 
                 item.Updated = now;
@@ -358,6 +388,15 @@ namespace ToDo.Client.ViewModels
 
                 Workspace.Instance.SaveChanges();
 
+                if (parentChanged)
+                {
+                    int listId = existing == null ? list.TaskListID : existing.ListID;
+                    Workspace.API.RenumberTasks(listId,
+                        oldParentId);
+
+                    Workspace.API.RenumberTasks(listId,
+                        item.ListID);
+                }
                 Cancelled = false;
                 window.Close();
             }
@@ -365,6 +404,16 @@ namespace ToDo.Client.ViewModels
             {
                 MessageBoxFactory.ShowError(e);
             }
+        }
+
+        private bool ParentChanged(TaskItem item, TaskItem parent)
+        {
+            if (item == null)
+                return false;
+            else if (item.Parent != null && parent != null && item.ParentID == parent.TaskItemID)
+                return false;
+            else
+                return true;
         }
 
         #endregion

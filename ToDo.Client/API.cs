@@ -1,11 +1,13 @@
 ﻿using Microsoft.Data.Entity;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToDo.Client.Core.Lists;
 using ToDo.Client.Core.Tasks;
+using ToDo.Client.ViewModels;
 
 namespace ToDo.Client
 {
@@ -32,13 +34,13 @@ namespace ToDo.Client
                 return query;
             }
 
-            public static TaskItem GetTaskItem(int id)
+            public static TaskItem GetTaskItem(int itemId)
             {
                 var query = DB.Tasks
                     .Include(x => x.Parent)
                     .Include(x => x.Comments)
-                    .Include(x => x.Frequency) //TODO: Add back, FK removed?
-                    .Where(x => x.TaskItemID == id);
+                    //.Include(x => x.Frequency) //TODO: Not needed as is enum
+                    .Where(x => x.TaskItemID == itemId);
 
                 var item = query.FirstOrDefault();
 
@@ -60,11 +62,15 @@ namespace ToDo.Client
 
                 return item;
             }
-
             public static ICollection<TaskItem> GetRootTaskItems(TaskList list)
             {
+                return GetRootTaskItems(list.TaskListID);
+            }
+
+            public static ICollection<TaskItem> GetRootTaskItems(int listId)
+            {
                 var query = DB.Tasks
-                    .Where(x => x.ParentID == null && x.ListID == list.TaskListID)
+                    .Where(x => x.ParentID == null && x.ListID == listId)
                     .OrderBy(x => x.Order);
 
                 List<TaskItem> tasks = new List<TaskItem>();
@@ -88,13 +94,17 @@ namespace ToDo.Client
                 DB.Tasks.Remove(task);
                 DB.SaveChanges();
 
-                ICollection<TaskItem> remaining;
+                RenumberTasks(task.ListID, parentId);
+                
+            }
 
-                remaining = (from t in DB.Tasks
-                             where t.ParentID == parentId
-                             orderby t.Order ascending
-                             select t).ToList();
-
+            public static void RenumberTasks(int listId, int? parentId)
+            {
+                ICollection<TaskItem> remaining = (from t in DB.Tasks
+                                                   where t.ParentID == parentId 
+                                                   && t.ListID == listId
+                                                   orderby t.Order ascending
+                                                   select t).ToList();
                 int ctr = 1;
                 foreach (var t in remaining)
                 {
@@ -102,7 +112,6 @@ namespace ToDo.Client
                 }
 
                 DB.SaveChanges();
-
             }
 
             private static void DeleteChildren(ICollection<TaskItem> children)
@@ -153,6 +162,48 @@ namespace ToDo.Client
                 return true;
             }
 
+            public static void LoadList(int listId, ObservableCollection<TaskItemViewModel> collection, int? selected = null)
+            {
+                collection.Clear();
+                
+                var root = Workspace.API.GetRootTaskItems(listId);
+                foreach (var t in root)
+                {
+                    collection.Add(new TaskItemViewModel(t));
+                }
+
+                if (selected != null)
+                    Expand(collection, selected.Value);
+                
+            }
+
+            private static bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
+            {
+                foreach (var t in tasks)
+                {
+                    if (t.Data.TaskItemID == id)
+                    {
+                        TaskItemViewModel parent = t.Parent;
+
+                        while (parent != null)
+                        {
+                            parent.IsExpanded = true;
+                            parent = parent.Parent;
+                        }
+
+                        return true;
+                    }
+                    else if (t.Children != null)
+                    {
+                        bool expanded = Expand(t.Children, id);
+                        if (expanded)
+                            return true;
+                    }
+                }
+
+                return false;
+            }
+            
             public static bool MoveUp(TaskItem task)
             {
                 if (task == null || task.Order == 1)
