@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
         mc:Ignorable="d"
-        Title="{Binding Title}" Height="300" Width="300">
+        Title="{Binding Title, FallbackValue='Edit List'}" Height="300" Width="300">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

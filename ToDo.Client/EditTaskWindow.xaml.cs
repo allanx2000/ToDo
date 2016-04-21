@@ -33,8 +33,6 @@ namespace ToDo.Client
             vm.SetParent(parent);
         }
 
-
-
         public EditTaskWindow(TaskItem existing)
         {
             InitializeComponent();

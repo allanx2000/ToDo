@@ -1,8 +1,4 @@
-﻿-Parent Task Selector
--Due Date/Reminder Checker
--Implement Frequencies
-	-Add a StartDate field
-	-Clear NextTime if !HasFrequency
-
--On SetParent, need to renumber
+﻿-Due Date/Reminder Checker
+-Rename window titles
+-Change DB function
 

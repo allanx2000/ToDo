@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ToDo.Client"
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
-        Title="DashboardWindow" Height="800" Width="800">
+        Title="Dashboard" Height="800" Width="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -112,29 +112,6 @@
                         ItemTemplate="{StaticResource TreeViewDataTemplate}"
                         ItemContainerStyle="{StaticResource TreeViewContainerStyle}"
                         SelectedItemChanged="TreeView_SelectedItemChanged">
-                        <!--
-                        <TreeView.ItemContainerStyle>
-                            <Style TargetType="{x:Type TreeViewItem}">
-                                <Setter Property="IsExpanded" Value="{Binding IsExpanded}"/>
-                            </Style>
-                        </TreeView.ItemContainerStyle>
-                        -->
-                        <!--
-                        <TreeView.ItemTemplate>
-                            <HierarchicalDataTemplate x:Name="DataTemplate" ItemsSource="{Binding Children}">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <Label>
-                                        <TextBlock Style="{Binding TextStyle}" Text="{Binding DisplayName}"/>
-                                    </Label>
-                                </Grid>
-                            </HierarchicalDataTemplate>
-                        </TreeView.ItemTemplate>
-                        -->
                     </TreeView>
                     
                 </DockPanel>

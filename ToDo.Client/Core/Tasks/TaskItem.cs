@@ -48,6 +48,6 @@ namespace ToDo.Client.Core.Tasks
         [Required]
         public int ListID { get; set; }
         public virtual TaskList List { get; set; }
-
+        public DateTime? StartDate { get; set; }
     }
 }

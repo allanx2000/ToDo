@@ -33,6 +33,56 @@ namespace ToDo.Client.ViewModels
             Incomplete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
         }
 
+        private static readonly SolidColorBrush Green = new SolidColorBrush(Colors.DarkGreen);
+        private static readonly SolidColorBrush Orange = new SolidColorBrush(Colors.Orange);
+        private static readonly SolidColorBrush Red = new SolidColorBrush(Colors.Red);
+        private static readonly SolidColorBrush Black = new SolidColorBrush(Colors.Black);
+
+        public string CompletedDate
+        {
+            get
+            {
+                return data.Completed == null ? "" : data.Completed.Value.ToShortDateString();
+            }
+        }
+        public string DueDate
+        {
+            get
+            {
+                if (data.DueDate == null)
+                    return "";
+                else
+                    return data.DueDate.Value.ToShortDateString();
+            }
+        }
+
+        public SolidColorBrush DueDateColor
+        {
+            get
+            {
+                SolidColorBrush color = Black;
+                
+                var date = data.DueDate;
+                var today = DateTime.Today;
+
+                if (data.Completed == null && date != null )
+                {
+                    var diff = date.Value - today;
+                    int days = diff.Days;
+
+                    if (days <= 0)
+                        color = Red;
+                    else if (days < 5)
+                        color = Orange;
+                    else
+                        color = Green;
+                }
+
+                return color;
+
+            }
+        }
+
         public TaskItemViewModel(TaskItem item)
         {
             data = item;

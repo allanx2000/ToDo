@@ -35,7 +35,7 @@ namespace ToDo.Client
         public DbSet<Comment> Comments {get; set; }
         public DbSet<TaskList> Lists { get; set; }
         public DbSet<TaskItem> Tasks { get; set; }
-
+        public DbSet<TaskLog> TasksLog { get; set; }
 
         private string workspacePath, dbPath;
         private Workspace(string workspacePath, string dbPath)
@@ -43,6 +43,12 @@ namespace ToDo.Client
             //TODO: Change to just one
             this.workspacePath = workspacePath;
             this.dbPath = dbPath;
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TaskLog>()
+                .HasKey(x => new { x.TaskID, x.Date });
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -71,6 +71,8 @@ namespace ToDo.Client.ViewModels
                 DueDate = existing.DueDate;
                 HasDueDate = DueDate != null;
 
+                StartDate = existing.StartDate;
+
                 HasRepeat = existing.Frequency != null;
                 if (HasRepeat)
                     SelectedFrequency = existing.Frequency.ToString();
@@ -232,7 +234,7 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        
+
 
         private DateTime? completed;
         public DateTime? Completed
@@ -249,7 +251,7 @@ namespace ToDo.Client.ViewModels
         }
 
         private bool hasCompleted;
-        
+
         public bool HasCompleted
         {
             get { return hasCompleted; }
@@ -257,7 +259,7 @@ namespace ToDo.Client.ViewModels
             {
                 //TODO: Need to add a DatePicker?
                 hasCompleted = value;
-                
+
                 if (!hasCompleted)
                     Completed = null;
                 else if (Completed == null)
@@ -299,7 +301,7 @@ namespace ToDo.Client.ViewModels
                 if (window.SelectedItem == null)
                     SetParent(null);
                 else
-                    SetParent(window.SelectedItem.Data); 
+                    SetParent(window.SelectedItem.Data);
             }
         }
 
@@ -308,6 +310,18 @@ namespace ToDo.Client.ViewModels
             get
             {
                 return new CommandHelper(Save);
+            }
+        }
+
+        private DateTime? startDate;
+
+        public DateTime? StartDate
+        {
+            get { return startDate; }
+            set
+            {
+                startDate = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -321,7 +335,19 @@ namespace ToDo.Client.ViewModels
                     throw new Exception("Priority is required.");
                 else if (HasCompleted && Completed == null)
                     throw new Exception("Completed Date not set.");
-
+                else if (HasRepeat)
+                {
+                    if (string.IsNullOrEmpty(SelectedFrequency))
+                        throw new Exception("No Frequency selected.");
+                    else if (StartDate == null)
+                        throw new Exception("No Start Date set.");
+                }
+                else if (HasDueDate)
+                {
+                    if (DueDate == null)
+                        throw new Exception("Due Date not set.");
+                }
+                
 
                 var sameName = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == Name);
                 if (sameName == null || (existing != null && sameName.TaskItemID == existing.TaskItemID))
@@ -345,18 +371,9 @@ namespace ToDo.Client.ViewModels
                 item.Title = Name;
                 item.Description = Details;
 
-                if (HasCompleted)
-                {
-                    item.Completed = Completed.Value;
-                }
-                else
-                    item.Completed = null;
 
                 item.Priority = Priority.Value;
-
-                if (HasDueDate)
-                    item.DueDate = DueDate;
-
+                
                 int? oldParentId = null;
                 bool parentChanged = ParentChanged(item, parent);
                 if (parentChanged)
@@ -365,20 +382,37 @@ namespace ToDo.Client.ViewModels
 
                     item.Order = Workspace.API.GetNextOrder(list, parent);
                     item.Parent = parent;
-                    
+
                 }
 
                 item.Updated = now;
 
-                //TODO: Implement
                 if (HasRepeat)
                 {
+                    item.Frequency = (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
+                    item.StartDate = StartDate;
 
+                    if (item.NextReminder == null && item.NextReminder.Value < startDate)
+                    {
+                        if (startDate >= DateTime.Today)
+                            item.NextReminder = startDate;
+                        else
+                            item.NextReminder = Workspace.API.CalculateNextReminder(item.Frequency.Value, StartDate.Value);
+                    }
                 }
                 else //Delete
                 {
-
+                    item.Frequency = null;
+                    item.StartDate = null;
+                    item.NextReminder = null;
                 }
+
+                if (HasDueDate)
+                {
+                    item.DueDate = DueDate;
+                }
+                else
+                    item.DueDate = null;
 
                 if (!isExisting) //Set ListId
                 {
@@ -387,6 +421,8 @@ namespace ToDo.Client.ViewModels
                 }
 
                 Workspace.Instance.SaveChanges();
+
+                //Impacts DB directly/immediately
 
                 if (parentChanged)
                 {
@@ -397,6 +433,14 @@ namespace ToDo.Client.ViewModels
                     Workspace.API.RenumberTasks(listId,
                         item.ListID);
                 }
+
+                if (HasCompleted)
+                {
+                    Workspace.API.MarkCompleted(item, Completed.Value);
+                }
+                else
+                    Workspace.API.MarkIncomplete(item);
+
                 Cancelled = false;
                 window.Close();
             }
@@ -409,6 +453,8 @@ namespace ToDo.Client.ViewModels
         private bool ParentChanged(TaskItem item, TaskItem parent)
         {
             if (item == null)
+                return false;
+            else if (item.Parent == null && parent == null)
                 return false;
             else if (item.Parent != null && parent != null && item.ParentID == parent.TaskItemID)
                 return false;

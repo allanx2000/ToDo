@@ -17,6 +17,23 @@
                 <Label>
                     <TextBlock Style="{Binding TextStyle}" Text="{Binding DisplayName}"/>
                 </Label>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="200"/>
+                    <ColumnDefinition Width="*" MinWidth="200"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Label>Completed: </Label>
+                    <Label Content="{Binding CompletedDate}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Label>Due:</Label>
+                    <Label Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
+                </StackPanel>
+            </Grid>
             </Grid>
         </HierarchicalDataTemplate>
     

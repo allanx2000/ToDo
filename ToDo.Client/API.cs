@@ -95,13 +95,13 @@ namespace ToDo.Client
                 DB.SaveChanges();
 
                 RenumberTasks(task.ListID, parentId);
-                
+
             }
 
             public static void RenumberTasks(int listId, int? parentId)
             {
                 ICollection<TaskItem> remaining = (from t in DB.Tasks
-                                                   where t.ParentID == parentId 
+                                                   where t.ParentID == parentId
                                                    && t.ListID == listId
                                                    orderby t.Order ascending
                                                    select t).ToList();
@@ -150,7 +150,7 @@ namespace ToDo.Client
                 else if (task.Order == GetNextOrder(task.List, task.Parent) - 1)
                     return false;
 
-                TaskItem next = DB.Tasks.FirstOrDefault(x => 
+                TaskItem next = DB.Tasks.FirstOrDefault(x =>
                     x.Order == task.Order + 1
                     && x.ParentID == task.ParentID
                     );
@@ -165,7 +165,7 @@ namespace ToDo.Client
             public static void LoadList(int listId, ObservableCollection<TaskItemViewModel> collection, int? selected = null)
             {
                 collection.Clear();
-                
+
                 var root = Workspace.API.GetRootTaskItems(listId);
                 foreach (var t in root)
                 {
@@ -174,7 +174,7 @@ namespace ToDo.Client
 
                 if (selected != null)
                     Expand(collection, selected.Value);
-                
+
             }
 
             private static bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
@@ -203,13 +203,13 @@ namespace ToDo.Client
 
                 return false;
             }
-            
+
             public static bool MoveUp(TaskItem task)
             {
                 if (task == null || task.Order == 1)
                     return false;
 
-                TaskItem prev = DB.Tasks.FirstOrDefault(x => 
+                TaskItem prev = DB.Tasks.FirstOrDefault(x =>
                     x.ParentID == task.ParentID
                     && x.Order == task.Order - 1);
 
@@ -219,6 +219,121 @@ namespace ToDo.Client
                 DB.SaveChanges();
 
                 return true;
+            }
+
+            public static DateTime CalculateLastReminder(TaskFrequency frequency, DateTime referenceDate)
+            {
+                DateTime dt = referenceDate;
+
+                switch (frequency)
+                {
+                    case TaskFrequency.Daily:
+                        dt = dt.AddDays(-1);
+                        break;
+                    case TaskFrequency.Monthly:
+                        dt = dt.AddMonths(-1);
+                        break;
+                    case TaskFrequency.Weekly:
+                        dt = dt.AddDays(-7);
+                        break;
+                }
+
+                return dt;
+            }
+
+
+            public static DateTime CalculateNextReminder(TaskFrequency frequency, DateTime referenceDate)
+            {
+                DateTime dt = referenceDate;
+
+                while (dt <= DateTime.Today)
+                {
+                    switch (frequency)
+                    {
+                        case TaskFrequency.Daily:
+                            dt = dt.AddDays(1);
+                            break;
+                        case TaskFrequency.Monthly:
+                            dt = dt.AddMonths(1);
+                            break;
+                        case TaskFrequency.Weekly:
+                            dt = dt.AddDays(7);
+                            break;
+                    }
+                }
+
+                return dt;
+            }
+
+            public static IEnumerable<TaskLog> GetTaskLogs(DateTime start, DateTime end)
+            {
+                return (from i in Instance.TasksLog
+                        where i.Date >= start
+                            && i.Date < end
+                        select i).ToList();
+            }
+
+            public static void RemoveTaskLog(DateTime start, DateTime end, int taskItemId)
+            {
+                var items = GetTaskLogs(start, end).Where(x => x.TaskID == taskItemId);
+
+                /*
+                List<TaskLog> items =  (
+                        from i in Instance.TasksLog
+                        where i.Date >= start
+                            && i.Date <= end
+                            && i.TaskID == taskItemId
+                        select i).ToList();
+                */
+
+                foreach (TaskLog i in items)
+                {
+                    Instance.TasksLog.Remove(i);
+                }
+
+                Instance.SaveChanges();
+            }
+
+            public static void MarkIncomplete(TaskItem task)
+            {
+                task.Completed = null;
+                task.Updated = DateTime.Now;
+                Workspace.instance.SaveChanges();
+
+                //TODO: If Repeat, remove log if entry is between NextReminder - Frequency and NextReminder
+                //Need to store Prev reminder?
+
+                if (task.Frequency != null)
+                {
+                    var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
+                    RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
+                    
+                }
+            }
+            public static void MarkCompleted(TaskItem task, DateTime completed)
+            {
+                task.Completed = completed;
+                task.Updated = DateTime.Now;
+
+                Workspace.Instance.SaveChanges();
+
+                //TODO: Check for existing, update NextReminder?
+
+                if (task.Frequency != null)
+                {
+                    TaskLog log = new TaskLog()
+                    {
+                        Date = completed,
+                        TaskID = task.TaskItemID,
+                        Completed = true
+                    };
+
+                    Instance.TasksLog.Add(log);
+
+                    task.NextReminder = Workspace.API.CalculateNextReminder(task.Frequency.Value, task.NextReminder.Value);
+
+                    Instance.SaveChanges();
+                }
             }
         }
     }

@@ -150,12 +150,14 @@
     <Compile Include="Core\Tasks\ProjectTaskType.cs" />
     <Compile Include="Core\Tasks\TaskFrequency.cs" />
     <Compile Include="Core\Tasks\TaskItem.cs" />
+    <Compile Include="Core\Tasks\TaskLog.cs" />
     <Compile Include="EditTaskWindow.xaml.cs">
       <DependentUpon>EditTaskWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ParentSelectWindow.xaml.cs">
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TasksUpdateTimer.cs" />
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
     <Compile Include="ViewModels\TaskItemViewModel.cs" />
