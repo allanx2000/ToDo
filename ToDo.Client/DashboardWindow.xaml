@@ -10,6 +10,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -18,7 +19,12 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.ColumnSpan="2">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
+            <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
+            <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
+        </Menu>
+        
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -30,7 +36,7 @@
             </Grid>
         </Grid>
 
-        <GroupBox Grid.Row="1" Grid.Column="0" Header="Lists">
+        <GroupBox Grid.Row="2" Grid.Column="0" Header="Lists">
             <DockPanel LastChildFill="True">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
                     <Button Command="{Binding AddListCommand}">Add</Button>
@@ -72,7 +78,7 @@
             </DockPanel>
         </GroupBox>
 
-        <Grid Grid.Row="1" Grid.Column="1">
+        <Grid Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="2*" />
                 <RowDefinition Height="*"/>

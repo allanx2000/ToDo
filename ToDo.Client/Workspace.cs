@@ -91,5 +91,13 @@ namespace ToDo.Client
                 }
             }
         }
+
+        public static void Unload()
+        {
+            TasksUpdateTimer.StopTimer();
+
+            instance.Dispose();
+            instance = null;
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace ToDo.Client
         }
         
 
-        private static void UpdateTasks(object state)
+        public static void UpdateTasks(object state)
         {
             UpdateRepeats();
 
@@ -59,6 +59,11 @@ namespace ToDo.Client
             }
 
             Workspace.Instance.SaveChanges();
+        }
+
+        public static void UpdateTasks()
+        {
+            UpdateTasks(null);
         }
     }
 }

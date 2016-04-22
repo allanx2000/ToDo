@@ -25,7 +25,7 @@ namespace ToDo.Client
         {
             InitializeComponent();
 
-            vm = new DashboardWindowViewModel();
+            vm = new DashboardWindowViewModel(this);
             this.DataContext = vm;
         }
 
