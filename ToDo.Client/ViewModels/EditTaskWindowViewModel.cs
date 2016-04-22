@@ -392,7 +392,8 @@ namespace ToDo.Client.ViewModels
                     item.Frequency = (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
                     item.StartDate = StartDate;
 
-                    if (item.NextReminder == null && item.NextReminder.Value < startDate)
+                    if (item.NextReminder == null 
+                        || item.NextReminder.Value < startDate)
                     {
                         if (startDate >= DateTime.Today)
                             item.NextReminder = startDate;
