@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ToDo.Client.Core.Tasks
 {
+    [Serializable]
     public class TaskLog
     {
         [Required]

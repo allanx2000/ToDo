@@ -401,6 +401,19 @@ namespace ToDo.Client.ViewModels
             window.Close();
         }
 
+        public ICommand ExportImportCommand
+        {
+            get
+            {
+                return new CommandHelper(ShowExportImportWindow);
+            }
+        }
+
+        private void ShowExportImportWindow()
+        {
+            Export.Exporter.Export(@"c:\DEV\todo.xml");
+        }
+
         #endregion
     }
 }

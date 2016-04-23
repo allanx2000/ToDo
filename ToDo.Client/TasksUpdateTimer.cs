@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client
 {
@@ -50,11 +51,28 @@ namespace ToDo.Client
             //Update previous days
             var yesterday = DateTime.Today.AddDays(-1);
 
-            var matches = Workspace.Instance.Tasks.Where(x => yesterday == x.NextReminder);
+            foreach (var t in Workspace.Instance.Tasks.Where(x => x.NextReminder == DateTime.Today))
+            {
+                t.NextReminder = yesterday;
+            }
+            
+            var matches = Workspace.Instance.Tasks.Where(x => yesterday == x.NextReminder).ToList();
 
             foreach (var t in matches)
             {
-                t.NextReminder = Workspace.API.CalculateNextReminder(t.Frequency.Value, t.NextReminder.Value);
+                //var last = Workspace.API.CalculateLastReminder(t.Frequency.Value, t.NextReminder.Value);
+                var next = Workspace.API.CalculateNextReminder(t.Frequency.Value, t.NextReminder.Value);
+
+                //var logs = Workspace.API.GetTaskLogs(last, next);
+
+                TaskLog log = new TaskLog() {
+                    Date = yesterday,
+                    TaskID = t.TaskItemID };
+
+                log.Completed = t.Completed.HasValue;
+                Workspace.Instance.TasksLog.Add(log);
+                
+                t.NextReminder = next;
                 t.Completed = null;
             }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ToDo.Client.Core.Lists
 {
+    [Serializable]
     public enum ListType
     {
         Project,

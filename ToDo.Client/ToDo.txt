@@ -2,3 +2,5 @@
 -Rename window titles
 -Change DB function
 
+-NextReminder should be updated on date roll when date matches, not on completed. VERIFY
+-NextReminder should be shown somewhere in the UI

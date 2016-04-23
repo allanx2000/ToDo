@@ -154,6 +154,7 @@
     <Compile Include="EditTaskWindow.xaml.cs">
       <DependentUpon>EditTaskWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Export\Exporter.cs" />
     <Compile Include="ParentSelectWindow.xaml.cs">
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
     </Compile>
@@ -257,6 +258,7 @@
     </Content>
     <Resource Include="ToDo.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

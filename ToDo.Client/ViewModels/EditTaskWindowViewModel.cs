@@ -390,13 +390,19 @@ namespace ToDo.Client.ViewModels
                 if (HasRepeat)
                 {
                     item.Frequency = (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
+
+                    bool dateChanged = StartDate != item.StartDate;
                     item.StartDate = StartDate;
+                    
+                    //TODO: Verify behavior if StartDate changed
+                    if (dateChanged)
+                        item.NextReminder = null;
 
                     if (item.NextReminder == null 
                         || item.NextReminder.Value < startDate)
                     {
-                        if (startDate >= DateTime.Today)
-                            item.NextReminder = startDate;
+                        if (StartDate >= DateTime.Today)
+                            item.NextReminder = StartDate;
                         else
                             item.NextReminder = Workspace.API.CalculateNextReminder(item.Frequency.Value, StartDate.Value);
                     }

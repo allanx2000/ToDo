@@ -9,6 +9,7 @@ using ToDo.Client.Core.Lists;
 
 namespace ToDo.Client.Core.Tasks
 {
+    [Serializable]
     public class TaskItem
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -32,8 +33,8 @@ namespace ToDo.Client.Core.Tasks
         public DateTime? NextReminder { get; set; }
 
         public int? FrequencyId { get; set; }
+
         public TaskFrequency? Frequency { get; set; }
-        //TODO: Add Clear if HasFrequency == false
 
         //Navigation/References
         public ICollection<Comment> Comments { get; set; }

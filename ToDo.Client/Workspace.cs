@@ -36,7 +36,7 @@ namespace ToDo.Client
         public DbSet<TaskList> Lists { get; set; }
         public DbSet<TaskItem> Tasks { get; set; }
         public DbSet<TaskLog> TasksLog { get; set; }
-
+        
         private string workspacePath, dbPath;
         private Workspace(string workspacePath, string dbPath)
         {

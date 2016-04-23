@@ -246,7 +246,7 @@ namespace ToDo.Client
             {
                 DateTime dt = referenceDate;
 
-                while (dt <= DateTime.Today)
+                while (dt < DateTime.Today)
                 {
                     switch (frequency)
                     {
@@ -300,15 +300,14 @@ namespace ToDo.Client
                 task.Updated = DateTime.Now;
                 Workspace.instance.SaveChanges();
 
-                //TODO: If Repeat, remove log if entry is between NextReminder - Frequency and NextReminder
-                //Need to store Prev reminder?
-
+                /*
                 if (task.Frequency != null)
                 {
                     var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
                     RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
-                    
                 }
+                */
+                
             }
             public static void MarkCompleted(TaskItem task, DateTime completed)
             {
@@ -317,10 +316,15 @@ namespace ToDo.Client
 
                 Workspace.Instance.SaveChanges();
 
-                //TODO: Check for existing, update NextReminder?
+                /*
+                Logic handled by DateRoll Updater
 
+                //TODO: Check for existing, update NextReminder?
                 if (task.Frequency != null)
                 {
+                    var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
+                    RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
+
                     TaskLog log = new TaskLog()
                     {
                         Date = completed,
@@ -330,10 +334,11 @@ namespace ToDo.Client
 
                     Instance.TasksLog.Add(log);
 
-                    task.NextReminder = Workspace.API.CalculateNextReminder(task.Frequency.Value, task.NextReminder.Value);
+                    //task.NextReminder = Workspace.API.CalculateNextReminder(task.Frequency.Value, task.NextReminder.Value);
 
                     Instance.SaveChanges();
                 }
+                */
             }
         }
     }

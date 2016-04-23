@@ -5,6 +5,7 @@ using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client.Core
 {
+    [Serializable]
     public class Comment
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]

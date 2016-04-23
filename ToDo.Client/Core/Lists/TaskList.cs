@@ -9,6 +9,7 @@ using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client.Core.Lists
 {
+    [Serializable]
     public class TaskList
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
