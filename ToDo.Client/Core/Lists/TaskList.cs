@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client.Core.Lists
@@ -25,7 +26,8 @@ namespace ToDo.Client.Core.Lists
         [Required]
         public ListType Type { get; set; }
 
-        public ICollection<TaskItem> TaskItems
+        [XmlIgnore]
+        public List<TaskItem> TaskItems
         {
             get; set;
         }

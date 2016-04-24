@@ -1,0 +1,48 @@
+﻿<Window x:Class="ToDo.Client.ExportImportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ToDo.Client"
+        mc:Ignorable="d"
+        Title="Export/Import Database" Height="288.096" Width="401.191">
+    <StackPanel>
+        <GroupBox Header="Export">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label Grid.Column="0">Export To:</Label>
+                <TextBox Grid.Column="1" Text="{Binding ExportPath}" />
+                <Button Grid.Column="2" Command="{Binding BrowseForExportCommand}" >...</Button>
+                <Button Grid.Column="3" Command="{Binding ExportCommand}">Export</Button>
+
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Import">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Column="0">Import from:</Label>
+                <TextBox Grid.Column="1" Text="{Binding ImportPath}" />
+                <Button Grid.Column="2" Command="{Binding BrowseForImportCommand}" >...</Button>
+                <Button Grid.Column="3" Command="{Binding ImportCommand}">Import</Button>
+
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Header="Other">
+            <Button Command="{Binding ClearDatabaseCommand}">Clear Database</Button>
+        </GroupBox>
+    </StackPanel>
+</Window>

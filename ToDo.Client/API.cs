@@ -39,11 +39,15 @@ namespace ToDo.Client
                 var query = DB.Tasks
                     .Include(x => x.Parent)
                     .Include(x => x.Comments)
-                    //.Include(x => x.Frequency) //TODO: Not needed as is enum
+                    .Include(x => x.Children)
+                    //.Include(x => x.Frequency) //Not needed as is enum
                     .Where(x => x.TaskItemID == itemId);
 
                 var item = query.FirstOrDefault();
 
+                return item;
+
+                //TODO: Obsolete?
                 //Add Children
                 if (item != null)
                 {
@@ -62,12 +66,12 @@ namespace ToDo.Client
 
                 return item;
             }
-            public static ICollection<TaskItem> GetRootTaskItems(TaskList list)
+            public static List<TaskItem> GetRootTaskItems(TaskList list)
             {
                 return GetRootTaskItems(list.TaskListID);
             }
 
-            public static ICollection<TaskItem> GetRootTaskItems(int listId)
+            public static List<TaskItem> GetRootTaskItems(int listId)
             {
                 var query = DB.Tasks
                     .Where(x => x.ParentID == null && x.ListID == listId)

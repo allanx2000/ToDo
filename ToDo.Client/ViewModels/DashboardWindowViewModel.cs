@@ -411,7 +411,8 @@ namespace ToDo.Client.ViewModels
 
         private void ShowExportImportWindow()
         {
-            Export.Exporter.Export(@"c:\DEV\todo.xml");
+            var dlg = new ExportImportWindow();
+            dlg.ShowDialog();
         }
 
         #endregion

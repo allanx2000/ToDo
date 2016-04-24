@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using ToDo.Client.Core.Lists;
 
 namespace ToDo.Client.Core.Tasks
@@ -37,18 +38,23 @@ namespace ToDo.Client.Core.Tasks
         public TaskFrequency? Frequency { get; set; }
 
         //Navigation/References
-        public ICollection<Comment> Comments { get; set; }
+        public virtual List<Comment> Comments { get; set; }
         
         public int? ParentID { get; set; }
+
+        [XmlIgnore]
         public virtual TaskItem Parent { get; set; }
-        public ICollection<TaskItem> Children { get; set; }
+        [XmlIgnore]
+        public List<TaskItem> Children { get; set; }
 
         [Required]
         public int Order { get; set; }
 
         [Required]
         public int ListID { get; set; }
+        [XmlIgnore]
         public virtual TaskList List { get; set; }
+
         public DateTime? StartDate { get; set; }
     }
 }

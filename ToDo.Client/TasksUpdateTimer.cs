@@ -50,11 +50,12 @@ namespace ToDo.Client
         {
             //Update previous days
             var yesterday = DateTime.Today.AddDays(-1);
-
+            /*
             foreach (var t in Workspace.Instance.Tasks.Where(x => x.NextReminder == DateTime.Today))
             {
                 t.NextReminder = yesterday;
             }
+            */
             
             var matches = Workspace.Instance.Tasks.Where(x => yesterday == x.NextReminder).ToList();
 

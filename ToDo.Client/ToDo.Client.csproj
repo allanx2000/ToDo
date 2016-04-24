@@ -154,12 +154,16 @@
     <Compile Include="EditTaskWindow.xaml.cs">
       <DependentUpon>EditTaskWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExportImportWindow.xaml.cs">
+      <DependentUpon>ExportImportWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Export\Exporter.cs" />
     <Compile Include="ParentSelectWindow.xaml.cs">
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TasksUpdateTimer.cs" />
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
+    <Compile Include="ViewModels\ExportImportViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
     <Compile Include="ViewModels\TaskItemViewModel.cs" />
     <Compile Include="ViewModels\TaskListViewModel.cs" />
@@ -184,6 +188,10 @@
     <Page Include="EditTaskWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExportImportWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="LoadWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

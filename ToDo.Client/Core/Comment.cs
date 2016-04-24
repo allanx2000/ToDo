@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Xml.Serialization;
 using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client.Core
@@ -14,6 +15,8 @@ namespace ToDo.Client.Core
         public string Text { get; set; }
 
         public int OwnerId { get; set; }
+
+        [XmlIgnore]
         public virtual TaskItem Owner { get; set; }
     }
 }

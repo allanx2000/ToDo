@@ -1,6 +1,7 @@
-﻿-Due Date/Reminder Checker
--Rename window titles
--Change DB function
+﻿-Import
+	-Remap old IDs to new ones for List, Tasks then import parent-child, comments, 
+-Task Details
+-Reminder List
+-Other UI elements
 
--NextReminder should be updated on date roll when date matches, not on completed. VERIFY
--NextReminder should be shown somewhere in the UI
+-Export/Import window

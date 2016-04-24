@@ -394,7 +394,6 @@ namespace ToDo.Client.ViewModels
                     bool dateChanged = StartDate != item.StartDate;
                     item.StartDate = StartDate;
                     
-                    //TODO: Verify behavior if StartDate changed
                     if (dateChanged)
                         item.NextReminder = null;
 

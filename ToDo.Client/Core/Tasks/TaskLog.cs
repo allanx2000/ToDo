@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace ToDo.Client.Core.Tasks
 {
@@ -13,6 +14,7 @@ namespace ToDo.Client.Core.Tasks
     {
         [Required]
         public int TaskID { get; set; }
+        [XmlIgnore]
         public virtual TaskItem Task { get; set; }
 
         [Required]
