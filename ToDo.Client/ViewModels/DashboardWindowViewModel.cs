@@ -339,7 +339,9 @@ namespace ToDo.Client.ViewModels
                     System.Windows.MessageBoxImage.Exclamation))
                     return;
 
-                SelectedTask = SelectedTask.Parent;
+                var parent = SelectedTask.Parent;
+                if (parent != null)
+                    SelectedTask = parent;
 
                 Workspace.API.DeleteTask(SelectedTask);
 
