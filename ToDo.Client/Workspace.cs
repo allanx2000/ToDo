@@ -64,7 +64,7 @@ namespace ToDo.Client
         
 
         //TODO: Add Seed(...) and Unique indexes
-
+        //Not supported in EF7...
         public void RejectChanges()
         {
             foreach (var entry in ChangeTracker.Entries())

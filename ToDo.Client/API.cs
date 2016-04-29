@@ -23,6 +23,8 @@ namespace ToDo.Client
                 }
             }
 
+            #region Task Lists
+
             /// <summary>
             /// Get Lists and include TaskItems
             /// </summary>
@@ -32,6 +34,76 @@ namespace ToDo.Client
                 var query = DB.Lists
                     .Include(x => x.TaskItems);
                 return query;
+            }
+
+            public static void LoadList(int listId, ObservableCollection<TaskItemViewModel> collection, int? selected = null)
+            {
+                collection.Clear();
+
+                var root = Workspace.API.GetRootTaskItems(listId);
+                foreach (var t in root)
+                {
+                    collection.Add(new TaskItemViewModel(t));
+                }
+
+                if (selected != null)
+                    Expand(collection, selected.Value);
+            }
+
+            //TODO: Change in Dashboard
+
+            public static void UpdateList(TaskList list)
+            {
+                list.LastUpdated = DateTime.Now;
+                DB.SaveChanges();
+            }
+
+            public static void DeleteList(TaskList list)
+            {
+                DB.Lists.Remove(list);
+                DB.SaveChanges();
+            }
+
+
+            #endregion
+
+            #region TaskItems
+            
+            public static void MarkIncomplete(TaskItem task)
+            {
+                task.Completed = null;
+                task.Updated = DateTime.Now;
+                Workspace.instance.SaveChanges();
+            }
+            public static void MarkCompleted(TaskItem task, DateTime completed)
+            {
+                task.Completed = completed;
+                task.Updated = DateTime.Now;
+                Workspace.Instance.SaveChanges();
+
+                /*
+                Logic handled by DateRoll Updater
+
+                //TODO: Check for existing, update NextReminder?
+                if (task.Frequency != null)
+                {
+                    var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
+                    RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
+
+                    TaskLog log = new TaskLog()
+                    {
+                        Date = completed,
+                        TaskID = task.TaskItemID,
+                        Completed = true
+                    };
+
+                    Instance.TasksLog.Add(log);
+
+                    //task.NextReminder = Workspace.API.CalculateNextReminder(task.Frequency.Value, task.NextReminder.Value);
+
+                    Instance.SaveChanges();
+                }
+                */
             }
 
             public static TaskItem GetTaskItem(int itemId)
@@ -46,7 +118,7 @@ namespace ToDo.Client
                 var item = query.FirstOrDefault();
 
                 return item;
-
+                /*
                 //TODO: Obsolete?
                 //Add Children
                 if (item != null)
@@ -65,7 +137,9 @@ namespace ToDo.Client
                 }
 
                 return item;
+                */
             }
+
             public static List<TaskItem> GetRootTaskItems(TaskList list)
             {
                 return GetRootTaskItems(list.TaskListID);
@@ -133,6 +207,12 @@ namespace ToDo.Client
                 DB.SaveChanges();
             }
 
+            /// <summary>
+            /// Returns the next order number for a new TaskItem
+            /// </summary>
+            /// <param name="list"></param>
+            /// <param name="parent"></param>
+            /// <returns></returns>
             public static int GetNextOrder(TaskList list, TaskItem parent)
             {
                 int order;
@@ -166,20 +246,7 @@ namespace ToDo.Client
                 return true;
             }
 
-            public static void LoadList(int listId, ObservableCollection<TaskItemViewModel> collection, int? selected = null)
-            {
-                collection.Clear();
-
-                var root = Workspace.API.GetRootTaskItems(listId);
-                foreach (var t in root)
-                {
-                    collection.Add(new TaskItemViewModel(t));
-                }
-
-                if (selected != null)
-                    Expand(collection, selected.Value);
-
-            }
+            #endregion
 
             private static bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
             {
@@ -225,6 +292,7 @@ namespace ToDo.Client
                 return true;
             }
 
+            #region Reminders
             public static DateTime CalculateLastReminder(TaskFrequency frequency, DateTime referenceDate)
             {
                 DateTime dt = referenceDate;
@@ -269,6 +337,10 @@ namespace ToDo.Client
                 return dt;
             }
 
+            #endregion
+
+            #region Task Logging
+
             public static IEnumerable<TaskLog> GetTaskLogs(DateTime start, DateTime end)
             {
                 return (from i in Instance.TasksLog
@@ -277,18 +349,10 @@ namespace ToDo.Client
                         select i).ToList();
             }
 
+            //May not be needed anymore as tasks are not logged until after date rolls
             public static void RemoveTaskLog(DateTime start, DateTime end, int taskItemId)
             {
                 var items = GetTaskLogs(start, end).Where(x => x.TaskID == taskItemId);
-
-                /*
-                List<TaskLog> items =  (
-                        from i in Instance.TasksLog
-                        where i.Date >= start
-                            && i.Date <= end
-                            && i.TaskID == taskItemId
-                        select i).ToList();
-                */
 
                 foreach (TaskLog i in items)
                 {
@@ -298,52 +362,8 @@ namespace ToDo.Client
                 Instance.SaveChanges();
             }
 
-            public static void MarkIncomplete(TaskItem task)
-            {
-                task.Completed = null;
-                task.Updated = DateTime.Now;
-                Workspace.instance.SaveChanges();
+            #endregion
 
-                /*
-                if (task.Frequency != null)
-                {
-                    var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
-                    RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
-                }
-                */
-                
-            }
-            public static void MarkCompleted(TaskItem task, DateTime completed)
-            {
-                task.Completed = completed;
-                task.Updated = DateTime.Now;
-
-                Workspace.Instance.SaveChanges();
-
-                /*
-                Logic handled by DateRoll Updater
-
-                //TODO: Check for existing, update NextReminder?
-                if (task.Frequency != null)
-                {
-                    var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
-                    RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
-
-                    TaskLog log = new TaskLog()
-                    {
-                        Date = completed,
-                        TaskID = task.TaskItemID,
-                        Completed = true
-                    };
-
-                    Instance.TasksLog.Add(log);
-
-                    //task.NextReminder = Workspace.API.CalculateNextReminder(task.Frequency.Value, task.NextReminder.Value);
-
-                    Instance.SaveChanges();
-                }
-                */
-            }
         }
     }
 }

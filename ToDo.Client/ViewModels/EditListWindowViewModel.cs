@@ -175,10 +175,26 @@ namespace ToDo.Client.ViewModels
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("Name cannot be empty");
 
+                var duplicate = (from l in Workspace.Instance.Lists
+                            where l.Title == Name select l).FirstOrDefault();
+
+                if (duplicate != null)
+                {
+                    if (existing != null && duplicate.TaskListID == existing.TaskListID)
+                    {
+                        //OK
+                    }
+                    else
+                    {
+                        throw new Exception("A list by the same name already exists");
+                    }
+                }
+
                 DateTime now = DateTime.Now;
 
                 if (existing == null)
                 {
+                    
                     TaskList list = new TaskList()
                     {
                         Title = Name,

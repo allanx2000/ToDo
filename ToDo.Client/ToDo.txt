@@ -4,4 +4,7 @@
 -Reminder List
 -Other UI elements
 
+-New List- check name duplicate
+-Move CRUD operations with validation into API
+
 -Export/Import window
