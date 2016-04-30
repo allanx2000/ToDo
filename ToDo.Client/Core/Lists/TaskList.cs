@@ -13,6 +13,14 @@ namespace ToDo.Client.Core.Lists
     [Serializable]
     public class TaskList
     {
+        
+        public TaskList(string name, string description, ListType type)
+        {
+            Title = name;
+            Description = description;
+            Type = type;
+        }
+
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int TaskListID { get; set; }
 

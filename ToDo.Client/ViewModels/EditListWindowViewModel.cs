@@ -172,6 +172,15 @@ namespace ToDo.Client.ViewModels
         {
             try
             {
+                TaskList newList = new TaskList(Name, Description, ConvertType(SelectedListType));
+
+                if (existing != null)
+                {
+                    Workspace.API.UpdateList(existing, newList);
+                }
+                else
+                    Workspace.API.InsertList(newList);
+                /*
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("Name cannot be empty");
 
@@ -214,6 +223,7 @@ namespace ToDo.Client.ViewModels
                 }
 
                 Workspace.Instance.SaveChanges();
+                */
 
                 Cancelled = false;
                 window.Close();

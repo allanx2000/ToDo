@@ -49,13 +49,48 @@ namespace ToDo.Client
                 if (selected != null)
                     Expand(collection, selected.Value);
             }
-
-            //TODO: Change in Dashboard
-
-            public static void UpdateList(TaskList list)
+            
+            public static void UpdateList(TaskList existing, TaskList newData)
             {
-                list.LastUpdated = DateTime.Now;
+                ValidateTaskList(newData, existing.TaskListID);
+
+                existing.Title = newData.Title;
+                existing.Description = newData.Description;
+                existing.LastUpdated = DateTime.Now;
+
                 DB.SaveChanges();
+            }
+            
+            public static void InsertList(TaskList newData)
+            {
+                ValidateTaskList(newData);
+
+                newData.Created = newData.LastUpdated = DateTime.Now;
+
+                DB.Lists.Add(newData);
+                DB.SaveChanges();
+            }
+
+            private static void ValidateTaskList(TaskList data, int? id = null)
+            {
+                if (string.IsNullOrEmpty(data.Title))
+                    throw new Exception("Name cannot be empty");
+
+                var duplicate = (from l in Workspace.Instance.Lists
+                                 where l.Title == data.Title
+                                 select l).FirstOrDefault();
+
+                if (duplicate != null)
+                {
+                    if (id.HasValue && duplicate.TaskListID == id.Value)
+                    {
+                        //OK
+                    }
+                    else
+                    {
+                        throw new Exception("A list by the same name already exists");
+                    }
+                }
             }
 
             public static void DeleteList(TaskList list)
@@ -139,7 +174,7 @@ namespace ToDo.Client
                 return item;
                 */
             }
-
+            
             public static List<TaskItem> GetRootTaskItems(TaskList list)
             {
                 return GetRootTaskItems(list.TaskListID);

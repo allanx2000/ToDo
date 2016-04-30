@@ -28,11 +28,12 @@ namespace ToDo.Client.Export
                 Log = Workspace.Instance.TasksLog.ToList(),
                 Tasks = Workspace.Instance.Tasks.ToList()
             };
+
             XmlSerializer xser = GetSerializer();
             StreamWriter sw = new StreamWriter(@"c:\dev\todo.xml");
             xser.Serialize(sw, bundle);
             sw.Close();
-            //Manual Serialization, Use JSON
+            
         }
 
         private static XmlSerializer GetSerializer()

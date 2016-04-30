@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
         mc:Ignorable="d"
-        Title="{Binding Title, FallbackValue='Edit Task'}" SizeToContent="Height" Width="500">
+        Title="{Binding Title, FallbackValue='Edit Task'}" Height="650" Width="600">
     <Grid>
         <Grid.Resources>
             <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
@@ -26,12 +26,13 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="150"/>
+            <RowDefinition Height="150"/> <!-- Description -->
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/> <!-- Comments -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -84,11 +85,25 @@
 
         </Grid>
 
+
+        <GroupBox Grid.Row="7" Grid.ColumnSpan="2" Header="Comments">
+            <DockPanel LastChildFill="True">
+                <StackPanel VerticalAlignment="Center" DockPanel.Dock="Right">
+                    <Button>New</Button>
+                    <Button>Edit</Button>
+                    <Label/>
+                    <Button>Delete</Button>
+                </StackPanel>
+
+                <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding CommentsView}" SelectedItem="{Binding SelectedComment}"/>
+            </DockPanel>
+        </GroupBox>
         
-        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Command="{Binding SaveCommand}">Save</Button>
             <Button Command="{Binding CancelCommand}">Cancel</Button>
         </StackPanel>
+        
 
     </Grid>
 </Window>

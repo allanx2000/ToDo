@@ -88,12 +88,29 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-
+        
         public ICollectionView Lists
         {
             get
             {
                 return listsViewSource.View;
+            }
+        }
+
+        public ICommand DeleteListCommand
+        {
+            get { return new CommandHelper(DeleteList); }
+        }
+
+        private void DeleteList()
+        {
+            if (SelectedList == null)
+                return;
+
+            if (MessageBoxFactory.ShowConfirmAsBool("Are you sure you want to delete: " + SelectedList.Name, "Delete List"))
+            {
+                Workspace.API.DeleteList(SelectedList.Data);
+                ReloadLists();
             }
         }
 

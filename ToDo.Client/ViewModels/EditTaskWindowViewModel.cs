@@ -62,6 +62,7 @@ namespace ToDo.Client.ViewModels
             {
                 Name = existing.Title;
                 Details = existing.Description;
+                
                 //TODO: Add Edit Comments row | existing.Comments
                 HasCompleted = existing.Completed != null;
                 Completed = existing.Completed;
@@ -329,6 +330,7 @@ namespace ToDo.Client.ViewModels
         {
             try
             {
+
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("Name cannot be empty.");
                 else if (Priority == null)
@@ -347,15 +349,10 @@ namespace ToDo.Client.ViewModels
                     if (DueDate == null)
                         throw new Exception("Due Date not set.");
                 }
-                
 
-                var sameName = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == Name);
-                if (sameName == null || (existing != null && sameName.TaskItemID == existing.TaskItemID))
-                {
-                    //OK
-                }
-                else
-                    throw new Exception("A task with the name already exists.");
+                //TODO: Move to API, how?
+
+                CheckName();
 
                 DateTime now = DateTime.Now;
 
@@ -370,41 +367,25 @@ namespace ToDo.Client.ViewModels
 
                 item.Title = Name;
                 item.Description = Details;
-
-
                 item.Priority = Priority.Value;
-                
-                int? oldParentId = null;
+
                 bool parentChanged = ParentChanged(item, parent);
+
+                int? oldParentId = null; //Used for renumbering further below
+
                 if (parentChanged)
                 {
                     oldParentId = item.ParentID;
 
                     item.Order = Workspace.API.GetNextOrder(list, parent);
                     item.Parent = parent;
-
                 }
 
                 item.Updated = now;
 
                 if (HasRepeat)
                 {
-                    item.Frequency = (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
-
-                    bool dateChanged = StartDate != item.StartDate;
-                    item.StartDate = StartDate;
-                    
-                    if (dateChanged)
-                        item.NextReminder = null;
-
-                    if (item.NextReminder == null 
-                        || item.NextReminder.Value < startDate)
-                    {
-                        if (StartDate >= DateTime.Today)
-                            item.NextReminder = StartDate;
-                        else
-                            item.NextReminder = Workspace.API.CalculateNextReminder(item.Frequency.Value, StartDate.Value);
-                    }
+                    ScheduleRepeat(item);
                 }
                 else //Delete
                 {
@@ -420,9 +401,10 @@ namespace ToDo.Client.ViewModels
                 else
                     item.DueDate = null;
 
-                if (!isExisting) //Set ListId
+                if (!isExisting) //Add, Set ListId
                 {
                     item.List = list;
+
                     Workspace.Instance.Tasks.Add(item);
                 }
 
@@ -453,6 +435,37 @@ namespace ToDo.Client.ViewModels
             catch (Exception e)
             {
                 MessageBoxFactory.ShowError(e);
+            }
+        }
+
+        private void CheckName()
+        {
+            var sameName = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == Name);
+            if (sameName == null || (existing != null && sameName.TaskItemID == existing.TaskItemID))
+            {
+                //OK
+            }
+            else
+                throw new Exception("A task with the name already exists.");
+        }
+
+        private void ScheduleRepeat(TaskItem item)
+        {
+            item.Frequency = (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
+
+            bool dateChanged = StartDate != item.StartDate;
+            item.StartDate = StartDate;
+
+            if (dateChanged)
+                item.NextReminder = null;
+
+            if (item.NextReminder == null
+                || item.NextReminder.Value < startDate)
+            {
+                if (StartDate >= DateTime.Today)
+                    item.NextReminder = StartDate;
+                else
+                    item.NextReminder = Workspace.API.CalculateNextReminder(item.Frequency.Value, StartDate.Value);
             }
         }
 
