@@ -18,10 +18,18 @@ namespace ToDo.Client
 
         public static void LoadWorkspace(string workspacePath, string dbFile)
         {
-            if (instance == null)
+            try
             {
-                instance = new Workspace(workspacePath, dbFile);
-                instance.Database.EnsureCreated();
+                if (instance == null)
+                {
+                    instance = new Workspace(workspacePath, dbFile);
+                    instance.Database.EnsureCreated();
+                }
+            }
+            catch (Exception e)
+            {
+                instance = null;
+                throw;
             }
         } 
         public static Workspace Instance

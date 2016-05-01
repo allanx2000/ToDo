@@ -162,6 +162,7 @@
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TasksUpdateTimer.cs" />
+    <Compile Include="ViewModels\CommentsViewModel.cs" />
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\ExportImportViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />

@@ -49,7 +49,18 @@ namespace ToDo.Client
                 if (selected != null)
                     Expand(collection, selected.Value);
             }
-            
+
+            public static void UpdateList(TaskList existing, string title, string description)
+            {
+                ValidateTaskList(title, description, existing.TaskListID);
+
+                existing.Title = title;
+                existing.Description = description;
+                existing.LastUpdated = DateTime.Now;
+
+                DB.SaveChanges();
+            }
+            /*
             public static void UpdateList(TaskList existing, TaskList newData)
             {
                 ValidateTaskList(newData, existing.TaskListID);
@@ -60,17 +71,40 @@ namespace ToDo.Client
 
                 DB.SaveChanges();
             }
-            
-            public static void InsertList(TaskList newData)
+            */
+
+            public static void InsertList(string name, string description, ListType type)
             {
-                ValidateTaskList(newData);
+                ValidateTaskList(name, description, type: type);
 
-                newData.Created = newData.LastUpdated = DateTime.Now;
+                var data = new TaskList(name, description, type);
+                data.Created = data.LastUpdated = DateTime.Now;
 
-                DB.Lists.Add(newData);
+                DB.Lists.Add(data);
                 DB.SaveChanges();
             }
 
+            private static void ValidateTaskList(string title, string description, int? id = null, ListType? type = null)
+            {
+                if (string.IsNullOrEmpty(title))
+                    throw new Exception("Name cannot be empty");
+
+                var duplicate = (from l in Workspace.Instance.Lists
+                                 where l.Title == title
+                                 select l).FirstOrDefault();
+
+                if (duplicate != null)
+                {
+                    if (!id.HasValue || duplicate.TaskListID != id.Value)
+                        throw new Exception("A list by the same name already exists");
+                }
+
+                if (id == null && type == null)
+                    throw new Exception("Project Type must be defined.");
+            }
+
+
+            /*
             private static void ValidateTaskList(TaskList data, int? id = null)
             {
                 if (string.IsNullOrEmpty(data.Title))
@@ -92,6 +126,7 @@ namespace ToDo.Client
                     }
                 }
             }
+            */
 
             public static void DeleteList(TaskList list)
             {
@@ -147,7 +182,6 @@ namespace ToDo.Client
                     .Include(x => x.Parent)
                     .Include(x => x.Comments)
                     .Include(x => x.Children)
-                    //.Include(x => x.Frequency) //Not needed as is enum
                     .Where(x => x.TaskItemID == itemId);
 
                 var item = query.FirstOrDefault();
@@ -279,6 +313,161 @@ namespace ToDo.Client
                 DB.SaveChanges();
 
                 return true;
+            }
+
+            private static bool HasTaskParentChanged(TaskItem item, TaskItem parent)
+            {
+                if (item == null)
+                    return false;
+                else if (item.Parent == null && parent == null)
+                    return false;
+                else if (item.Parent != null && parent != null && item.ParentID == parent.TaskItemID)
+                    return false;
+                else
+                    return true;
+            }
+
+            public static void InsertTask(TaskList list, string title, string details, int? priority, 
+                TaskItem parent, 
+                TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
+            {   
+                ValidateTaskValues(title, priority, frequency, startDate);
+
+                TaskItem item = new TaskItem();
+                item.List = list;
+                item.Title = title;
+                item.Description = details;
+                item.Priority = priority.Value;
+                item.Parent = parent;
+                item.Order = Workspace.API.GetNextOrder(list, parent);
+                item.DueDate = dueDate;
+                item.Created = item.Updated = DateTime.Now;
+
+                SetFrequency(item, frequency, startDate);
+
+                /*
+                if (frequency != null && startDate != null)
+                {
+                    DateTime reminder = GetNextReminder(frequency.Value, startDate.Value);
+                    item.Frequency = frequency;
+                    item.StartDate = startDate;
+                }
+                else //Delete
+                {
+                    item.Frequency = null;
+                    item.StartDate = null;
+                    item.NextReminder = null;
+                }
+                */
+
+                Workspace.Instance.Tasks.Add(item);
+
+                Workspace.Instance.SaveChanges();
+
+                SetCompleted(item, completed);
+            }
+
+            public static void UpdateTask(TaskItem existing, string title, string details, int? priority, TaskItem parent, int order, TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
+            {
+                ValidateTaskValues(title, priority, frequency, startDate, existing.TaskItemID);
+
+                existing.Title = title;
+                existing.Description = details;
+                existing.Priority = priority.Value;
+                existing.DueDate = dueDate;
+                existing.Updated = DateTime.Now;
+
+                bool parentChanged = HasTaskParentChanged(parent, existing.Parent);
+                int? oldParentId = existing.ParentID; //Used for renumbering further below
+
+                if (parentChanged)
+                {
+                    existing.Order = Workspace.API.GetNextOrder(existing.List, parent);
+                    existing.Parent = parent;
+                }
+
+                SetFrequency(existing, frequency, startDate);
+                
+                Workspace.Instance.SaveChanges();
+
+                //Impacts DB directly/immediately
+
+                if (parentChanged)
+                {
+                    int listId = existing.ListID;
+
+                    Workspace.API.RenumberTasks(listId,
+                        oldParentId);
+
+                    Workspace.API.RenumberTasks(listId,
+                        existing.ListID);
+                }
+
+                SetCompleted(existing, completed);
+
+            }
+
+            /// <summary>
+            /// Marks the Task as completed. Affects DB and item directly
+            /// </summary>
+            /// <param name="task"></param>
+            /// <param name="completed"></param>
+            private static void SetCompleted(TaskItem task, DateTime? completed)
+            {
+                if (completed != null)
+                {
+                    Workspace.API.MarkCompleted(task, completed.Value);
+                }
+                else
+                    Workspace.API.MarkIncomplete(task);
+            }
+
+            private static void SetFrequency(TaskItem task, TaskFrequency? frequency, DateTime? startDate)
+            {
+                if (frequency != null && startDate != null)
+                {
+                    DateTime reminder = GetNextReminder(frequency.Value, startDate.Value);
+                    task.Frequency = frequency;
+                    task.StartDate = startDate;
+                }
+                else //Delete
+                {
+                    task.Frequency = null;
+                    task.StartDate = null;
+                    task.NextReminder = null;
+                }
+            }
+
+            private static DateTime GetNextReminder(TaskFrequency frequency, DateTime startDate)
+            {
+                if (startDate >= DateTime.Today)
+                    return startDate;
+                else
+                    return Workspace.API.CalculateNextReminder(frequency, startDate);                
+            }
+
+            private static void ValidateTaskValues(string title, int? priority,
+                TaskFrequency? frequency, DateTime? startDate,
+                int? id = null)
+            {
+                //Title
+                var existing = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == title);
+                if (existing != null)
+                {
+                    if (id == null || existing.TaskItemID != id)
+                    {
+                        throw new Exception("An task by this name already exists.");
+                    }
+                }
+
+                //Priority
+                if (priority == null)
+                    throw new Exception("Priority must be set.");
+
+                //Frequency
+                if ((frequency == null && startDate != null)
+                    || (frequency != null && startDate == null))
+                    throw new Exception("Frequency and Start Date must both be set or unset.");
             }
 
             #endregion

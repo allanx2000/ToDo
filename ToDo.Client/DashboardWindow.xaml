@@ -41,7 +41,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
                     <Button Command="{Binding AddListCommand}">Add</Button>
                     <Button Command="{Binding EditListCommand}">Edit</Button>
-                    <Button>Delete</Button>
+                    <Button Command="{Binding DeleteListCommand}">Delete</Button>
 
                 </StackPanel>
 

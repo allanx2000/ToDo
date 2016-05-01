@@ -13,7 +13,8 @@ namespace ToDo.Client.Core.Lists
     [Serializable]
     public class TaskList
     {
-        
+        public TaskList() { }
+
         public TaskList(string name, string description, ListType type)
         {
             Title = name;

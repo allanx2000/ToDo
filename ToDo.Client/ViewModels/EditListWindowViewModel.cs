@@ -176,10 +176,10 @@ namespace ToDo.Client.ViewModels
 
                 if (existing != null)
                 {
-                    Workspace.API.UpdateList(existing, newList);
+                    Workspace.API.UpdateList(existing, Name, Description);
                 }
                 else
-                    Workspace.API.InsertList(newList);
+                    Workspace.API.InsertList(Name, Description, ConvertType(SelectedListType));
                 /*
                 if (string.IsNullOrEmpty(Name))
                     throw new Exception("Name cannot be empty");

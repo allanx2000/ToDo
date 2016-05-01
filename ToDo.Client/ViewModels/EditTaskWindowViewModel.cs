@@ -2,11 +2,15 @@
 using Innouvous.Utils.MVVM;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
+using ToDo.Client.Core;
 using ToDo.Client.Core.Lists;
 using ToDo.Client.Core.Tasks;
 
@@ -29,6 +33,10 @@ namespace ToDo.Client.ViewModels
         {
             Cancelled = true;
             this.window = window;
+
+            commentsSource = new CollectionViewSource();
+            commentsSource.Source = CommentsView;
+            commentsSource.SortDescriptions.Add(new SortDescription("Created", ListSortDirection.Ascending));
         }
 
         /// <summary>
@@ -62,7 +70,7 @@ namespace ToDo.Client.ViewModels
             {
                 Name = existing.Title;
                 Details = existing.Description;
-                
+
                 //TODO: Add Edit Comments row | existing.Comments
                 HasCompleted = existing.Completed != null;
                 Completed = existing.Completed;
@@ -79,8 +87,39 @@ namespace ToDo.Client.ViewModels
                     SelectedFrequency = existing.Frequency.ToString();
 
                 SetParent(existing.Parent);
+
+                foreach (Comment c in existing.Comments)
+                {
+                    comments.Add(new CommentsViewModel(c));
+                }
             }
         }
+
+        #region Comments
+
+        private CollectionViewSource commentsSource;
+        private ObservableCollection<CommentsViewModel> comments = new ObservableCollection<CommentsViewModel>();
+
+        public ICollectionView CommentsView
+        {
+            get
+            {
+                return commentsSource.View;
+            }
+        }
+
+        private CommentsViewModel selectedComment;
+        public CommentsViewModel SelectedComment
+        {
+            get { return selectedComment; }
+            set
+            {
+                selectedComment = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
 
         #region Properties and Commands
 
@@ -357,6 +396,25 @@ namespace ToDo.Client.ViewModels
                 DateTime now = DateTime.Now;
 
                 bool isExisting = existing != null;
+
+                if (isExisting)
+                {
+                    Workspace.API.UpdateTask(existing, Name, Details, Priority,
+                        parent,
+                        existing.Order,
+                        HasRepeat ? (TaskFrequency?) ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        HasDueDate ? DueDate : null,
+                        HasCompleted ? Completed : null);
+                }
+                else
+                {
+                    Workspace.API.InsertTask(list, Name, Details, Priority,
+                        parent,
+                        HasRepeat ? (TaskFrequency?) ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        HasDueDate ? DueDate : null,
+                        HasCompleted ? Completed : null);
+                }
+                /*
                 TaskItem item = isExisting ? existing : new TaskItem();
 
                 if (!isExisting)
@@ -428,6 +486,7 @@ namespace ToDo.Client.ViewModels
                 }
                 else
                     Workspace.API.MarkIncomplete(item);
+                */
 
                 Cancelled = false;
                 window.Close();
@@ -436,6 +495,11 @@ namespace ToDo.Client.ViewModels
             {
                 MessageBoxFactory.ShowError(e);
             }
+        }
+
+        private TaskFrequency ConvertToFrequency(string selectedFrequency)
+        {
+            return (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
         }
 
         private void CheckName()

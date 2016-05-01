@@ -8,3 +8,5 @@
 -Move CRUD operations with validation into API
 
 -Export/Import window
+
+-Put periods after all messages
