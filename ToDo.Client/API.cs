@@ -445,6 +445,7 @@ namespace ToDo.Client
                     DateTime reminder = GetNextReminder(frequency.Value, startDate.Value);
                     task.Frequency = frequency;
                     task.StartDate = startDate;
+                    task.NextReminder = reminder;
                 }
                 else //Delete
                 {
