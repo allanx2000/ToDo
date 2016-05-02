@@ -343,7 +343,42 @@ namespace ToDo.Client.ViewModels
         #region Commands
 
         #region Comments
-        
+
+        public ICommand DeleteCommentCommand
+        {
+            get { return new CommandHelper(DeleteComment); }
+        }
+
+        private void DeleteComment()
+        {
+            if (SelectedComment == null)
+                return;
+
+            comments.Remove(SelectedComment);
+            SelectedComment = null;
+        }
+
+        public ICommand EditCommentCommand
+        {
+            get { return new CommandHelper(EditComment); }
+        }
+
+        private void EditComment()
+        {
+            if (SelectedComment == null)
+                return;
+
+            var ecw = new EditCommentWindow(SelectedComment);
+            ecw.ShowDialog();
+
+            if (!ecw.Cancelled)
+            {
+                comments.Remove(SelectedComment);
+                comments.Add(new CommentViewModel(ecw.GetData()));
+            }
+        }
+
+
         public ICommand NewCommentCommand
         {
             get { return new CommandHelper(NewComment); }

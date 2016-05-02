@@ -122,13 +122,15 @@ namespace ToDo.Client.ViewModels
 
                 Data = new Core.Comment()
                 {
-                    Text = Comment
+                    Text = Comment,
                 };
 
                 //Returns a List and then API checks if it has ID, if yes update, else add
 
                 if (IsEdit)
                     Data.CommentID = existing.CommentID;
+                else
+                    Data.Created = DateTime.Now;
 
                 Cancelled = false;
                 window.Close();

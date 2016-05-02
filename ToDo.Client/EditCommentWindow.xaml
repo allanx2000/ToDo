@@ -15,7 +15,7 @@
 
         <StackPanel Visibility="{Binding DateVisibility}" Orientation="Horizontal">
             <Label FontWeight="Bold">Created: </Label>
-            <Label Content="{Binding CreatedDate}"/>
+            <Label Content="{Binding Created}"/>
         </StackPanel>
 
         <TextBox Grid.Row="1" Margin="5" Style="{Binding Multiline}" Text="{Binding Comment}" ScrollViewer.VerticalScrollBarVisibility="Auto"/>

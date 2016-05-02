@@ -90,12 +90,29 @@
             <DockPanel LastChildFill="True">
                 <StackPanel VerticalAlignment="Center" DockPanel.Dock="Right">
                     <Button Command="{Binding NewCommentCommand}">New</Button>
-                    <Button>Edit</Button>
+                    <Button Command="{Binding EditCommentCommand}">Edit</Button>
                     <Label/>
-                    <Button>Delete</Button>
+                    <Button Command="{Binding DeleteCommentCommand}">Delete</Button>
                 </StackPanel>
 
-                <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding CommentsView}" SelectedItem="{Binding SelectedComment}"/>
+                <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         HorizontalContentAlignment="Stretch"
+                         ItemsSource="{Binding CommentsView}" SelectedItem="{Binding SelectedComment}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel LastChildFill="True">
+
+                                <Label DockPanel.Dock="Bottom" HorizontalAlignment="Right"
+                                       Content="{Binding Created}"/>
+                                
+                                <Label>
+                                    <TextBlock TextWrapping="Wrap" Text="{Binding Text}"/>
+                                </Label>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
             </DockPanel>
         </GroupBox>
         

@@ -28,8 +28,12 @@ namespace ToDo.Client.ViewModels
             get { return data.Text; }
         }
 
-        public DateTime Created
-        { get { return data.Created; } }
-        
+        public string Created
+        {
+            get
+            {
+                return Data.Created.ToString("MMMM d, yyyy h:mm tt");
+            }
+        }        
     }
 }

@@ -359,6 +359,68 @@ namespace ToDo.Client
                 SetCompleted(existing, completed);
 
                 //Process Comments
+
+                foreach (var c in comments.Where(x => x.Owner == null))
+                    c.Owner = existing;
+
+                ProcessComments(existing.Comments, comments);
+                //Copy new comments list to existing, find mismatchs (Deletes/Adds)
+            }
+
+            private static void ProcessComments(ICollection<Comment> existing, ICollection<Comment> updated)
+            {
+                var ex = existing.OrderByDescending(x => x.CommentID).ToList();
+                var up = updated.OrderByDescending(x => x.CommentID).ToList();
+
+                int p1 = 0, p2 = 0;
+
+                Comment c1, c2;
+
+                List<Comment> add = new List<Comment>();
+                List<Comment> delete = new List<Comment>();
+
+                while (p1 < ex.Count && p2 < up.Count)
+                {
+                    c1 = ex[p1];
+                    c2 = up[p2];
+
+                    if (c1.CommentID == c2.CommentID)
+                    {
+                        c1.Text = c2.Text;
+                        p1++;
+                        p2++;
+                    }
+                    else //Not matched -> deleted
+                    {
+                        delete.Add(c1);
+                        p1++;
+                    }
+                }
+
+                while (p2 < up.Count)
+                {
+                    add.Add(up[p2]);
+                    p2++;
+                }
+
+                while (p1 < ex.Count)
+                {
+                    delete.Add(ex[p1]);
+                    p1++;
+                }
+
+                foreach (var c in delete)
+                {
+                    DB.Comments.Remove(c);
+                }
+
+                foreach (var c in add)
+                {
+                    DB.Comments.Add(c);
+                }
+
+                DB.SaveChanges();
+                
             }
 
             /// <summary>
