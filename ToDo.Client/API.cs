@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ToDo.Client.Core.Lists;
 using ToDo.Client.Core.Tasks;
 using ToDo.Client.ViewModels;
+using ToDo.Client.Core;
 
 namespace ToDo.Client
 {
@@ -60,19 +61,7 @@ namespace ToDo.Client
 
                 DB.SaveChanges();
             }
-            /*
-            public static void UpdateList(TaskList existing, TaskList newData)
-            {
-                ValidateTaskList(newData, existing.TaskListID);
-
-                existing.Title = newData.Title;
-                existing.Description = newData.Description;
-                existing.LastUpdated = DateTime.Now;
-
-                DB.SaveChanges();
-            }
-            */
-
+            
             public static void InsertList(string name, string description, ListType type)
             {
                 ValidateTaskList(name, description, type: type);
@@ -103,42 +92,16 @@ namespace ToDo.Client
                     throw new Exception("Project Type must be defined.");
             }
 
-
-            /*
-            private static void ValidateTaskList(TaskList data, int? id = null)
-            {
-                if (string.IsNullOrEmpty(data.Title))
-                    throw new Exception("Name cannot be empty");
-
-                var duplicate = (from l in Workspace.Instance.Lists
-                                 where l.Title == data.Title
-                                 select l).FirstOrDefault();
-
-                if (duplicate != null)
-                {
-                    if (id.HasValue && duplicate.TaskListID == id.Value)
-                    {
-                        //OK
-                    }
-                    else
-                    {
-                        throw new Exception("A list by the same name already exists");
-                    }
-                }
-            }
-            */
-
             public static void DeleteList(TaskList list)
             {
                 DB.Lists.Remove(list);
                 DB.SaveChanges();
             }
-
-
+            
             #endregion
 
             #region TaskItems
-            
+
             public static void MarkIncomplete(TaskItem task)
             {
                 task.Completed = null;
@@ -187,26 +150,6 @@ namespace ToDo.Client
                 var item = query.FirstOrDefault();
 
                 return item;
-                /*
-                //TODO: Obsolete?
-                //Add Children
-                if (item != null)
-                {
-                    var children = DB.Tasks.Where(x => x.ParentID == item.TaskItemID).ToList();
-
-                    if (children.Count > 0)
-                    {
-                        item.Children = new List<TaskItem>();
-
-                        foreach (var i in children)
-                        {
-                            item.Children.Add(i);
-                        }
-                    }
-                }
-
-                return item;
-                */
             }
             
             public static List<TaskItem> GetRootTaskItems(TaskList list)
@@ -232,7 +175,6 @@ namespace ToDo.Client
 
             public static void DeleteTask(TaskItem task)
             {
-                //List<TaskItem> children = new List<TaskItem>();
                 int? parentId = task.ParentID;
                 int listId = task.ListID;
 
@@ -243,6 +185,21 @@ namespace ToDo.Client
 
                 RenumberTasks(task.ListID, parentId);
 
+            }
+
+            private static void DeleteChildren(ICollection<TaskItem> children)
+            {
+                if (children == null)
+                    return;
+
+                foreach (var c in children)
+                {
+                    DeleteChildren(c.Children);
+
+                    DB.Tasks.Remove(c);
+                }
+
+                DB.SaveChanges();
             }
 
             public static void RenumberTasks(int listId, int? parentId)
@@ -260,21 +217,7 @@ namespace ToDo.Client
 
                 DB.SaveChanges();
             }
-
-            private static void DeleteChildren(ICollection<TaskItem> children)
-            {
-                if (children == null)
-                    return;
-
-                foreach (var c in children)
-                {
-                    DeleteChildren(c.Children);
-
-                    DB.Tasks.Remove(c);
-                }
-
-                DB.SaveChanges();
-            }
+            
 
             /// <summary>
             /// Returns the next order number for a new TaskItem
@@ -294,6 +237,23 @@ namespace ToDo.Client
                              where t.ListID == list.TaskListID
                              select t.Order).Max();
                 return order + 1;
+            }
+            
+            public static bool MoveUp(TaskItem task)
+            {
+                if (task == null || task.Order == 1)
+                    return false;
+
+                TaskItem prev = DB.Tasks.FirstOrDefault(x =>
+                    x.ParentID == task.ParentID
+                    && x.Order == task.Order - 1);
+
+                prev.Order += 1;
+                task.Order -= 1;
+
+                DB.SaveChanges();
+
+                return true;
             }
 
             public static bool MoveDown(TaskItem task)
@@ -328,6 +288,7 @@ namespace ToDo.Client
             }
 
             public static void InsertTask(TaskList list, string title, string details, int? priority, 
+                ICollection<Comment> comments,
                 TaskItem parent, 
                 TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
             {   
@@ -344,30 +305,22 @@ namespace ToDo.Client
                 item.Created = item.Updated = DateTime.Now;
 
                 SetFrequency(item, frequency, startDate);
-
-                /*
-                if (frequency != null && startDate != null)
-                {
-                    DateTime reminder = GetNextReminder(frequency.Value, startDate.Value);
-                    item.Frequency = frequency;
-                    item.StartDate = startDate;
-                }
-                else //Delete
-                {
-                    item.Frequency = null;
-                    item.StartDate = null;
-                    item.NextReminder = null;
-                }
-                */
-
+                
                 Workspace.Instance.Tasks.Add(item);
-
                 Workspace.Instance.SaveChanges();
 
                 SetCompleted(item, completed);
+
+                foreach (var comment in comments)
+                {
+                    comment.Owner = item;
+                    DB.Comments.Add(comment);
+                }
+
+                DB.SaveChanges();
             }
 
-            public static void UpdateTask(TaskItem existing, string title, string details, int? priority, TaskItem parent, int order, TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
+            public static void UpdateTask(TaskItem existing, string title, string details, ICollection<Comment> comments, int? priority, TaskItem parent, int order, TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
             {
                 ValidateTaskValues(title, priority, frequency, startDate, existing.TaskItemID);
 
@@ -405,6 +358,7 @@ namespace ToDo.Client
 
                 SetCompleted(existing, completed);
 
+                //Process Comments
             }
 
             /// <summary>
@@ -471,7 +425,7 @@ namespace ToDo.Client
             }
 
             #endregion
-
+            
             private static bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
             {
                 foreach (var t in tasks)
@@ -498,24 +452,7 @@ namespace ToDo.Client
 
                 return false;
             }
-
-            public static bool MoveUp(TaskItem task)
-            {
-                if (task == null || task.Order == 1)
-                    return false;
-
-                TaskItem prev = DB.Tasks.FirstOrDefault(x =>
-                    x.ParentID == task.ParentID
-                    && x.Order == task.Order - 1);
-
-                prev.Order += 1;
-                task.Order -= 1;
-
-                DB.SaveChanges();
-
-                return true;
-            }
-
+            
             #region Reminders
             public static DateTime CalculateLastReminder(TaskFrequency frequency, DateTime referenceDate)
             {
@@ -573,6 +510,7 @@ namespace ToDo.Client
                         select i).ToList();
             }
 
+            /*
             //May not be needed anymore as tasks are not logged until after date rolls
             public static void RemoveTaskLog(DateTime start, DateTime end, int taskItemId)
             {
@@ -585,6 +523,7 @@ namespace ToDo.Client
 
                 Instance.SaveChanges();
             }
+            */
 
             #endregion
 

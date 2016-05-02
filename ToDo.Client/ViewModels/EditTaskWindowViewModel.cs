@@ -35,7 +35,7 @@ namespace ToDo.Client.ViewModels
             this.window = window;
 
             commentsSource = new CollectionViewSource();
-            commentsSource.Source = CommentsView;
+            commentsSource.Source = comments;
             commentsSource.SortDescriptions.Add(new SortDescription("Created", ListSortDirection.Ascending));
         }
 
@@ -65,40 +65,51 @@ namespace ToDo.Client.ViewModels
         private void LoadExisting(TaskItem item)
         {
             existing = item;
+            if (existing == null)
+                return;
+            
+            Name = existing.Title;
+            Details = existing.Description;
+            Priority = existing.Priority;
 
-            if (existing != null)
+            HasCompleted = existing.Completed != null;
+            Completed = existing.Completed;
+            
+            HasDueDate = DueDate != null;
+            DueDate = existing.DueDate;
+
+            HasRepeat = existing.Frequency != null;
+            if (HasRepeat)
             {
-                Name = existing.Title;
-                Details = existing.Description;
-
-                //TODO: Add Edit Comments row | existing.Comments
-                HasCompleted = existing.Completed != null;
-                Completed = existing.Completed;
-
-                Priority = existing.Priority;
-
-                DueDate = existing.DueDate;
-                HasDueDate = DueDate != null;
-
+                SelectedFrequency = existing.Frequency.ToString();
                 StartDate = existing.StartDate;
+            }
 
-                HasRepeat = existing.Frequency != null;
-                if (HasRepeat)
-                    SelectedFrequency = existing.Frequency.ToString();
+            SetParent(existing.Parent);
 
-                SetParent(existing.Parent);
+            foreach (Comment c in existing.Comments)
+            {
+                comments.Add(new CommentViewModel(c));
+            }
+        }
+        
+        #region Properties
 
-                foreach (Comment c in existing.Comments)
-                {
-                    comments.Add(new CommentsViewModel(c));
-                }
+        /// <summary>
+        /// Window Title
+        /// </summary>
+        public string Title
+        {
+            get
+            {
+                return (existing != null ? "Edit" : "Add") + " Task";
             }
         }
 
         #region Comments
 
         private CollectionViewSource commentsSource;
-        private ObservableCollection<CommentsViewModel> comments = new ObservableCollection<CommentsViewModel>();
+        private ObservableCollection<CommentViewModel> comments = new ObservableCollection<CommentViewModel>();
 
         public ICollectionView CommentsView
         {
@@ -108,8 +119,8 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private CommentsViewModel selectedComment;
-        public CommentsViewModel SelectedComment
+        private CommentViewModel selectedComment;
+        public CommentViewModel SelectedComment
         {
             get { return selectedComment; }
             set
@@ -121,7 +132,20 @@ namespace ToDo.Client.ViewModels
 
         #endregion
 
-        #region Properties and Commands
+        #region Frequency/Repeat
+
+        private DateTime? startDate;
+
+        public DateTime? StartDate
+        {
+            get { return startDate; }
+            set
+            {
+                startDate = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         private string selectedFrequency;
         public string SelectedFrequency
@@ -168,6 +192,46 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        #endregion
+
+        #region DueDate
+
+        private bool hasDueDate;
+        public bool HasDueDate
+        {
+            get
+            {
+                return hasDueDate;
+            }
+            set
+            {
+                hasDueDate = value;
+
+                if (hasDueDate == false)
+                    DueDate = null;
+
+                RaisePropertyChanged();
+            }
+        }
+
+        private DateTime? dueDate;
+        public DateTime? DueDate
+        {
+            get
+            {
+                return dueDate;
+            }
+            set
+            {
+                dueDate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
+
+        #region Priority, Name, Details
+        
         private int? priority = 3;
         public int? Priority
         {
@@ -206,45 +270,6 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private bool hasDueDate;
-        public bool HasDueDate
-        {
-            get
-            {
-                return hasDueDate;
-            }
-            set
-            {
-                hasDueDate = value;
-
-                if (hasDueDate == false)
-                    DueDate = null;
-
-                RaisePropertyChanged();
-            }
-        }
-
-        private DateTime? dueDate;
-        public DateTime? DueDate
-        {
-            get
-            {
-                return dueDate;
-            }
-            set
-            {
-                dueDate = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string Title
-        {
-            get
-            {
-                return (existing != null ? "Edit" : "Add") + " Task";
-            }
-        }
 
         public string name, details;
 
@@ -274,7 +299,9 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        #endregion
 
+        #region Completed
 
         private DateTime? completed;
         public DateTime? Completed
@@ -308,6 +335,34 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
+
+        #endregion
+
+        #endregion
+
+        #region Commands
+
+        #region Comments
+        
+        public ICommand NewCommentCommand
+        {
+            get { return new CommandHelper(NewComment); }
+        }
+
+        private void NewComment()
+        {
+            EditCommentWindow ecw = new EditCommentWindow();
+            ecw.ShowDialog();
+
+            if (!ecw.Cancelled)
+            {
+                Comment comment = ecw.GetData();
+                comments.Add(new CommentViewModel(comment));
+            }
+        }
+
+        #endregion
+
         public ICommand CancelCommand
         {
             get
@@ -352,141 +407,34 @@ namespace ToDo.Client.ViewModels
                 return new CommandHelper(Save);
             }
         }
-
-        private DateTime? startDate;
-
-        public DateTime? StartDate
-        {
-            get { return startDate; }
-            set
-            {
-                startDate = value;
-                RaisePropertyChanged();
-            }
-        }
-
+        
         private void Save()
         {
             try
             {
-
-                if (string.IsNullOrEmpty(Name))
-                    throw new Exception("Name cannot be empty.");
-                else if (Priority == null)
-                    throw new Exception("Priority is required.");
-                else if (HasCompleted && Completed == null)
-                    throw new Exception("Completed Date not set.");
-                else if (HasRepeat)
-                {
-                    if (string.IsNullOrEmpty(SelectedFrequency))
-                        throw new Exception("No Frequency selected.");
-                    else if (StartDate == null)
-                        throw new Exception("No Start Date set.");
-                }
-                else if (HasDueDate)
-                {
-                    if (DueDate == null)
-                        throw new Exception("Due Date not set.");
-                }
-
-                //TODO: Move to API, how?
-
-                CheckName();
-
-                DateTime now = DateTime.Now;
+                ValidateFields();
 
                 bool isExisting = existing != null;
 
+                ICollection<Comment> comments = GetComments(this.comments);
                 if (isExisting)
                 {
-                    Workspace.API.UpdateTask(existing, Name, Details, Priority,
+                    Workspace.API.UpdateTask(existing, Name, Details, comments, Priority,
                         parent,
                         existing.Order,
-                        HasRepeat ? (TaskFrequency?) ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        HasRepeat ? ConvertToFrequency(SelectedFrequency) : null, StartDate,
                         HasDueDate ? DueDate : null,
                         HasCompleted ? Completed : null);
                 }
                 else
                 {
-                    Workspace.API.InsertTask(list, Name, Details, Priority,
-                        parent,
-                        HasRepeat ? (TaskFrequency?) ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                    Workspace.API.InsertTask(list, Name, Details, Priority, 
+                        comments,
+                        parent, 
+                        HasRepeat ? ConvertToFrequency(SelectedFrequency) : null, StartDate,
                         HasDueDate ? DueDate : null,
                         HasCompleted ? Completed : null);
                 }
-                /*
-                TaskItem item = isExisting ? existing : new TaskItem();
-
-                if (!isExisting)
-                {
-                    item.Created = now;
-                    item.Order = Workspace.API.GetNextOrder(list, parent);
-                }
-
-                item.Title = Name;
-                item.Description = Details;
-                item.Priority = Priority.Value;
-
-                bool parentChanged = ParentChanged(item, parent);
-
-                int? oldParentId = null; //Used for renumbering further below
-
-                if (parentChanged)
-                {
-                    oldParentId = item.ParentID;
-
-                    item.Order = Workspace.API.GetNextOrder(list, parent);
-                    item.Parent = parent;
-                }
-
-                item.Updated = now;
-
-                if (HasRepeat)
-                {
-                    ScheduleRepeat(item);
-                }
-                else //Delete
-                {
-                    item.Frequency = null;
-                    item.StartDate = null;
-                    item.NextReminder = null;
-                }
-
-                if (HasDueDate)
-                {
-                    item.DueDate = DueDate;
-                }
-                else
-                    item.DueDate = null;
-
-                if (!isExisting) //Add, Set ListId
-                {
-                    item.List = list;
-
-                    Workspace.Instance.Tasks.Add(item);
-                }
-
-                Workspace.Instance.SaveChanges();
-
-                //Impacts DB directly/immediately
-
-                if (parentChanged)
-                {
-                    int listId = existing == null ? list.TaskListID : existing.ListID;
-                    Workspace.API.RenumberTasks(listId,
-                        oldParentId);
-
-                    Workspace.API.RenumberTasks(listId,
-                        item.ListID);
-                }
-
-                if (HasCompleted)
-                {
-                    Workspace.API.MarkCompleted(item, Completed.Value);
-                }
-                else
-                    Workspace.API.MarkIncomplete(item);
-                */
 
                 Cancelled = false;
                 window.Close();
@@ -497,11 +445,50 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private TaskFrequency ConvertToFrequency(string selectedFrequency)
+        private ICollection<Comment> GetComments(ObservableCollection<CommentViewModel> comments)
         {
-            return (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
+            List<Comment> results = new List<Comment>();
+
+            foreach (var vm in comments)
+                results.Add(vm.Data);
+
+            return results;
         }
 
+        private void ValidateFields()
+        {
+            if (string.IsNullOrEmpty(Name))
+                throw new Exception("Name cannot be empty.");
+            else if (Priority == null)
+                throw new Exception("Priority is required.");
+            else if (HasCompleted && Completed == null)
+                throw new Exception("Completed Date not set.");
+            else if (HasRepeat)
+            {
+                if (string.IsNullOrEmpty(SelectedFrequency))
+                    throw new Exception("No Frequency selected.");
+                else if (StartDate == null)
+                    throw new Exception("No Start Date set.");
+            }
+            else if (HasDueDate)
+            {
+                if (DueDate == null)
+                    throw new Exception("Due Date not set.");
+            }
+        }
+
+        private TaskFrequency? ConvertToFrequency(string frequency)
+        {
+            if (String.IsNullOrEmpty(SelectedFrequency))
+                return null;
+            else
+                return (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
+        }
+        
+        #endregion
+
+        /*
+        Moved to API
         private void CheckName()
         {
             var sameName = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == Name);
@@ -532,7 +519,7 @@ namespace ToDo.Client.ViewModels
                     item.NextReminder = Workspace.API.CalculateNextReminder(item.Frequency.Value, StartDate.Value);
             }
         }
-
+        
         private bool ParentChanged(TaskItem item, TaskItem parent)
         {
             if (item == null)
@@ -544,7 +531,7 @@ namespace ToDo.Client.ViewModels
             else
                 return true;
         }
+        */
 
-        #endregion
     }
 }

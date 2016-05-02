@@ -24,6 +24,11 @@ namespace ToDo.Client
     {
         private readonly EditTaskWindowViewModel vm;
 
+        /// <summary>
+        /// Add Task/Subtask
+        /// </summary>
+        /// <param name="list"></param>
+        /// <param name="parent"></param>
         public EditTaskWindow(TaskList list, TaskItem parent = null)
         {
             InitializeComponent();
@@ -33,6 +38,10 @@ namespace ToDo.Client
             vm.SetParent(parent);
         }
 
+        /// <summary>
+        /// Edit Task
+        /// </summary>
+        /// <param name="existing"></param>
         public EditTaskWindow(TaskItem existing)
         {
             InitializeComponent();
@@ -48,11 +57,6 @@ namespace ToDo.Client
             {
                 return vm.Cancelled;
             }
-        }
-
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }

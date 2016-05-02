@@ -89,7 +89,7 @@
         <GroupBox Grid.Row="7" Grid.ColumnSpan="2" Header="Comments">
             <DockPanel LastChildFill="True">
                 <StackPanel VerticalAlignment="Center" DockPanel.Dock="Right">
-                    <Button>New</Button>
+                    <Button Command="{Binding NewCommentCommand}">New</Button>
                     <Button>Edit</Button>
                     <Label/>
                     <Button>Delete</Button>

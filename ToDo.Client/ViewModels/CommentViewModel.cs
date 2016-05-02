@@ -5,16 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToDo.Client.Core;
+using System.Windows;
 
 namespace ToDo.Client.ViewModels
 {
-    public class CommentsViewModel : ViewModel
+    public class CommentViewModel : ViewModel
     {
         private Comment data;
 
-        public CommentsViewModel(Comment comment)
+        public CommentViewModel(Comment comment)
         {
             data = comment;
+        }
+
+        public Comment Data
+        {
+            get { return data; }
         }
 
         public string Text

@@ -151,6 +151,9 @@
     <Compile Include="Core\Tasks\TaskFrequency.cs" />
     <Compile Include="Core\Tasks\TaskItem.cs" />
     <Compile Include="Core\Tasks\TaskLog.cs" />
+    <Compile Include="EditCommentWindow.xaml.cs">
+      <DependentUpon>EditCommentWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EditTaskWindow.xaml.cs">
       <DependentUpon>EditTaskWindow.xaml</DependentUpon>
     </Compile>
@@ -162,7 +165,8 @@
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="TasksUpdateTimer.cs" />
-    <Compile Include="ViewModels\CommentsViewModel.cs" />
+    <Compile Include="ViewModels\CommentViewModel.cs" />
+    <Compile Include="ViewModels\EditCommentViewModel.cs" />
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\ExportImportViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
@@ -179,6 +183,10 @@
     <Compile Include="ViewModels\LoadWindowViewModel.cs" />
     <Compile Include="Workspace.cs" />
     <Page Include="DashboardWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditCommentWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

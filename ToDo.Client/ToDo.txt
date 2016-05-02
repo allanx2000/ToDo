@@ -1,12 +1,15 @@
 ﻿-Import
 	-Remap old IDs to new ones for List, Tasks then import parent-child, comments, 
--Task Details
--Reminder List
--Other UI elements
+-GUI
+	-Task Details
+	-Reminder List
+	-Other UI elements
 
--New List- check name duplicate
--Move CRUD operations with validation into API
+-Create Groups and colors
 
 -Export/Import window
 
 -Put periods after all messages
+
+-Comments
+	-Add/Edit?/Delete?
