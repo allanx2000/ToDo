@@ -37,52 +37,7 @@ namespace ToDo.Client.ViewModels
         private static readonly SolidColorBrush Orange = new SolidColorBrush(Colors.Orange);
         private static readonly SolidColorBrush Red = new SolidColorBrush(Colors.Red);
         private static readonly SolidColorBrush Black = new SolidColorBrush(Colors.Black);
-
-        public string CompletedDate
-        {
-            get
-            {
-                return data.Completed == null ? "" : data.Completed.Value.ToShortDateString();
-            }
-        }
-        public string DueDate
-        {
-            get
-            {
-                if (data.DueDate == null)
-                    return "";
-                else
-                    return data.DueDate.Value.ToShortDateString();
-            }
-        }
-
-        public SolidColorBrush DueDateColor
-        {
-            get
-            {
-                SolidColorBrush color = Black;
-                
-                var date = data.DueDate;
-                var today = DateTime.Today;
-
-                if (data.Completed == null && date != null )
-                {
-                    var diff = date.Value - today;
-                    int days = diff.Days;
-
-                    if (days <= 0)
-                        color = Red;
-                    else if (days < 5)
-                        color = Orange;
-                    else
-                        color = Green;
-                }
-
-                return color;
-
-            }
-        }
-
+        
         public TaskItemViewModel(TaskItem item)
         {
             data = item;
@@ -106,7 +61,6 @@ namespace ToDo.Client.ViewModels
         }
 
         #region Properties
-        public TaskItemViewModel Parent { get; set; }
 
         public CollectionViewSource childrenViewSource;
         public ICollectionView ChildrenView
@@ -116,6 +70,7 @@ namespace ToDo.Client.ViewModels
                 return childrenViewSource.View;
             }
         }
+
 
         private List<TaskItemViewModel> children;
         public ICollection<TaskItemViewModel> Children
@@ -132,11 +87,21 @@ namespace ToDo.Client.ViewModels
             get { return data; }
         }
 
+        public TaskItemViewModel Parent { get; set; }
+
         public bool IsComplete
         {
             get
             {
                 return Data.Completed != null;
+            }
+        }
+
+        public Style TextStyle
+        {
+            get
+            {
+                return data.Completed == null ? Incomplete : Complete;
             }
         }
 
@@ -156,18 +121,33 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        public string DescriptionText
+        {
+            get
+            {
+                return string.IsNullOrEmpty(Data.Description) ? "{No Description}" : Data.Description;
+            }
+        }
+
         public int Order
         {
             get { return data.Order; }
         }
 
-        public Style TextStyle
+        public string FrequencyText
         {
             get
             {
-                return data.Completed == null ? Incomplete : Complete;
+                return Data.Frequency == null ? "No" : Data.Frequency.ToString();
             }
         }
+
+        public int CommentsCount
+        {
+            get { return Data.Comments == null ? 0 : Data.Comments.Count; }
+        }
+
+
 
         private bool isExpanded;
         public bool IsExpanded
@@ -183,6 +163,55 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        #region Completed/DueDate
+
+        public string CompletedDate
+        {
+            get
+            {
+                return data.Completed == null ? "No" : data.Completed.Value.ToShortDateString();
+            }
+        }
+        public string DueDate
+        {
+            get
+            {
+                if (data.DueDate == null)
+                    return "Not Set";
+                else
+                    return data.DueDate.Value.ToShortDateString();
+            }
+        }
+
+        public SolidColorBrush DueDateColor
+        {
+            get
+            {
+                SolidColorBrush color = Black;
+
+                var date = data.DueDate;
+                var today = DateTime.Today;
+
+                if (data.Completed == null && date != null)
+                {
+                    var diff = date.Value - today;
+                    int days = diff.Days;
+
+                    if (days <= 0)
+                        color = Red;
+                    else if (days < 5)
+                        color = Orange;
+                    else
+                        color = Green;
+                }
+
+                return color;
+            }
+        }
+
+        #endregion
+
+        
         #endregion
     }
 }

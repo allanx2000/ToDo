@@ -23,7 +23,7 @@
             <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
             <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
         </Menu>
-        
+
         <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
@@ -37,15 +37,19 @@
         </Grid>
 
         <GroupBox Grid.Row="2" Grid.Column="0" Header="Lists">
-            <DockPanel LastChildFill="True">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
-                    <Button Command="{Binding AddListCommand}">Add</Button>
-                    <Button Command="{Binding EditListCommand}">Edit</Button>
-                    <Button Command="{Binding DeleteListCommand}">Delete</Button>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                </StackPanel>
-
-                <ListBox ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
+                <DockPanel LastChildFill="True" Grid.Row="0">
+                    <Label DockPanel.Dock="Left">Order By: </Label>
+                    <ComboBox ItemsSource="{Binding ListOrder}" SelectedItem="{Binding SelectedListOrder}"/>
+                </DockPanel>
+                
+                <ListBox Grid.Row="1" ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>
@@ -75,7 +79,13 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </DockPanel>
+
+                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+                    <Button Command="{Binding AddListCommand}">Add</Button>
+                    <Button Command="{Binding EditListCommand}">Edit</Button>
+                    <Button Command="{Binding DeleteListCommand}">Delete</Button>
+                </StackPanel>
+            </Grid>
         </GroupBox>
 
         <Grid Grid.Row="2" Grid.Column="1">
@@ -89,7 +99,7 @@
                     <DockPanel.Resources>
                         <ResourceDictionary Source="TreeListDictionary.xaml"/>
                     </DockPanel.Resources>
-                    
+
                     <StackPanel DockPanel.Dock="Right">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">
@@ -119,12 +129,51 @@
                         ItemContainerStyle="{StaticResource TreeViewContainerStyle}"
                         SelectedItemChanged="TreeView_SelectedItemChanged">
                     </TreeView>
-                    
+
                 </DockPanel>
             </GroupBox>
 
             <GroupBox Grid.Row="1" Header="Details">
+                <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" DataContext="{Binding SelectedTaskViewModel}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Grid.ColumnSpan="4" FontWeight="Bold">
+                        <TextBlock Text="{Binding Name, FallbackValue=Name}"/>
+                    </Label>
+
+                    <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Repeats:</Label>
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding FrequencyText}"/>
+
+                    <Label Grid.Row="1" Grid.Column="2" Style="{StaticResource GridField}">Comments:</Label>
+                    <Label Grid.Row="1" Grid.Column="3" Content="{Binding CommentsCount}"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Completed:</Label>
+                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding CompletedDate}"/>
+
+                    <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Due Date:</Label>
+                    <Label Grid.Row="2" Grid.Column="3"  Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
+
+
+
+                    <Label VerticalAlignment="Top" Grid.Row="3" Grid.ColumnSpan="4">
+                        <TextBlock 
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                        TextWrapping="Wrap" Text="{Binding DescriptionText}" />
+                    </Label>
+                </Grid>
             </GroupBox>
         </Grid>
     </Grid>

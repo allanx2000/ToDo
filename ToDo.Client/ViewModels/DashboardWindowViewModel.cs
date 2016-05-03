@@ -44,9 +44,7 @@ namespace ToDo.Client.ViewModels
             TasksUpdateTimer.UpdateTasks();
             TasksUpdateTimer.StartTimer();
         }
-
-
-
+        
         private void TasksUpdateTimer_OnTasksUpdated()
         {
             foreach (var t in tasks)
@@ -171,17 +169,40 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private TaskItem selectedTask;
+        public Visibility DetailsVisible
+        {
+            get
+            {
+                return SelectedTaskViewModel == null ? Visibility.Hidden : Visibility.Visible;
+            }
+        }
+
+        private TaskItemViewModel selectedTaskViewModel;
+        public TaskItemViewModel SelectedTaskViewModel
+        {
+            get { return selectedTaskViewModel; }
+            set
+            {
+                selectedTaskViewModel = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged("SelectedTask");
+                RaisePropertyChanged("DetailsVisible");
+
+            }
+        }
+
+        //private TaskItem selectedTask;
         public TaskItem SelectedTask
         {
-            get { return selectedTask; }
+            get { return SelectedTaskViewModel == null ? null : SelectedTaskViewModel.Data; } //selectedTask; 
+            /*
             set
             {
                 selectedTask = value;
                 RaisePropertyChanged();
 
-                UpdateDetails();
-            }
+                //UpdateDetails();
+            }*/
 
         }
 
@@ -357,8 +378,12 @@ namespace ToDo.Client.ViewModels
                     return;
 
                 var parent = SelectedTask.Parent;
+
+                /*
+                FIXME: Needs to be changed to ViewModel
                 if (parent != null)
                     SelectedTask = parent;
+                */
 
                 Workspace.API.DeleteTask(SelectedTask);
 
@@ -399,6 +424,9 @@ namespace ToDo.Client.ViewModels
         }
 
         #endregion
+
+        //#region Task Details
+
 
         #region Misc
 

@@ -239,6 +239,7 @@ namespace ToDo.Client
                 return order + 1;
             }
             
+            //TODO?: Add Order to TaskList and change both to use IOrderable (expose the Order property)
             public static bool MoveUp(TaskItem task)
             {
                 if (task == null || task.Order == 1)
