@@ -76,7 +76,7 @@ namespace ToDo.Client
             private static void ValidateTaskList(string title, string description, int? id = null, ListType? type = null)
             {
                 if (string.IsNullOrEmpty(title))
-                    throw new Exception("Name cannot be empty");
+                    throw new Exception("Name cannot be empty.");
 
                 var duplicate = (from l in Workspace.Instance.Lists
                                  where l.Title == title
@@ -85,7 +85,7 @@ namespace ToDo.Client
                 if (duplicate != null)
                 {
                     if (!id.HasValue || duplicate.TaskListID != id.Value)
-                        throw new Exception("A list by the same name already exists");
+                        throw new Exception("A list by the same name already exists.");
                 }
 
                 if (id == null && type == null)

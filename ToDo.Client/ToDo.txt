@@ -7,7 +7,7 @@
 
 -Create Groups and colors
 
--Export/Import window
+-Export/Import window?
 
 -Put periods after all messages
 

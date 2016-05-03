@@ -65,7 +65,7 @@ namespace ToDo.Client.ViewModels
             try
             {
                 if (string.IsNullOrEmpty(WorkspacePath))
-                    throw new Exception("The path cannot be empty");
+                    throw new Exception("The path cannot be empty.");
 
                 string dbFile = GetDbFilePath(WorkspacePath);
 
