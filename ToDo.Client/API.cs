@@ -217,7 +217,24 @@ namespace ToDo.Client
 
                 DB.SaveChanges();
             }
-            
+
+            public static Stats GetStats()
+            {
+                int completed, remaining, overdue, total;
+
+                var query = DB.Tasks.AsQueryable();
+                total = query.Count();
+
+                query = query.Where(x => x.Completed == null).AsQueryable();
+                remaining = query.Count();
+                completed = total - remaining;
+
+                query = query.Where(x => x.DueDate != null && x.DueDate < DateTime.Today);
+                overdue = query.Count();
+
+                return new Stats(total, completed, remaining, overdue);
+            }
+
 
             /// <summary>
             /// Returns the next order number for a new TaskItem

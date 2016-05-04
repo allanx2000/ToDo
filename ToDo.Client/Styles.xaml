@@ -20,16 +20,22 @@
             
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" MinWidth="200"/>
-                    <ColumnDefinition Width="*" MinWidth="200"/>
+                    <ColumnDefinition Width="*" MinWidth="120"/>
+                    <ColumnDefinition Width="*" MinWidth="120"/>
+                    <ColumnDefinition Width="*" MinWidth="120"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Label>Priority:</Label>
+                    <Label Content="{Binding Priority}"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Label>Repeats: </Label>
                     <Label Content="{Binding FrequencyText}"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
                     <Label>Due Date:</Label>
                     <Label Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
                 </StackPanel>

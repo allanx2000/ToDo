@@ -129,6 +129,11 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        public int Priority
+        {
+            get { return Data.Priority; }
+        }
+
         public int Order
         {
             get { return data.Order; }

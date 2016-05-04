@@ -170,6 +170,7 @@
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\ExportImportViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
+    <Compile Include="ViewModels\Stats.cs" />
     <Compile Include="ViewModels\TaskItemViewModel.cs" />
     <Compile Include="ViewModels\TaskListViewModel.cs" />
     <Compile Include="DashboardWindow.xaml.cs">
@@ -218,7 +219,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TreeListDictionary.xaml">
+    <Page Include="Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -8,10 +8,13 @@
         mc:Ignorable="d"
         Title="Dashboard" Height="800" Width="800">
     <Grid>
+        <Grid.Resources>
+            <ResourceDictionary Source="Styles.xaml"/>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -19,20 +22,79 @@
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
+        <!--Menu Bar -->
         <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
             <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
             <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
         </Menu>
 
+        <!--Stats and QuickList-->
         <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Header="Coming Due"></GroupBox>
-                <GroupBox Grid.Row="1" Header="Stats"></GroupBox>
+                <GroupBox Grid.Row="0" Header="Stats">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="0">Completed: </Label>
+                        <Label Grid.Row="0" Grid.Column="1" Content="{Binding TotalCompleted}"/>
+                        <Label Grid.Row="0" Grid.Column="2">Remaining:</Label>
+                        <Label Grid.Row="0" Grid.Column="3" Content="{Binding TotalRemaining}"/>
+                        <Label Grid.Row="0" Grid.Column="4">Overdue:</Label>
+                        <Label Grid.Row="0" Grid.Column="5" Content="{Binding TotalOverdue}"/>
+
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Quick Lists">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <DockPanel HorizontalAlignment="Stretch">
+                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                <Label>Type:</Label>
+                                <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickList}"/>
+                            </StackPanel>
+
+                            <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button>Edit</Button>
+                                <Button>Mark Completed</Button>
+                                <Button>Select in Tasks</Button>
+                            </StackPanel>
+                        </DockPanel>
+                        
+                        <!--TODO: Need separate style-->
+                        <ListBox Grid.Row="1"
+                        ItemsSource="{Binding QuickList}"
+                        >
+                            
+                        </ListBox>
+
+                    </Grid>
+                </GroupBox>
             </Grid>
         </Grid>
 
@@ -96,10 +158,7 @@
 
             <GroupBox Grid.Row="0" Header="Tasks">
                 <DockPanel LastChildFill="True">
-                    <DockPanel.Resources>
-                        <ResourceDictionary Source="TreeListDictionary.xaml"/>
-                    </DockPanel.Resources>
-
+                    
                     <StackPanel DockPanel.Dock="Right">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">
@@ -146,6 +205,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
@@ -153,21 +213,24 @@
                         <TextBlock Text="{Binding Name, FallbackValue=Name}"/>
                     </Label>
 
-                    <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Repeats:</Label>
-                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding FrequencyText}"/>
+                    <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Priority:</Label>
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding Priority}"/>
 
-                    <Label Grid.Row="1" Grid.Column="2" Style="{StaticResource GridField}">Comments:</Label>
-                    <Label Grid.Row="1" Grid.Column="3" Content="{Binding CommentsCount}"/>
+                    <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Repeats:</Label>
+                    
+                    <!--TODO: Add View Logs Button -->
+                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding FrequencyText}"/>
+                    
+                    <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Comments:</Label>
+                    <!--TODO: Add View Comments Button, Extract ItemViewSource into ResourceDictionary; Change TaskItemResourceDictionary.xaml to ToDoResourceDictionary.xaml -->
+                    <Label Grid.Row="2" Grid.Column="3" Content="{Binding CommentsCount}"/>
 
-                    <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Completed:</Label>
-                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding CompletedDate}"/>
+                    <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource GridField}">Completed:</Label>
+                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding CompletedDate}"/>
+                    <Label Grid.Row="3" Grid.Column="2" Style="{StaticResource GridField}">Due Date:</Label>
+                    <Label Grid.Row="3" Grid.Column="3"  Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
 
-                    <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Due Date:</Label>
-                    <Label Grid.Row="2" Grid.Column="3"  Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
-
-
-
-                    <Label VerticalAlignment="Top" Grid.Row="3" Grid.ColumnSpan="4">
+                    <Label Grid.Row="4" Grid.ColumnSpan="4" VerticalAlignment="Top">
                         <TextBlock 
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         ScrollViewer.VerticalScrollBarVisibility="Auto"

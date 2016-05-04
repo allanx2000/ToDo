@@ -38,9 +38,9 @@ namespace ToDo.Client.ViewModels
             tasksViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
 
             ReloadLists();
+            UpdateStats();
 
             TasksUpdateTimer.OnTasksUpdated += TasksUpdateTimer_OnTasksUpdated;
-
             TasksUpdateTimer.UpdateTasks();
             TasksUpdateTimer.StartTimer();
         }
@@ -275,35 +275,39 @@ namespace ToDo.Client.ViewModels
             {
                 LoadTasks();
             }
+
         }
 
-        //TODO: replace With API call
         private void LoadTasks()
         {
             if (selectedList == null)
                 return;
 
-            int? prevTask = SelectedTask == null ? null : (int?) SelectedTask.TaskItemID;
-
-            /*
-            tasks.Clear();
-
-            if (selectedList == null)
-                return;
-            
-            var root = Workspace.API.GetRootTaskItems(selectedList.Data);
-            foreach (var t in root)
-            {
-                tasks.Add(new TaskItemViewModel(t));
-            }
-            
-            if (prevTask != null)
-                Expand(tasks, prevTask.Value);
-            */
+            int? prevTask = SelectedTask == null ? null : (int?)SelectedTask.TaskItemID;
 
             Workspace.API.LoadList(SelectedList.Data.TaskListID, tasks, prevTask);
-            //TODO: Keep this when replaceing
+
             SelectedList.Update();
+
+            UpdateStats();
+
+        }
+
+        public int TotalCompleted { get; private set; }
+        public int TotalRemaining { get; private set; }
+        public int TotalOverdue { get; private set; }
+
+
+        private void UpdateStats()
+        {
+            Stats stats = Workspace.API.GetStats();
+            TotalCompleted = stats.Completed;
+            TotalRemaining = stats.Remaining;
+            TotalOverdue = stats.Overdue;
+
+            RaisePropertyChanged("TotalCompleted");
+            RaisePropertyChanged("TotalRemaining");
+            RaisePropertyChanged("TotalOverdue");
         }
 
         private bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
@@ -455,7 +459,7 @@ namespace ToDo.Client.ViewModels
                 return new CommandHelper(ShowExportImportWindow);
             }
         }
-
+        
         private void ShowExportImportWindow()
         {
             var dlg = new ExportImportWindow();
