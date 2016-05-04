@@ -173,7 +173,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return SelectedTaskViewModel == null ? Visibility.Hidden : Visibility.Visible;
+                return SelectedTaskViewModel == null ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -286,6 +286,7 @@ namespace ToDo.Client.ViewModels
             int? prevTask = SelectedTask == null ? null : (int?)SelectedTask.TaskItemID;
 
             Workspace.API.LoadList(SelectedList.Data.TaskListID, tasks, prevTask);
+            
 
             SelectedList.Update();
 

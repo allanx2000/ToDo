@@ -6,97 +6,90 @@
         xmlns:local="clr-namespace:ToDo.Client"
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
-        Title="Dashboard" Height="800" Width="800">
+        Title="ToDo" Height="850" MinHeight="850" Width="900">
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="Styles.xaml"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*" MinHeight="150"/>
+            <RowDefinition Height="3*" MinHeight="600"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="230"/>
+            <ColumnDefinition Width="*" MinWidth="260"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
         <!--Menu Bar -->
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5">
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Background="Transparent"
+              >
+            <Menu.Resources>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Padding" Value="5"/>
+                </Style>
+            </Menu.Resources>
             <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
             <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
         </Menu>
 
-        <!--Stats and QuickList-->
-        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+        <GroupBox Grid.Row="1" Grid.Column="0" 
+                  Header="Stats">
+            <Grid >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource GridField}" >Completed:</Label>
+                <Label Grid.Row="0" Grid.Column="1" Content="{Binding TotalCompleted}"/>
+                <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}" >Remaining:</Label>
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding TotalRemaining}"/>
+                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}" >Overdue:</Label>
+                <Label Grid.Row="2" Grid.Column="1" Content="{Binding TotalOverdue}"/>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Grid.Column="1" 
+                  Header="Quick Lists">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <GroupBox Grid.Row="0" Header="Stats">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
+                <DockPanel HorizontalAlignment="Stretch">
+                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                        <Label>Type:</Label>
+                        <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickList}"/>
+                    </StackPanel>
 
-                        <Label Grid.Row="0" Grid.Column="0">Completed: </Label>
-                        <Label Grid.Row="0" Grid.Column="1" Content="{Binding TotalCompleted}"/>
-                        <Label Grid.Row="0" Grid.Column="2">Remaining:</Label>
-                        <Label Grid.Row="0" Grid.Column="3" Content="{Binding TotalRemaining}"/>
-                        <Label Grid.Row="0" Grid.Column="4">Overdue:</Label>
-                        <Label Grid.Row="0" Grid.Column="5" Content="{Binding TotalOverdue}"/>
+                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button>Edit</Button>
+                        <Button>Mark Completed</Button>
+                        <Button>Select in Tasks</Button>
+                    </StackPanel>
+                </DockPanel>
 
-                    </Grid>
-                </GroupBox>
-                <GroupBox Grid.Row="1" Header="Quick Lists">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <DockPanel HorizontalAlignment="Stretch">
-                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                                <Label>Type:</Label>
-                                <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickList}"/>
-                            </StackPanel>
-
-                            <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
-                                <Button>Edit</Button>
-                                <Button>Mark Completed</Button>
-                                <Button>Select in Tasks</Button>
-                            </StackPanel>
-                        </DockPanel>
-                        
-                        <!--TODO: Need separate style-->
-                        <ListBox Grid.Row="1"
+                <!--TODO: Need separate style-->
+                <ListBox Grid.Row="1"
                         ItemsSource="{Binding QuickList}"
                         >
-                            
-                        </ListBox>
 
-                    </Grid>
-                </GroupBox>
+                </ListBox>
+
             </Grid>
-        </Grid>
+        </GroupBox>
 
         <GroupBox Grid.Row="2" Grid.Column="0" Header="Lists">
             <Grid>
@@ -107,10 +100,10 @@
                 </Grid.RowDefinitions>
 
                 <DockPanel LastChildFill="True" Grid.Row="0">
-                    <Label DockPanel.Dock="Left">Order By: </Label>
+                    <Label DockPanel.Dock="Left">Order By:</Label>
                     <ComboBox ItemsSource="{Binding ListOrder}" SelectedItem="{Binding SelectedListOrder}"/>
                 </DockPanel>
-                
+
                 <ListBox Grid.Row="1" ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -158,7 +151,7 @@
 
             <GroupBox Grid.Row="0" Header="Tasks">
                 <DockPanel LastChildFill="True">
-                    
+
                     <StackPanel DockPanel.Dock="Right">
                         <StackPanel.Resources>
                             <Style TargetType="Separator">
@@ -192,51 +185,52 @@
                 </DockPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="Details">
-                <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" DataContext="{Binding SelectedTaskViewModel}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+            <GroupBox Grid.Row="1" Header="Details" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" DataContext="{Binding SelectedTaskViewModel}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                    <Label Grid.ColumnSpan="4" FontWeight="Bold">
-                        <TextBlock Text="{Binding Name, FallbackValue=Name}"/>
-                    </Label>
+                        <Label Grid.ColumnSpan="4" FontWeight="Bold">
+                            <TextBlock Text="{Binding Name, FallbackValue=Name}"/>
+                        </Label>
 
-                    <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Priority:</Label>
-                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding Priority}"/>
+                        <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Priority:</Label>
+                        <Label Grid.Row="1" Grid.Column="1" Content="{Binding Priority}"/>
 
-                    <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Repeats:</Label>
-                    
-                    <!--TODO: Add View Logs Button -->
-                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding FrequencyText}"/>
-                    
-                    <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Comments:</Label>
-                    <!--TODO: Add View Comments Button, Extract ItemViewSource into ResourceDictionary; Change TaskItemResourceDictionary.xaml to ToDoResourceDictionary.xaml -->
-                    <Label Grid.Row="2" Grid.Column="3" Content="{Binding CommentsCount}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Repeats:</Label>
 
-                    <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource GridField}">Completed:</Label>
-                    <Label Grid.Row="3" Grid.Column="1" Content="{Binding CompletedDate}"/>
-                    <Label Grid.Row="3" Grid.Column="2" Style="{StaticResource GridField}">Due Date:</Label>
-                    <Label Grid.Row="3" Grid.Column="3"  Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
+                        <!--TODO: Add View Logs Button -->
+                        <Label Grid.Row="2" Grid.Column="1" Content="{Binding FrequencyText}"/>
 
-                    <Label Grid.Row="4" Grid.ColumnSpan="4" VerticalAlignment="Top">
-                        <TextBlock 
+                        <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Comments:</Label>
+                        <!--TODO: Add View Comments Button, Extract ItemViewSource into ResourceDictionary; Change TaskItemResourceDictionary.xaml to ToDoResourceDictionary.xaml -->
+                        <Label Grid.Row="2" Grid.Column="3" Content="{Binding CommentsCount}"/>
+
+                        <Label Grid.Row="3" Grid.Column="0" Style="{StaticResource GridField}">Completed:</Label>
+                        <Label Grid.Row="3" Grid.Column="1" Content="{Binding CompletedDate}"/>
+                        <Label Grid.Row="3" Grid.Column="2" Style="{StaticResource GridField}">Due Date:</Label>
+                        <Label Grid.Row="3" Grid.Column="3"  Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
+
+                        <Label Grid.Row="4" Grid.ColumnSpan="4" VerticalAlignment="Top">
+                            <TextBlock 
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        ScrollViewer.VerticalScrollBarVisibility="Auto"
                         TextWrapping="Wrap" Text="{Binding DescriptionText}" />
-                    </Label>
-                </Grid>
+                        </Label>
+                    </Grid>
+                </ScrollViewer>
             </GroupBox>
         </Grid>
     </Grid>

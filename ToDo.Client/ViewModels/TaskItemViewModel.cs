@@ -23,7 +23,7 @@ namespace ToDo.Client.ViewModels
             //Create Styles
             var bold = FontWeights.Bold;
             //var current = Application.Current.FindResource(typeof(Label)) as Style;
-            
+
             Complete = new Style(typeof(TextBlock));
             Complete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
             Complete.Setters.Add(new Setter(TextBlock.TextDecorationsProperty, TextDecorations.Strikethrough));
@@ -37,7 +37,7 @@ namespace ToDo.Client.ViewModels
         private static readonly SolidColorBrush Orange = new SolidColorBrush(Colors.Orange);
         private static readonly SolidColorBrush Red = new SolidColorBrush(Colors.Red);
         private static readonly SolidColorBrush Black = new SolidColorBrush(Colors.Black);
-        
+
         public TaskItemViewModel(TaskItem item)
         {
             data = item;
@@ -214,9 +214,20 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        private bool selected = false;
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                selected = value;
+                RaisePropertyChanged();
+            }
+        }
+
         #endregion
 
-        
+
         #endregion
     }
 }

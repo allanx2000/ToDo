@@ -521,6 +521,8 @@ namespace ToDo.Client
                             parent = parent.Parent;
                         }
 
+                        t.Selected = true;
+
                         return true;
                     }
                     else if (t.Children != null)
