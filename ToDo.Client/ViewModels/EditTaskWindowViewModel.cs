@@ -454,6 +454,7 @@ namespace ToDo.Client.ViewModels
                 ValidateFields();
 
                 bool isExisting = existing != null;
+                
 
                 ICollection<Comment> comments = GetComments(this.comments);
                 if (isExisting)
@@ -461,7 +462,7 @@ namespace ToDo.Client.ViewModels
                     Workspace.API.UpdateTask(existing, Name, Details, comments, Priority,
                         parent,
                         existing.Order,
-                        HasRepeat ? ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        ConvertToFrequency(SelectedFrequency),
                         HasDueDate ? DueDate : null,
                         HasCompleted ? Completed : null);
                 }
@@ -469,8 +470,8 @@ namespace ToDo.Client.ViewModels
                 {
                     Workspace.API.InsertTask(list, Name, Details, Priority, 
                         comments,
-                        parent, 
-                        HasRepeat ? ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        parent,
+                        ConvertToFrequency(SelectedFrequency),
                         HasDueDate ? DueDate : null,
                         HasCompleted ? Completed : null);
                 }
@@ -516,10 +517,10 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private TaskFrequency? ConvertToFrequency(string frequency)
+        private TaskFrequency ConvertToFrequency(string frequency)
         {
             if (String.IsNullOrEmpty(SelectedFrequency))
-                return null;
+                return TaskFrequency.No;
             else
                 return (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
         }

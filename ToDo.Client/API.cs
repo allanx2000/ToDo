@@ -308,9 +308,9 @@ namespace ToDo.Client
             public static void InsertTask(TaskList list, string title, string details, int? priority, 
                 ICollection<Comment> comments,
                 TaskItem parent, 
-                TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
+                TaskFrequency frequency, DateTime? dueDate, DateTime? completed)
             {   
-                ValidateTaskValues(title, priority, frequency, startDate);
+                ValidateTaskValues(title, priority, frequency, dueDate);
 
                 TaskItem item = new TaskItem();
                 item.List = list;
@@ -319,10 +319,9 @@ namespace ToDo.Client
                 item.Priority = priority.Value;
                 item.Parent = parent;
                 item.Order = Workspace.API.GetNextOrder(list, parent);
-                item.DueDate = dueDate;
+                //item.DueDate = dueDate;
                 item.Created = item.Updated = DateTime.Now;
-
-                SetFrequency(item, frequency, startDate);
+                SetFrequency(item, frequency, dueDate);
                 
                 Workspace.Instance.Tasks.Add(item);
                 Workspace.Instance.SaveChanges();
@@ -338,15 +337,15 @@ namespace ToDo.Client
                 DB.SaveChanges();
             }
 
-            public static void UpdateTask(TaskItem existing, string title, string details, ICollection<Comment> comments, int? priority, TaskItem parent, int order, TaskFrequency? frequency, DateTime? startDate, DateTime? dueDate, DateTime? completed)
+            public static void UpdateTask(TaskItem existing, string title, string details, ICollection<Comment> comments, int? priority, TaskItem parent, int order, TaskFrequency frequency, DateTime? dueDate, DateTime? completed)
             {
-                ValidateTaskValues(title, priority, frequency, startDate, existing.TaskItemID);
+                ValidateTaskValues(title, priority, frequency, dueDate, existing.TaskItemID);
 
                 existing.Title = title;
                 existing.Description = details;
                 existing.Priority = priority.Value;
-                existing.DueDate = dueDate;
                 existing.Updated = DateTime.Now;
+                SetFrequency(existing, frequency, dueDate);
 
                 bool parentChanged = HasTaskParentChanged(parent, existing.Parent);
                 int? oldParentId = existing.ParentID; //Used for renumbering further below
@@ -357,7 +356,6 @@ namespace ToDo.Client
                     existing.Parent = parent;
                 }
 
-                SetFrequency(existing, frequency, startDate);
                 
                 Workspace.Instance.SaveChanges();
 
@@ -460,20 +458,18 @@ namespace ToDo.Client
                     Workspace.API.MarkIncomplete(task);
             }
 
-            private static void SetFrequency(TaskItem task, TaskFrequency? frequency, DateTime? startDate)
+            private static void SetFrequency(TaskItem task, TaskFrequency frequency, DateTime? startDate)
             {
-                if (frequency != null && startDate != null)
+                if (frequency != TaskFrequency.No && startDate != null)
                 {
-                    DateTime reminder = GetNextReminder(frequency.Value, startDate.Value);
+                    DateTime reminder = GetNextReminder(frequency, startDate.Value);
                     task.Frequency = frequency;
-                    task.StartDate = startDate;
-                    task.NextReminder = reminder;
+                    task.DueDate = startDate;
                 }
                 else //Delete
                 {
-                    task.Frequency = null;
-                    task.StartDate = null;
-                    task.NextReminder = null;
+                    task.Frequency = TaskFrequency.No;
+                    task.DueDate = null;
                 }
             }
 
@@ -506,7 +502,7 @@ namespace ToDo.Client
                 //Frequency
                 if ((frequency == null && startDate != null)
                     || (frequency != null && startDate == null))
-                    throw new Exception("Frequency and Start Date must both be set or unset.");
+                    throw new Exception("Frequency and DueDate must both be set or unset.");
             }
 
             #endregion
