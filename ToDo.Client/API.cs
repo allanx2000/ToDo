@@ -382,13 +382,17 @@ namespace ToDo.Client
                     c.Owner = existing;
 
                 ProcessComments(existing.Comments, comments);
-                //Copy new comments list to existing, find mismatchs (Deletes/Adds)
             }
 
+            /// <summary>
+            /// Copy new comments list to existing, find mismatchs (Deletes/Adds)
+            /// </summary>
+            /// <param name="existing"></param>
+            /// <param name="updated"></param>
             private static void ProcessComments(ICollection<Comment> existing, ICollection<Comment> updated)
             {
-                var ex = existing.OrderByDescending(x => x.CommentID).ToList();
-                var up = updated.OrderByDescending(x => x.CommentID).ToList();
+                var ex = existing == null? new List<Comment>() : existing.OrderByDescending(x => x.CommentID).ToList();
+                var up = updated == null? new List<Comment>() : updated.OrderByDescending(x => x.CommentID).ToList();
 
                 int p1 = 0, p2 = 0;
 

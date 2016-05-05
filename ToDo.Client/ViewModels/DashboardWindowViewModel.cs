@@ -30,12 +30,13 @@ namespace ToDo.Client.ViewModels
 
             listsViewSource = new CollectionViewSource();
             listsViewSource.Source = lists;
-            listsViewSource.SortDescriptions.Add(new SortDescription("Name", ListSortDirection.Ascending));
-
+            
             tasksViewSource = new CollectionViewSource();
             tasksViewSource.Source = tasks;
-            //tasksViewSource.SortDescriptions.Add(new SortDescription("IsComplete", ListSortDirection.Ascending));
             tasksViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
+            //tasksViewSource.SortDescriptions.Add(new SortDescription("IsComplete", ListSortDirection.Ascending));
+
+            SelectedListOrder = Alphabetical;
 
             ReloadLists();
             UpdateStats();
@@ -44,7 +45,9 @@ namespace ToDo.Client.ViewModels
             TasksUpdateTimer.UpdateTasks();
             TasksUpdateTimer.StartTimer();
         }
+
         
+
         private void TasksUpdateTimer_OnTasksUpdated()
         {
             foreach (var t in tasks)
@@ -58,7 +61,67 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+
         #region Lists
+
+        #region Ordering
+        public const string Alphabetical = "Alphabetical";
+        public const string Type = "Type";
+        public const string Remaining = "Remaining Tasks";
+
+        private static readonly List<string> listOrder = new List<string>()
+        {
+            Alphabetical,
+            Type,
+            Remaining
+        };
+
+        private string selectedListOrder;
+        public string SelectedListOrder
+        {
+            get { return selectedListOrder; }
+            set
+            {
+                selectedListOrder = value;
+                RaisePropertyChanged();
+
+                SetListOrder(selectedListOrder);
+            }
+        }
+
+        public List<string> ListOrder
+        {
+            get { return listOrder; }
+        }
+
+        private readonly SortDescription alpha = new SortDescription("Name", ListSortDirection.Ascending);
+        private readonly SortDescription type = new SortDescription("Type", ListSortDirection.Ascending);
+        private void SetListOrder(string order)
+        {
+            listsViewSource.SortDescriptions.Clear();
+
+            switch (order)
+            {
+                case Type:
+                    listsViewSource.SortDescriptions.Add(type);
+                    listsViewSource.SortDescriptions.Add(alpha);
+                    break;
+                case Remaining:
+                    listsViewSource.SortDescriptions.Add(new SortDescription("Remaining", ListSortDirection.Descending));
+                    listsViewSource.SortDescriptions.Add(alpha);
+                    break;
+                default:
+                case Alphabetical:
+                    listsViewSource.SortDescriptions.Add(alpha);
+                    break;
+
+            }
+
+            RefreshListsView();
+            //listsViewSource.View.Refresh();
+        }
+
+        #endregion
 
         private void ReloadLists()
         {
@@ -68,6 +131,8 @@ namespace ToDo.Client.ViewModels
             {
                 lists.Add(new TaskListViewModel(list));
             }
+
+            RaisePropertyChanged("Lists");
         }
 
         private TaskListViewModel selectedList;
@@ -178,6 +243,8 @@ namespace ToDo.Client.ViewModels
         }
 
         private TaskItemViewModel selectedTaskViewModel;
+
+        
         public TaskItemViewModel SelectedTaskViewModel
         {
             get { return selectedTaskViewModel; }
@@ -230,6 +297,7 @@ namespace ToDo.Client.ViewModels
             if (!window.Cancelled)
             {
                 LoadTasks();
+                RefreshListsView();
             }
         }
 
@@ -243,7 +311,7 @@ namespace ToDo.Client.ViewModels
 
         private void EditTask()
         {
-            if (SelectedTask == null || SelectedList == null)
+            if (SelectedTask == null)
                 return;
 
             var window = new EditTaskWindow(SelectedTask); //TODO: Check if filled
@@ -252,6 +320,7 @@ namespace ToDo.Client.ViewModels
             if (!window.Cancelled)
             {
                 LoadTasks();
+                RefreshListsView();
             }
         }
 
@@ -274,6 +343,7 @@ namespace ToDo.Client.ViewModels
             if (!window.Cancelled)
             {
                 LoadTasks();
+                RefreshListsView();
             }
 
         }
@@ -393,11 +463,18 @@ namespace ToDo.Client.ViewModels
                 Workspace.API.DeleteTask(SelectedTask);
 
                 LoadTasks();
+
+                RefreshListsView();
             }
             catch (Exception e)
             {
                 MessageBoxFactory.ShowError(e);
             }
+        }
+
+        private void RefreshListsView()
+        {
+            Lists.Refresh();
         }
 
         public ICommand MoveUpCommand

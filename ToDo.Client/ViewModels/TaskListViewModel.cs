@@ -61,6 +61,8 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        public ListType Type { get { return Data.Type; } }
+
         public SolidColorBrush TitleColor
         {
             get

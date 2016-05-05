@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ToDo.Client"
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
-        Title="ToDo" Height="850" MinHeight="850" Width="900">
+        Title="ToDo" Height="850" MinHeight="850" Width="900" Unloaded="Window_Unloaded">
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="Styles.xaml"/>
@@ -162,7 +162,7 @@
                         <Button Command="{Binding AddTaskCommand}">Task</Button>
                         <Button Command="{Binding AddSubTaskCommand}">Subtask</Button>
                         <Separator/>
-                        <Button Command="{Binding EditTaskCommand}">Edit</Button>
+                        <Button Command="{Binding EditTaskCommand}" >Edit</Button>
                         <Button Command="{Binding MarkCompletedCommand}">
                             <TextBlock TextAlignment="Center">Mark<LineBreak/>Completed</TextBlock>
                         </Button>

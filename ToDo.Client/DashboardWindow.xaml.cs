@@ -34,5 +34,10 @@ namespace ToDo.Client
             var task = e.NewValue as TaskItemViewModel;
             vm.SelectedTaskViewModel = task == null? null : task;
         }
+
+        private void Window_Unloaded(object sender, RoutedEventArgs e)
+        {
+            TasksUpdateTimer.StopTimer();
+        }
     }
 }

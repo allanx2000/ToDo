@@ -87,10 +87,14 @@ namespace ToDo.Client.ViewModels
 
             SetParent(existing.Parent);
 
-            foreach (Comment c in existing.Comments)
+            if (existing.Comments != null)
             {
-                comments.Add(new CommentViewModel(c));
+                foreach (Comment c in existing.Comments)
+                {
+                    comments.Add(new CommentViewModel(c));
+                }
             }
+            else comments = new ObservableCollection<CommentViewModel>();
         }
         
         #region Properties
