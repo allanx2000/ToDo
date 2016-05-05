@@ -30,7 +30,7 @@ namespace ToDo.Client.Export
             };
 
             XmlSerializer xser = GetSerializer();
-            StreamWriter sw = new StreamWriter(@"c:\dev\todo.xml");
+            StreamWriter sw = new StreamWriter(path);
             xser.Serialize(sw, bundle);
             sw.Close();
             
@@ -85,9 +85,18 @@ namespace ToDo.Client.Export
             Dictionary<int, int> tasks = new Dictionary<int, int>();
 
             //TODO: Verify
-            var sortedTasks = from t in bundle.Tasks
-                              orderby t.ParentID == null, t.ParentID ascending
-                              select t;
+
+            List<TaskItem> sortedTasks = new List<TaskItem>();
+            var tmp = from t in bundle.Tasks
+                      where t.ParentID == null
+                      select t;
+            sortedTasks.AddRange(tmp);
+
+            tmp = from t in bundle.Tasks
+                  where t.ParentID != null
+                  orderby t.ParentID ascending
+                  select t;
+            sortedTasks.AddRange(tmp);
 
             foreach (var t in sortedTasks)
             {
@@ -110,19 +119,19 @@ namespace ToDo.Client.Export
 
                     tasks.Add(oldId, t.TaskItemID);
                 }
+            }
 
-                foreach (var l in bundle.Log)
+            foreach (var l in bundle.Log)
+            {
+                l.TaskID = tasks[l.TaskID];
+
+                var existing = DB.TasksLog.FirstOrDefault(
+                    x => x.TaskID == l.TaskID
+                    && x.Date == l.Date);
+
+                if (existing == null)
                 {
-                    l.TaskID = tasks[l.TaskID];
-
-                    var existing = DB.TasksLog.FirstOrDefault(
-                        x => x.TaskID == l.TaskID 
-                        && x.Date == l.Date);
-
-                    if (existing == null)
-                    {
-                        DB.TasksLog.Add(l);
-                    }
+                    DB.TasksLog.Add(l);
                 }
             }
         }

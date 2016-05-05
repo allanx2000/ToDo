@@ -75,15 +75,10 @@ namespace ToDo.Client.ViewModels
             HasCompleted = existing.Completed != null;
             Completed = existing.Completed;
             
-            HasDueDate = DueDate != null;
             DueDate = existing.DueDate;
+            HasDueDate = existing.DueDate != null;
 
-            HasRepeat = existing.Frequency != null;
-            if (HasRepeat)
-            {
-                SelectedFrequency = existing.Frequency.ToString();
-                StartDate = existing.StartDate;
-            }
+            SelectedFrequency = existing.Frequency.ToString();
 
             SetParent(existing.Parent);
 
@@ -180,7 +175,7 @@ namespace ToDo.Client.ViewModels
                 return frequencies;
             }
         }
-
+        /*
         private bool hasRepeat;
         public bool HasRepeat
         {
@@ -195,6 +190,7 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
+        */
 
         #endregion
 
@@ -454,14 +450,18 @@ namespace ToDo.Client.ViewModels
                 ValidateFields();
 
                 bool isExisting = existing != null;
+                
 
                 ICollection<Comment> comments = GetComments(this.comments);
+                if (!HasDueDate)
+                    SelectedFrequency = null;
+
                 if (isExisting)
                 {
                     Workspace.API.UpdateTask(existing, Name, Details, comments, Priority,
                         parent,
                         existing.Order,
-                        HasRepeat ? ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        ConvertToFrequency(SelectedFrequency),
                         HasDueDate ? DueDate : null,
                         HasCompleted ? Completed : null);
                 }
@@ -469,8 +469,8 @@ namespace ToDo.Client.ViewModels
                 {
                     Workspace.API.InsertTask(list, Name, Details, Priority, 
                         comments,
-                        parent, 
-                        HasRepeat ? ConvertToFrequency(SelectedFrequency) : null, StartDate,
+                        parent,
+                        ConvertToFrequency(SelectedFrequency),
                         HasDueDate ? DueDate : null,
                         HasCompleted ? Completed : null);
                 }
@@ -502,13 +502,6 @@ namespace ToDo.Client.ViewModels
                 throw new Exception("Priority is required.");
             else if (HasCompleted && Completed == null)
                 throw new Exception("Completed Date not set.");
-            else if (HasRepeat)
-            {
-                if (string.IsNullOrEmpty(SelectedFrequency))
-                    throw new Exception("No Frequency selected.");
-                else if (StartDate == null)
-                    throw new Exception("No Start Date set.");
-            }
             else if (HasDueDate)
             {
                 if (DueDate == null)
@@ -516,10 +509,10 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private TaskFrequency? ConvertToFrequency(string frequency)
+        private TaskFrequency ConvertToFrequency(string frequency)
         {
             if (String.IsNullOrEmpty(SelectedFrequency))
-                return null;
+                return TaskFrequency.No;
             else
                 return (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
         }
