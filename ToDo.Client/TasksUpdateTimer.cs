@@ -57,14 +57,15 @@ namespace ToDo.Client
             }
             */
             
-            var matches = Workspace.Instance.Tasks
-                .Where(x => x.Frequency != TaskFrequency.No 
-                        && yesterday == x.DueDate).ToList();
+            var matches = Workspace.Instance.Tasks.Where(x => yesterday == x.NextReminder).ToList();
 
             foreach (var t in matches)
             {
-                var next = Workspace.API.CalculateNextReminder(t.Frequency, t.DueDate.Value);
-                
+                //var last = Workspace.API.CalculateLastReminder(t.Frequency.Value, t.NextReminder.Value);
+                var next = Workspace.API.CalculateNextReminder(t.Frequency.Value, t.NextReminder.Value);
+
+                //var logs = Workspace.API.GetTaskLogs(last, next);
+
                 TaskLog log = new TaskLog() {
                     Date = yesterday,
                     TaskID = t.TaskItemID };
@@ -72,7 +73,7 @@ namespace ToDo.Client
                 log.Completed = t.Completed.HasValue;
                 Workspace.Instance.TasksLog.Add(log);
                 
-                t.DueDate = next;
+                t.NextReminder = next;
                 t.Completed = null;
             }
 

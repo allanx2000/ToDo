@@ -9,7 +9,6 @@ namespace ToDo.Client.Core.Tasks
     [Serializable]
     public enum TaskFrequency
     {
-        No,
         Daily,
         Weekly,
         Monthly

@@ -31,11 +31,11 @@ namespace ToDo.Client.Core.Tasks
         public DateTime? DueDate { get; set; }
 
         //TODO: Add a StartDate Field
-        //public DateTime? NextReminder { get; set; }
+        public DateTime? NextReminder { get; set; }
 
-        public int FrequencyId { get; set; }
+        public int? FrequencyId { get; set; }
 
-        public TaskFrequency Frequency { get; set; }
+        public TaskFrequency? Frequency { get; set; }
 
         //Navigation/References
         public virtual List<Comment> Comments { get; set; }

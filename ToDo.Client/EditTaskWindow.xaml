@@ -59,11 +59,6 @@
                   SelectedItem="{Binding Priority}" ItemsSource="{Binding Priorities}"/>
 
         <Grid Grid.Row="4" Grid.Column="1">
-            <Grid.Resources>
-                <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                    <Setter Property="Width" Value="80"/>
-                </Style>
-            </Grid.Resources>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
@@ -72,18 +67,19 @@
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-
-            <StackPanel Grid.Row="0" Grid.ColumnSpan="2"
-                        Orientation="Horizontal">
-                <CheckBox IsChecked="{Binding HasDueDate}">Due Date</CheckBox>
-                <DatePicker HorizontalAlignment="Left" SelectedDate="{Binding DueDate}" IsEnabled="{Binding HasDueDate}" />
-                
-                <Label>Repeat: </Label>
-                <ComboBox  HorizontalAlignment="Left" Width="120" IsEnabled="{Binding HasRepeat}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
-            </StackPanel>
             
+            <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding HasRepeat}">Repeat:</CheckBox>
+            <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+                <ComboBox  HorizontalAlignment="Left" Width="120" IsEnabled="{Binding HasRepeat}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
+                <Label Width="20"/>
+                <Label>Start Date: </Label>
+                <DatePicker IsEnabled="{Binding HasRepeat}" SelectedDate="{Binding StartDate}"/>
+            </StackPanel>
+            <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding HasDueDate}">Due Date:</CheckBox>
+            <DatePicker Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" SelectedDate="{Binding DueDate}" IsEnabled="{Binding HasDueDate}" />
+
             <CheckBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding HasCompleted}">Completed</CheckBox>
             <DatePicker Grid.Row="2" Grid.Column="1" IsEnabled="{Binding HasCompleted}" SelectedDate="{Binding Completed}"/>
 
