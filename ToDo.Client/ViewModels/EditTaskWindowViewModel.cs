@@ -209,6 +209,8 @@ namespace ToDo.Client.ViewModels
 
                 if (hasDueDate == false)
                     DueDate = null;
+                else
+                    dueDate = DateTime.Today;
 
                 RaisePropertyChanged();
             }
@@ -511,7 +513,7 @@ namespace ToDo.Client.ViewModels
 
         private TaskFrequency ConvertToFrequency(string frequency)
         {
-            if (String.IsNullOrEmpty(SelectedFrequency))
+            if (string.IsNullOrEmpty(SelectedFrequency))
                 return TaskFrequency.No;
             else
                 return (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);

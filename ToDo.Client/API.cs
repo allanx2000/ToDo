@@ -149,6 +149,8 @@ namespace ToDo.Client
 
                 var item = query.FirstOrDefault();
 
+                //var comments = DB.Comments.Where(x => x.OwnerId == item.TaskItemID).ToList();
+
                 return item;
             }
             
@@ -183,7 +185,7 @@ namespace ToDo.Client
                 DB.Tasks.Remove(task);
                 DB.SaveChanges();
 
-                RenumberTasks(task.ListID, parentId);
+                RenumberTasks(listId, parentId);
 
             }
 
@@ -204,13 +206,13 @@ namespace ToDo.Client
 
             public static void RenumberTasks(int listId, int? parentId)
             {
-                ICollection<TaskItem> remaining = (from t in DB.Tasks
+                ICollection<TaskItem> tasks = (from t in DB.Tasks
                                                    where t.ParentID == parentId
                                                    && t.ListID == listId
                                                    orderby t.Order ascending
                                                    select t).ToList();
                 int ctr = 1;
-                foreach (var t in remaining)
+                foreach (var t in tasks)
                 {
                     t.Order = ctr++;
                 }
@@ -259,17 +261,23 @@ namespace ToDo.Client
             //TODO?: Add Order to TaskList and change both to use IOrderable (expose the Order property)
             public static bool MoveUp(TaskItem task)
             {
+                //For fixing ordering
+                //RenumberTasks(task.ListID, task.ParentID);
+
                 if (task == null || task.Order == 1)
                     return false;
 
                 TaskItem prev = DB.Tasks.FirstOrDefault(x =>
-                    x.ParentID == task.ParentID
+                    x.TaskItemID != task.TaskItemID
+                    && x.ListID == task.ListID
+                    && x.ParentID == task.ParentID
                     && x.Order == task.Order - 1);
 
                 prev.Order += 1;
                 task.Order -= 1;
 
                 DB.SaveChanges();
+                
 
                 return true;
             }
@@ -282,13 +290,18 @@ namespace ToDo.Client
                     return false;
 
                 TaskItem next = DB.Tasks.FirstOrDefault(x =>
-                    x.Order == task.Order + 1
+                    x.TaskItemID != task.TaskItemID
+                    && x.ListID == task.ListID
+                    && x.Order == task.Order + 1
                     && x.ParentID == task.ParentID
                     );
+
                 next.Order -= 1;
                 task.Order += 1;
 
                 DB.SaveChanges();
+                
+                //RenumberTasks(task.ListID, task.ParentID);
 
                 return true;
             }
@@ -369,7 +382,7 @@ namespace ToDo.Client
                         oldParentId);
 
                     Workspace.API.RenumberTasks(listId,
-                        existing.ListID);
+                        existing.ParentID);
                 }
 
                 SetCompleted(existing, completed);
