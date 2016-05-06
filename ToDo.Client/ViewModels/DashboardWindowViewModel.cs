@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -23,30 +24,39 @@ namespace ToDo.Client.ViewModels
 
         private CollectionViewSource tasksViewSource;
         private ObservableCollection<TaskItemViewModel> tasks = new ObservableCollection<TaskItemViewModel>();
-        
+
+        private ObservableCollection<TaskItemViewModel> quickList = new ObservableCollection<TaskItemViewModel>();
+        private CollectionViewSource quickListSource;
+
         public DashboardWindowViewModel(Window window)
         {
             this.window = window;
 
             listsViewSource = new CollectionViewSource();
             listsViewSource.Source = lists;
-            
+
             tasksViewSource = new CollectionViewSource();
             tasksViewSource.Source = tasks;
             tasksViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
             //tasksViewSource.SortDescriptions.Add(new SortDescription("IsComplete", ListSortDirection.Ascending));
 
+            quickListSource = new CollectionViewSource();
+            quickListSource.Source = quickList;
+
             SelectedListOrder = Alphabetical;
+            SelectedQuickListType = ComingDue;
+
 
             ReloadLists();
             UpdateStats();
+
+            quickListSource = new CollectionViewSource();
+            quickListSource.Source = quickList;
 
             TasksUpdateTimer.OnTasksUpdated += TasksUpdateTimer_OnTasksUpdated;
             TasksUpdateTimer.UpdateTasks();
             TasksUpdateTimer.StartTimer();
         }
-
-        
 
         private void TasksUpdateTimer_OnTasksUpdated()
         {
@@ -60,7 +70,6 @@ namespace ToDo.Client.ViewModels
                 l.Update();
             }
         }
-
 
         #region Lists
 
@@ -151,7 +160,7 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        
+
         public ICollectionView Lists
         {
             get
@@ -224,8 +233,7 @@ namespace ToDo.Client.ViewModels
 
         #endregion
 
-        #region Tasks
-        
+        #region Tasks      
         public ICollectionView Tasks
         {
             get
@@ -244,7 +252,7 @@ namespace ToDo.Client.ViewModels
 
         private TaskItemViewModel selectedTaskViewModel;
 
-        
+
         public TaskItemViewModel SelectedTaskViewModel
         {
             get { return selectedTaskViewModel; }
@@ -296,8 +304,7 @@ namespace ToDo.Client.ViewModels
 
             if (!window.Cancelled)
             {
-                LoadTasks();
-                RefreshListsView();
+                TasksChanged();
             }
         }
 
@@ -319,8 +326,7 @@ namespace ToDo.Client.ViewModels
 
             if (!window.Cancelled)
             {
-                LoadTasks();
-                RefreshListsView();
+                TasksChanged();
             }
         }
 
@@ -342,10 +348,27 @@ namespace ToDo.Client.ViewModels
 
             if (!window.Cancelled)
             {
-                LoadTasks();
-                RefreshListsView();
+                TasksChanged();
+
             }
 
+        }
+        /// <summary>
+        /// Updates all UI elements when a task is added, edited, or deleted
+        /// </summary>
+        private void TasksChanged()
+        {
+            LoadTasks();
+            RefreshListsView();
+            UpdateQuickList();
+            //RefreshQuickList();
+            UpdateStats();
+            
+        }
+
+        private void RefreshQuickList()
+        {
+            QuickListView.Refresh();
         }
 
         private void LoadTasks()
@@ -356,32 +379,13 @@ namespace ToDo.Client.ViewModels
             int? prevTask = SelectedTask == null ? null : (int?)SelectedTask.TaskItemID;
 
             Workspace.API.LoadList(SelectedList.Data.TaskListID, tasks, prevTask);
-            
+
 
             SelectedList.Update();
 
-            UpdateStats();
-
         }
 
-        public int TotalCompleted { get; private set; }
-        public int TotalRemaining { get; private set; }
-        public int TotalOverdue { get; private set; }
-
-
-        private void UpdateStats()
-        {
-            Stats stats = Workspace.API.GetStats();
-            TotalCompleted = stats.Completed;
-            TotalRemaining = stats.Remaining;
-            TotalOverdue = stats.Overdue;
-
-            RaisePropertyChanged("TotalCompleted");
-            RaisePropertyChanged("TotalRemaining");
-            RaisePropertyChanged("TotalOverdue");
-        }
-
-        private bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
+        private bool ExpandAndSelect(IEnumerable<TaskItemViewModel> tasks, int id)
         {
             foreach (var t in tasks)
             {
@@ -395,11 +399,12 @@ namespace ToDo.Client.ViewModels
                         parent = parent.Parent;
                     }
 
+                    t.Selected = true;
                     return true;
                 }
                 else if (t.Children != null)
                 {
-                    bool expanded = Expand(t.Children, id);
+                    bool expanded = ExpandAndSelect(t.Children, id);
                     if (expanded)
                         return true;
                 }
@@ -423,8 +428,8 @@ namespace ToDo.Client.ViewModels
                 if (SelectedTask != null && SelectedTask.Completed == null)
                 {
                     Workspace.API.MarkCompleted(SelectedTask, DateTime.Today);
-                    
-                    LoadTasks();
+
+                    TasksChanged();
                 }
             }
             catch (Exception e)
@@ -453,17 +458,17 @@ namespace ToDo.Client.ViewModels
                     return;
 
                 var parent = SelectedTask.Parent;
-
-                /*
-                FIXME: Needs to be changed to ViewModel
-                if (parent != null)
-                    SelectedTask = parent;
-                */
+                int? pid = parent == null ? null : (int?)parent.TaskItemID;
 
                 Workspace.API.DeleteTask(SelectedTask);
 
-                LoadTasks();
+                //LoadTasks();
+                TasksChanged();
 
+                if (pid != null)
+                    ExpandAndSelect(tasks, pid.Value);
+
+                //Need to update list as well
                 RefreshListsView();
             }
             catch (Exception e)
@@ -507,9 +512,6 @@ namespace ToDo.Client.ViewModels
 
         #endregion
 
-        //#region Task Details
-
-
         #region Misc
 
         public ICommand ChangeDBCommand
@@ -537,12 +539,182 @@ namespace ToDo.Client.ViewModels
                 return new CommandHelper(ShowExportImportWindow);
             }
         }
-        
+
         private void ShowExportImportWindow()
         {
             var dlg = new ExportImportWindow();
             dlg.ShowDialog();
         }
+
+        #endregion
+
+
+        #region Stats
+        public int TotalCompleted { get; private set; }
+        public int TotalRemaining { get; private set; }
+        public int TotalOverdue { get; private set; }
+
+        private void UpdateStats()
+        {
+            Stats stats = Workspace.API.GetStats();
+            TotalCompleted = stats.Completed;
+            TotalRemaining = stats.Remaining;
+            TotalOverdue = stats.Overdue;
+
+            RaisePropertyChanged("TotalCompleted");
+            RaisePropertyChanged("TotalRemaining");
+            RaisePropertyChanged("TotalOverdue");
+        }
+
+        #endregion
+
+        #region QuickList
+
+        private const string Repeating = "Repeating";
+        private const string ComingDue = "Coming Due";
+        private const string Completed = "Completed";
+
+        private static readonly List<string> quickLists = new List<string>()
+        {
+            ComingDue,
+            Completed,
+            Repeating
+        };
+
+        public List<string> QuickLists
+        {
+            get { return quickLists; }
+        }
+
+        private string selectedQuickListType;
+        public string SelectedQuickListType
+        {
+            get { return selectedQuickListType; }
+            set
+            {
+                if (value != selectedQuickListType)
+                {
+                    selectedQuickListType = value;
+                    RaisePropertyChanged();
+
+                    UpdateQuickList();
+                }
+            }
+        }
+
+        public ICollectionView QuickListView
+        {
+            get
+            {
+                return quickListSource.View;
+            }
+        }
+
+        private void UpdateQuickList()
+        {
+            quickList.Clear();
+
+            IEnumerable<TaskItem> query = null;
+
+            switch (SelectedQuickListType)
+            {
+                case ComingDue:
+                    query = from i in Workspace.Instance.Tasks
+                            where i.DueDate != null
+                            && i.DueDate < DateTime.Today.AddDays(7)
+                            && i.Completed == null
+                            orderby i.DueDate ascending
+                            select i;
+                    break;
+                case Completed:
+                    query = from i in Workspace.Instance.Tasks
+                            where i.Completed != null
+                            orderby i.Completed descending
+                            select i;
+                    break;
+                case Repeating:
+                    query = from i in Workspace.Instance.Tasks
+                            where i.Frequency != TaskFrequency.No
+                            orderby (int) i.Frequency ascending
+                            select i;
+                    break;
+                default:
+                    break;
+            }
+
+            if (query != null)
+            {
+                foreach (var i in query.ToList())
+                    quickList.Add(new TaskItemViewModel(i));
+            }
+
+            QuickListView.Refresh();
+
+        }
+
+
+        private TaskItemViewModel selectedQuickListItem;
+        public TaskItemViewModel SelectedQuickListItem
+        {
+            get { return selectedQuickListItem; }
+            set
+            {
+                selectedQuickListItem = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand SelectInTasksCommand
+        {
+            get { return new CommandHelper(SelectInTask); }
+        }
+
+        private void SelectInTask()
+        {
+            if (SelectedQuickListItem == null)
+                return;
+
+            var item = SelectedQuickListItem.Data;
+            Thread th = new Thread(() =>
+            {
+                DoSelect(item.ListID, item.TaskItemID);
+            });
+
+            th.Start();
+        }
+
+        private void DoSelect(int listId, int taskId)
+        {
+            var disp = App.Current.Dispatcher;
+
+            var list = lists.FirstOrDefault(x => x.Data.TaskListID == listId);
+            if (list == null)
+                return;
+
+            disp.Invoke(() => SelectedList = list);
+
+            int tries = 0;
+            while (tries < 10)
+            {
+                Thread.Sleep(100);
+
+                var task = tasks.FirstOrDefault();
+
+                if (task != null && task.Data.ListID == listId)
+                {
+                    disp.Invoke(() =>
+                        {
+                            ExpandAndSelect(tasks, taskId);
+                            //task.Selected = true;
+                        }
+                    );
+                    break;
+                }
+
+                tries++;
+            }
+        }
+
 
         #endregion
     }
