@@ -100,6 +100,7 @@
                 </StackPanel>
 
                 <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          HorizontalContentAlignment="Stretch"
                          ItemsSource="{Binding CommentsView}" SelectedItem="{Binding SelectedComment}">
                     <ListBox.ItemTemplate>

@@ -18,7 +18,9 @@
             <Label Content="{Binding Created}"/>
         </StackPanel>
 
-        <TextBox Grid.Row="1" Margin="5" Style="{Binding Multiline}" Text="{Binding Comment}" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+        <TextBox Grid.Row="1" Margin="5" Style="{Binding Multiline}" Text="{Binding Comment}" 
+                 TextWrapping="Wrap"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Command="{Binding SaveCommand}" Content="{Binding SaveText, FallbackValue=Save}"/>

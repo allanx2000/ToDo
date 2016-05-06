@@ -71,21 +71,23 @@
                 <DockPanel HorizontalAlignment="Stretch">
                     <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
                         <Label>Type:</Label>
-                        <ComboBox Width="200" HorizontalAlignment="Left" ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickList}"/>
+                        <ComboBox Width="200" HorizontalAlignment="Left" 
+                                  ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickListType}"/>
                     </StackPanel>
 
                     <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
                         <Button>Edit</Button>
                         <Button>Mark Completed</Button>
-                        <Button>Select in Tasks</Button>
+                        <Button Command="{Binding SelectInTasksCommand}">Select in Tasks</Button>
                     </StackPanel>
                 </DockPanel>
 
                 <!--TODO: Need separate style-->
                 <ListBox Grid.Row="1"
-                        ItemsSource="{Binding QuickList}"
+                        ItemsSource="{Binding QuickListView}"
+                        SelectedItem="{Binding SelectedQuickListItem}"
+                        DisplayMemberPath="Name"
                         >
-
                 </ListBox>
 
             </Grid>
