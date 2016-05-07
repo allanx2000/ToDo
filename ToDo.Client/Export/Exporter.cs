@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using ToDo.Client.Core;
 using ToDo.Client.Core.Lists;
 using ToDo.Client.Core.Tasks;
 
@@ -15,6 +16,7 @@ namespace ToDo.Client.Export
         [Serializable]
         public class Bundle
         {
+            public List<Comment> Comments { get; set; }
             public List<TaskList> Lists { get; set; }
             public List<TaskLog> Log { get; set; }
             public List<TaskItem> Tasks { get; set; }
@@ -26,7 +28,8 @@ namespace ToDo.Client.Export
             {
                 Lists = Workspace.Instance.Lists.ToList(),
                 Log = Workspace.Instance.TasksLog.ToList(),
-                Tasks = Workspace.Instance.Tasks.ToList()
+                Tasks = Workspace.Instance.Tasks.ToList(),
+                Comments = Workspace.Instance.Comments.ToList()
             };
 
             XmlSerializer xser = GetSerializer();
@@ -83,9 +86,7 @@ namespace ToDo.Client.Export
 
             //Tasks
             Dictionary<int, int> tasks = new Dictionary<int, int>();
-
-            //TODO: Verify
-
+            
             List<TaskItem> sortedTasks = new List<TaskItem>();
             var tmp = from t in bundle.Tasks
                       where t.ParentID == null
@@ -121,6 +122,7 @@ namespace ToDo.Client.Export
                 }
             }
 
+            //Logs
             foreach (var l in bundle.Log)
             {
                 l.TaskID = tasks[l.TaskID];
@@ -134,6 +136,21 @@ namespace ToDo.Client.Export
                     DB.TasksLog.Add(l);
                 }
             }
+
+            //Comments
+            foreach (var c in bundle.Comments)
+            {
+                c.OwnerId = tasks[c.OwnerId];               
+                var existing = DB.Comments.FirstOrDefault(x =>
+                    x.OwnerId == c.OwnerId
+                    && x.Text == c.Text);
+
+                if (existing == null)
+                {
+                    DB.Comments.Add(c);
+                }
+            }
+
         }
     }
 }

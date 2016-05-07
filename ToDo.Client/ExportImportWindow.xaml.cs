@@ -17,5 +17,7 @@ namespace ToDo.Client
             vm = new ExportImportViewModel(this);
             this.DataContext = vm;
         }
+
+        public bool NeedsRefresh { get { return vm.NeedsReload; } }
     }
 }

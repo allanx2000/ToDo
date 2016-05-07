@@ -143,7 +143,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return Data.Frequency == null ? "No" : Data.Frequency.ToString();
+                return Data.Frequency.ToString(); // == null ? "No" : Data.Frequency.ToString();
             }
         }
 

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using ToDo.Client.Core.Tasks;
@@ -280,11 +281,12 @@ namespace ToDo.Client.ViewModels
             }*/
 
         }
-
+        /* Not needed
         private void UpdateDetails()
         {
             //throw new NotImplementedException();
         }
+        */
 
         public ICommand AddSubTaskCommand
         {
@@ -312,16 +314,16 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return new CommandHelper(EditTask);
+                return new CommandHelper(() =>EditTask(SelectedTask));
             }
         }
 
-        private void EditTask()
+        private void EditTask(TaskItem task)
         {
-            if (SelectedTask == null)
+            if (task == null)
                 return;
 
-            var window = new EditTaskWindow(SelectedTask); //TODO: Check if filled
+            var window = new EditTaskWindow(task); //TODO: Check if filled
             window.ShowDialog();
 
             if (!window.Cancelled)
@@ -417,17 +419,17 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return new CommandHelper(MarkCompleted);
+                return new CommandHelper(() =>MarkCompleted(SelectedTask));
             }
         }
 
-        public void MarkCompleted()
+        private void MarkCompleted(TaskItem task)
         {
             try
             {
-                if (SelectedTask != null && SelectedTask.Completed == null)
+                if (task != null && task.Completed == null)
                 {
-                    Workspace.API.MarkCompleted(SelectedTask, DateTime.Today);
+                    Workspace.API.MarkCompleted(task, DateTime.Today);
 
                     TasksChanged();
                 }
@@ -544,6 +546,12 @@ namespace ToDo.Client.ViewModels
         {
             var dlg = new ExportImportWindow();
             dlg.ShowDialog();
+
+            if (dlg.NeedsRefresh)
+            {
+                ReloadLists();
+                TasksChanged();
+            }
         }
 
         #endregion
@@ -609,7 +617,7 @@ namespace ToDo.Client.ViewModels
                 return quickListSource.View;
             }
         }
-
+        
         private void UpdateQuickList()
         {
             quickList.Clear();
@@ -621,9 +629,9 @@ namespace ToDo.Client.ViewModels
                 case ComingDue:
                     query = from i in Workspace.Instance.Tasks
                             where i.DueDate != null
-                            && i.DueDate < DateTime.Today.AddDays(7)
+                            //&& i.DueDate < DateTime.Today.AddDays(7)
                             && i.Completed == null
-                            orderby i.DueDate ascending
+                            orderby i.DueDate ascending, i.Title ascending
                             select i;
                     break;
                 case Completed:
@@ -661,6 +669,35 @@ namespace ToDo.Client.ViewModels
             {
                 selectedQuickListItem = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public ICommand EditQuickListItemCommand
+        {
+            get
+            {
+                return new CommandHelper(() =>
+                {
+                    TaskItem item = GetSelectedQuickListTaskItem();
+                    EditTask(item);
+                });
+            }
+        }
+
+        private TaskItem GetSelectedQuickListTaskItem()
+        {
+            return SelectedQuickListItem == null ? null : SelectedQuickListItem.Data;
+        }
+
+        public ICommand MarkQuickListItemCompletedCommand
+        {
+            get
+            {
+                return new CommandHelper(() =>
+                {
+                    TaskItem item = GetSelectedQuickListTaskItem();
+                    MarkCompleted(item);
+                });
             }
         }
 
@@ -714,8 +751,6 @@ namespace ToDo.Client.ViewModels
                 tries++;
             }
         }
-
-
         #endregion
     }
 }

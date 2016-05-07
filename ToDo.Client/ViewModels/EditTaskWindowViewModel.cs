@@ -146,7 +146,7 @@ namespace ToDo.Client.ViewModels
         }
 
 
-        private string selectedFrequency;
+        private string selectedFrequency = TaskFrequency.No.ToString();
         public string SelectedFrequency
         {
             get { return selectedFrequency; }
@@ -209,8 +209,8 @@ namespace ToDo.Client.ViewModels
 
                 if (hasDueDate == false)
                     DueDate = null;
-                else
-                    dueDate = DateTime.Today;
+                else if (DueDate == null) //VM initialization may be out of order, set date before this.
+                    DueDate = DateTime.Today.AddDays(1);
 
                 RaisePropertyChanged();
             }

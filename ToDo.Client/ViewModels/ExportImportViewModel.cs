@@ -15,7 +15,12 @@ namespace ToDo.Client.ViewModels
         public ExportImportViewModel(Window window)
         {
             this.window = window;
+
+            NeedsReload = false;
         }
+
+        //Needs to reload lists and tasks
+        public bool NeedsReload { get; private set; }
 
         #region Export
         private string exportPath;
@@ -66,7 +71,7 @@ namespace ToDo.Client.ViewModels
 
                 EXP.Export(ExportPath);
                 
-                MessageBoxFactory.ShowInfo("Database exported to: " + ExportPath, "Exported");
+                MessageBoxFactory.ShowInfo("Database exported to: " + ExportPath, "Exported");                
             }
             catch (Exception e)
             {
@@ -128,6 +133,7 @@ namespace ToDo.Client.ViewModels
                 
                 MessageBoxFactory.ShowInfo("Database has been imported.", "Imported");
 
+                NeedsReload = true;
             }
             catch (Exception e)
             {
@@ -149,7 +155,14 @@ namespace ToDo.Client.ViewModels
         {
             if (MessageBoxFactory.ShowConfirmAsBool("Are you sure you want to clear the database?", "Confirm Clear Database", MessageBoxImage.Exclamation))
             {
-                //TODO: Implement?
+                var DB = Workspace.Instance;
+
+                DB.Comments.RemoveRange(DB.Comments);
+                DB.Lists.RemoveRange(DB.Lists);
+                DB.Tasks.RemoveRange(DB.Tasks);
+                DB.TasksLog.RemoveRange(DB.TasksLog);
+
+                NeedsReload = true;
             }
         }
     }

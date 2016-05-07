@@ -7,6 +7,44 @@
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
         Title="ToDo" Height="850" MinHeight="850" Width="900" Unloaded="Window_Unloaded">
+    <Window.Resources>
+        
+        <DataTemplate x:Key="comingDue">
+            <DockPanel>            
+                <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
+                <Label DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="completed">
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
+                <Label DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding CompletedDate}"/>
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="repeating">
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
+                <Label DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding FrequencyText}"/>
+            </DockPanel>
+        </DataTemplate>
+
+
+        <Style x:Key="QuickListSelector" TargetType="{x:Type ListBox}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding SelectedQuickListType}" Value="Coming Due">
+                    <Setter Property="ItemTemplate" Value="{StaticResource comingDue}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding SelectedQuickListType}" Value="Completed">
+                    <Setter Property="ItemTemplate" Value="{StaticResource completed}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding SelectedQuickListType}" Value="Repeating">
+                    <Setter Property="ItemTemplate" Value="{StaticResource repeating}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="Styles.xaml"/>
@@ -74,16 +112,19 @@
                         <ComboBox Width="200" HorizontalAlignment="Left" 
                                   ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickListType}"/>
                     </StackPanel>
-
+                    
                     <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button>Edit</Button>
-                        <Button>Mark Completed</Button>
                         <Button Command="{Binding SelectInTasksCommand}">Select in Tasks</Button>
+                        <Label Width="30"/>
+                        <Button Command="{Binding EditQuickListItemCommand}">Edit</Button>
+                        <Button Command="{Binding MarkQuickListItemCompletedCommand}">Mark Completed</Button>
                     </StackPanel>
                 </DockPanel>
 
                 <!--TODO: Need separate style-->
                 <ListBox Grid.Row="1"
+                         HorizontalContentAlignment="Stretch"
+                        Style="{StaticResource QuickListSelector}"
                         ItemsSource="{Binding QuickListView}"
                         SelectedItem="{Binding SelectedQuickListItem}"
                         DisplayMemberPath="Name"
@@ -160,7 +201,7 @@
                                 <Setter Property="Margin" Value="5"/>
                             </Style>
                         </StackPanel.Resources>
-                        <Label FontWeight="Bold" >New...</Label>
+                        <Label FontWeight="Bold" HorizontalAlignment="Center" >New...</Label>
                         <Button Command="{Binding AddTaskCommand}">Task</Button>
                         <Button Command="{Binding AddSubTaskCommand}">Subtask</Button>
                         <Separator/>
