@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
         mc:Ignorable="d"
-        Title="{Binding Title, FallbackValue='Edit Task'}" Height="650" Width="600">
+        Title="{Binding Title, FallbackValue='Edit Task'}" Height="600" Width="600">
     <Grid>
         <Grid.Resources>
             <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
@@ -26,39 +26,52 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="150"/> <!-- Description -->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="150"/>
+            <!-- Description -->
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/> <!-- Comments -->
+            <RowDefinition Height="17*"/>
+            <!-- Comments -->
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Label Style="{StaticResource GridField}" Grid.Row="0" Grid.Column="0">Name:</Label>
-        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}"/>
+        <Label Grid.Row="0" Grid.Column="0"  Style="{StaticResource GridField}">List:</Label>
+        <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" 
+                  DisplayMemberPath="Title" Width="200" HorizontalAlignment="Left"/>
 
-        <Label Style="{StaticResource GridField}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Top">Details:</Label>
-        <TextBox  Grid.Row="1" Grid.Column="1"
+        <Label Style="{StaticResource GridField}" Grid.Row="1" Grid.Column="0">Name:</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name}"/>
+
+        <Label Style="{StaticResource GridField}" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top">Details:</Label>
+        <TextBox  Grid.Row="2" Grid.Column="1"
                   Text="{Binding Details}" AcceptsReturn="True" 
                   Style="{StaticResource MultilineTextBox}"
                   Margin="5"
                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  />
 
-        <Label Grid.Row="2" Grid.Column="0" HorizontalAlignment="Right" >Parent:</Label>
+        <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" >Parent:</Label>
         <!--Style="{Binding GridField}"-->
-        <DockPanel LastChildFill="True" Grid.Row="2" Grid.Column="1">
+        <DockPanel LastChildFill="True" Grid.Row="3" Grid.Column="1">
             <Button DockPanel.Dock="Right" Command="{Binding SelectParentCommand}">Select...</Button>
             <Label Content="{Binding ParentText, FallbackValue=Parent}"/>
         </DockPanel>
 
-        <Label Style="{StaticResource GridField}" Grid.Row="3" Grid.Column="0" >Priority:</Label>
+        <Label Style="{StaticResource GridField}" Grid.Row="4" Grid.Column="0" >Priority:</Label>
+        <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="1" >
+            <Slider Width="150" TickFrequency="1" TickPlacement="Both" Minimum="1" Maximum="5" Value="{Binding Priority}"/>
+            <Label Content="{Binding Priority}" />
+        </StackPanel>
+        <!--
         <ComboBox Grid.Row="3" Grid.Column="1" Width="100" HorizontalAlignment="Left"
                   SelectedItem="{Binding Priority}" ItemsSource="{Binding Priorities}"/>
+        -->
 
-        <Grid Grid.Row="4" Grid.Column="1">
+        <Grid Grid.Row="5" Grid.Column="1">
             <Grid.Resources>
                 <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
                     <Setter Property="Width" Value="80"/>
@@ -79,18 +92,18 @@
                         Orientation="Horizontal">
                 <CheckBox IsChecked="{Binding HasDueDate}">Due Date</CheckBox>
                 <DatePicker HorizontalAlignment="Left" SelectedDate="{Binding DueDate}" IsEnabled="{Binding HasDueDate}" />
-                
-                <Label>Repeat: </Label>
+
+                <Label>Repeat:</Label>
                 <ComboBox  HorizontalAlignment="Left" Width="120" IsEnabled="{Binding HasDueDate}" ItemsSource="{Binding Frequencies}" SelectedItem="{Binding SelectedFrequency}"/>
             </StackPanel>
-            
+
             <CheckBox Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" IsChecked="{Binding HasCompleted}">Completed</CheckBox>
             <DatePicker Grid.Row="2" Grid.Column="1" IsEnabled="{Binding HasCompleted}" SelectedDate="{Binding Completed}"/>
 
         </Grid>
 
 
-        <GroupBox Grid.Row="7" Grid.ColumnSpan="2" Header="Comments">
+        <GroupBox Grid.Row="6" Grid.ColumnSpan="2" Header="Comments">
             <DockPanel LastChildFill="True">
                 <StackPanel VerticalAlignment="Center" DockPanel.Dock="Right">
                     <Button Command="{Binding NewCommentCommand}">New</Button>
@@ -109,7 +122,7 @@
 
                                 <Label DockPanel.Dock="Bottom" HorizontalAlignment="Right"
                                        Content="{Binding Created}"/>
-                                
+
                                 <Label>
                                     <TextBlock TextWrapping="Wrap" Text="{Binding Text}"/>
                                 </Label>
@@ -120,12 +133,12 @@
 
             </DockPanel>
         </GroupBox>
-        
-        <StackPanel Grid.Row="8" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
+
+        <StackPanel Grid.Row="7" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Command="{Binding SaveCommand}">Save</Button>
             <Button Command="{Binding CancelCommand}">Cancel</Button>
         </StackPanel>
-        
+
 
     </Grid>
 </Window>

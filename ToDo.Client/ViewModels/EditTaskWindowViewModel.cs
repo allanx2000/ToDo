@@ -23,7 +23,39 @@ namespace ToDo.Client.ViewModels
         private TaskItem parent;
         private TaskItem existing;
 
-        private TaskList list;
+        private TaskList selectedList;
+        private TaskList originalList; //Used to track if changed
+        public TaskList SelectedList
+        {
+            get { return selectedList; }
+            set
+            {
+                if (originalList == null)
+                    originalList = value;
+
+                if (SelectedList != value)
+                {
+                    SetParent(null);
+
+                    selectedList = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private List<TaskList> lists;
+        public List<TaskList> Lists
+        {
+            get
+            {
+                if (lists == null)
+                {
+                    lists = Workspace.Instance.Lists.OrderBy(x => x.Title).ToList();
+                }
+
+                return lists;
+            }
+        }
 
         private Window window;
 
@@ -53,7 +85,7 @@ namespace ToDo.Client.ViewModels
         public EditTaskWindowViewModel(Window window, TaskList list)
         {
             Initialize(window);
-            this.list = list;
+            this.selectedList = list;
         }
 
         public void SetParent(TaskItem parent)
@@ -67,6 +99,8 @@ namespace ToDo.Client.ViewModels
             existing = item;
             if (existing == null)
                 return;
+
+            SelectedList = existing.List;
             
             Name = existing.Title;
             Details = existing.Description;
@@ -175,22 +209,6 @@ namespace ToDo.Client.ViewModels
                 return frequencies;
             }
         }
-        /*
-        private bool hasRepeat;
-        public bool HasRepeat
-        {
-            get { return hasRepeat; }
-            set
-            {
-                hasRepeat = value;
-
-                if (!hasRepeat)
-                    SelectedFrequency = null;
-
-                RaisePropertyChanged();
-            }
-        }
-        */
 
         #endregion
 
@@ -422,7 +440,7 @@ namespace ToDo.Client.ViewModels
 
         private void SelectParent()
         {
-            int listId = existing == null ? list.TaskListID : existing.ListID;
+            int listId = selectedList.TaskListID;
             int? currentTaskId = existing == null ? null : (int?)existing.TaskItemID;
 
             var window = new ParentSelectWindow(listId, currentTaskId);
@@ -465,11 +483,12 @@ namespace ToDo.Client.ViewModels
                         existing.Order,
                         ConvertToFrequency(SelectedFrequency),
                         HasDueDate ? DueDate : null,
-                        HasCompleted ? Completed : null);
+                        HasCompleted ? Completed : null,
+                        SelectedList != originalList? SelectedList : null);
                 }
                 else
                 {
-                    Workspace.API.InsertTask(list, Name, Details, Priority, 
+                    Workspace.API.InsertTask(selectedList, Name, Details, Priority, 
                         comments,
                         parent,
                         ConvertToFrequency(SelectedFrequency),
@@ -520,52 +539,6 @@ namespace ToDo.Client.ViewModels
         }
         
         #endregion
-
-        /*
-        Moved to API
-        private void CheckName()
-        {
-            var sameName = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == Name);
-            if (sameName == null || (existing != null && sameName.TaskItemID == existing.TaskItemID))
-            {
-                //OK
-            }
-            else
-                throw new Exception("A task with the name already exists.");
-        }
-
-        private void ScheduleRepeat(TaskItem item)
-        {
-            item.Frequency = (TaskFrequency)Enum.Parse(typeof(TaskFrequency), SelectedFrequency);
-
-            bool dateChanged = StartDate != item.StartDate;
-            item.StartDate = StartDate;
-
-            if (dateChanged)
-                item.NextReminder = null;
-
-            if (item.NextReminder == null
-                || item.NextReminder.Value < startDate)
-            {
-                if (StartDate >= DateTime.Today)
-                    item.NextReminder = StartDate;
-                else
-                    item.NextReminder = Workspace.API.CalculateNextReminder(item.Frequency.Value, StartDate.Value);
-            }
-        }
         
-        private bool ParentChanged(TaskItem item, TaskItem parent)
-        {
-            if (item == null)
-                return false;
-            else if (item.Parent == null && parent == null)
-                return false;
-            else if (item.Parent != null && parent != null && item.ParentID == parent.TaskItemID)
-                return false;
-            else
-                return true;
-        }
-        */
-
     }
 }

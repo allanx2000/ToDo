@@ -349,8 +349,8 @@ namespace ToDo.Client
 
                 DB.SaveChanges();
             }
-
-            public static void UpdateTask(TaskItem existing, string title, string details, ICollection<Comment> comments, int? priority, TaskItem parent, int order, TaskFrequency frequency, DateTime? dueDate, DateTime? completed)
+            
+            public static void UpdateTask(TaskItem existing, string title, string details, ICollection<Comment> comments, int? priority, TaskItem parent, int order, TaskFrequency frequency, DateTime? dueDate, DateTime? completed, TaskList newList)
             {
                 ValidateTaskValues(title, priority, frequency, dueDate, existing.TaskItemID);
 
@@ -369,10 +369,10 @@ namespace ToDo.Client
                     existing.Parent = parent;
                 }
 
-                
-                Workspace.Instance.SaveChanges();
+                DB.SaveChanges(); //For Renumbering
 
                 //Impacts DB directly/immediately
+                bool listChanged = newList != null && newList.TaskListID != existing.ListID;
 
                 if (parentChanged)
                 {
@@ -380,8 +380,18 @@ namespace ToDo.Client
 
                     Workspace.API.RenumberTasks(listId,
                         oldParentId);
-
+                    
                     Workspace.API.RenumberTasks(listId,
+                        existing.ParentID); //This is now the new one
+                }
+
+                if (listChanged)
+                {
+                    existing.ListID = newList.TaskListID;
+
+                    DB.SaveChanges();
+
+                    Workspace.API.RenumberTasks(newList.TaskListID,
                         existing.ParentID);
                 }
 
@@ -393,6 +403,30 @@ namespace ToDo.Client
                     c.Owner = existing;
 
                 ProcessComments(existing.Comments, comments);
+
+                //Move Children
+                if (listChanged && existing.Children != null)
+                {
+                    SetList(existing, newList.TaskListID);
+                    
+                    DB.SaveChanges();
+                }
+                
+            }
+
+            /// <summary>
+            /// Sets the listID of all it's children
+            /// DOES NOT set the TaskListID on task
+            /// </summary>
+            /// <param name="task"></param>
+            /// <param name="taskListID"></param>
+            private static void SetList(TaskItem task, int taskListID)
+            {   
+                foreach (var c in task.Children)
+                {
+                    c.ListID = taskListID;
+                    SetList(c, taskListID);
+                }
             }
 
             /// <summary>
@@ -471,11 +505,17 @@ namespace ToDo.Client
                     Workspace.API.MarkIncomplete(task);
             }
 
+            /// <summary>
+            /// Sets the Frequency and DueDate on the task
+            /// </summary>
+            /// <param name="task"></param>
+            /// <param name="frequency"></param>
+            /// <param name="startDate"></param>
             private static void SetFrequency(TaskItem task, TaskFrequency frequency, DateTime? startDate)
             {
                 if (frequency != TaskFrequency.No && startDate != null)
                 {
-                    DateTime reminder = GetNextReminder(frequency, startDate.Value);
+                    DateTime reminder = GetNextReminder(frequency, startDate.Value.Date);
                     task.Frequency = frequency;
                     task.DueDate = reminder;
                 }
