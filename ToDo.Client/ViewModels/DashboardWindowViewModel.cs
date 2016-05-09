@@ -38,8 +38,8 @@ namespace ToDo.Client.ViewModels
 
             tasksViewSource = new CollectionViewSource();
             tasksViewSource.Source = tasks;
+            tasksViewSource.SortDescriptions.Add(new SortDescription("IsComplete", ListSortDirection.Ascending));
             tasksViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
-            //tasksViewSource.SortDescriptions.Add(new SortDescription("IsComplete", ListSortDirection.Ascending));
 
             quickListSource = new CollectionViewSource();
             quickListSource.Source = quickList;
@@ -61,6 +61,9 @@ namespace ToDo.Client.ViewModels
 
         private void TasksUpdateTimer_OnTasksUpdated()
         {
+            TasksChanged();
+
+            /*
             foreach (var t in tasks)
             {
                 t.RefreshViewModel();
@@ -69,7 +72,7 @@ namespace ToDo.Client.ViewModels
             foreach (var l in lists)
             {
                 l.Update();
-            }
+            }*/
         }
 
         #region Lists

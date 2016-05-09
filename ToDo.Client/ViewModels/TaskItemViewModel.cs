@@ -27,7 +27,7 @@ namespace ToDo.Client.ViewModels
             Complete = new Style(typeof(TextBlock));
             Complete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
             Complete.Setters.Add(new Setter(TextBlock.TextDecorationsProperty, TextDecorations.Strikethrough));
-            Complete.Setters.Add(new Setter(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.LightGray)));
+            Complete.Setters.Add(new Setter(TextBlock.ForegroundProperty, new SolidColorBrush(Colors.Gray)));
 
             Incomplete = new Style(typeof(TextBlock));
             Incomplete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
@@ -109,7 +109,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return Data.Order + ". " + data.Title;
+                return (Data.Completed != null? "" : Data.Order + ". ") + data.Title;
             }
         }
 

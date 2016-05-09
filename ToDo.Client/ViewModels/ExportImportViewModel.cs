@@ -165,5 +165,13 @@ namespace ToDo.Client.ViewModels
                 NeedsReload = true;
             }
         }
+
+        public ICommand CloseCommand
+        {
+            get
+            {
+                return new CommandHelper(() => window.Close());
+            }
+        }
     }
 }

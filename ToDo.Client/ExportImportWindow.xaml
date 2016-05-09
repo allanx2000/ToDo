@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
         mc:Ignorable="d"
-        Title="Export/Import Database" Height="288.096" Width="401.191">
+        Title="Export/Import Database" ResizeMode="NoResize" SizeToContent="Height" Width="420">
     <StackPanel>
         <GroupBox Header="Export">
             <Grid>
@@ -44,5 +44,7 @@
         <GroupBox Header="Other">
             <Button Command="{Binding ClearDatabaseCommand}">Clear Database</Button>
         </GroupBox>
+
+        <Button HorizontalAlignment="Center" Command="{Binding CloseCommand}">Close</Button>
     </StackPanel>
 </Window>

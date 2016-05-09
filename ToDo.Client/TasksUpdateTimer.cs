@@ -77,7 +77,8 @@ namespace ToDo.Client
 
                 var next = Workspace.API.CalculateNextReminder(t.Frequency, t.DueDate.Value);
                 t.DueDate = next;
-                t.Completed = null;
+
+                Workspace.API.MarkIncomplete(t);
             }
 
             Workspace.Instance.SaveChanges();

@@ -16,6 +16,8 @@ namespace ToDo.Client
     {
         public static class API
         {
+            public const int NullOrder = -1;
+
             public static Workspace DB
             {
                 get
@@ -106,37 +108,32 @@ namespace ToDo.Client
             {
                 task.Completed = null;
                 task.Updated = DateTime.Now;
+                task.Order = GetNextOrder(task.List, task.Parent);
                 Workspace.instance.SaveChanges();
             }
-            public static void MarkCompleted(TaskItem task, DateTime completed)
+
+            private static void DoMarkCompleted(TaskItem task, DateTime completed)
             {
                 task.Completed = completed;
                 task.Updated = DateTime.Now;
+                task.Order = NullOrder;
+
+                if (task.Children != null)
+                {
+                    foreach (var c in task.Children)
+                    {
+                        if (c.Completed == null)
+                            DoMarkCompleted(c, completed);
+                    }
+                }
+            }
+            public static void MarkCompleted(TaskItem task, DateTime dateTime)
+            {
+                DoMarkCompleted(task, dateTime);
+
                 Workspace.Instance.SaveChanges();
 
-                /*
-                Logic handled by DateRoll Updater
-
-                //TODO: Check for existing, update NextReminder?
-                if (task.Frequency != null)
-                {
-                    var last = CalculateLastReminder(task.Frequency.Value, task.NextReminder.Value);
-                    RemoveTaskLog(last, task.NextReminder.Value, task.TaskItemID);
-
-                    TaskLog log = new TaskLog()
-                    {
-                        Date = completed,
-                        TaskID = task.TaskItemID,
-                        Completed = true
-                    };
-
-                    Instance.TasksLog.Add(log);
-
-                    //task.NextReminder = Workspace.API.CalculateNextReminder(task.Frequency.Value, task.NextReminder.Value);
-
-                    Instance.SaveChanges();
-                }
-                */
+                RenumberTasks(task.ListID, task.ParentID);
             }
 
             public static TaskItem GetTaskItem(int itemId)
@@ -206,8 +203,24 @@ namespace ToDo.Client
 
             public static void RenumberTasks(int listId, int? parentId)
             {
-                ICollection<TaskItem> tasks = (from t in DB.Tasks
+                ICollection<TaskItem> tasks;
+                
+                //Null Completeds
+                tasks = (from t in DB.Tasks
+                                 where t.ParentID == parentId
+                                 && t.Completed != null
+                                 && t.ListID == listId
+                                 select t).ToList();
+                foreach (var t in tasks)
+                {
+                    t.Order = NullOrder;
+                }
+
+                //Renumber others
+
+                tasks = (from t in DB.Tasks
                                                    where t.ParentID == parentId
+                                                   && t.Completed == null
                                                    && t.ListID == listId
                                                    orderby t.Order ascending
                                                    select t).ToList();
@@ -250,10 +263,13 @@ namespace ToDo.Client
                 if (parent != null)
                     order = (from t in DB.Tasks
                              where t.ParentID == parent.TaskItemID
+                                 && t.ListID == list.TaskListID //Should not need...
+                                 && t.Completed == null
                              select t.Order).Max();
                 else
                     order = (from t in DB.Tasks
                              where t.ListID == list.TaskListID
+                                && t.Completed == null
                              select t.Order).Max();
                 return order + 1;
             }
@@ -262,19 +278,24 @@ namespace ToDo.Client
             public static bool MoveUp(TaskItem task)
             {
                 //For fixing ordering
-                //RenumberTasks(task.ListID, task.ParentID);
+                RenumberTasks(task.ListID, task.ParentID);
 
-                if (task == null || task.Order == 1)
+                if (task == null || task.Completed != null || task.Order == 1)
                     return false;
 
-                TaskItem prev = DB.Tasks.FirstOrDefault(x =>
-                    x.TaskItemID != task.TaskItemID
-                    && x.ListID == task.ListID
-                    && x.ParentID == task.ParentID
-                    && x.Order == task.Order - 1);
+                TaskItem prev = (from x in DB.Tasks
+                                 where x.TaskItemID != task.TaskItemID
+                                    && x.ListID == task.ListID
+                                    && x.ParentID == task.ParentID
+                                    && x.Order < task.Order
+                                    orderby x.Order descending
+                                    select x).FirstOrDefault();
+                if (prev == null)
+                    return false;
 
-                prev.Order += 1;
-                task.Order -= 1;
+                int tmp = prev.Order;
+                prev.Order = task.Order;
+                task.Order = tmp;
 
                 DB.SaveChanges();
                 
@@ -284,25 +305,31 @@ namespace ToDo.Client
 
             public static bool MoveDown(TaskItem task)
             {
-                if (task == null)
+                RenumberTasks(task.ListID, task.ParentID);
+
+                if (task == null || task.Completed != null)
                     return false;
                 else if (task.Order == GetNextOrder(task.List, task.Parent) - 1)
                     return false;
 
-                TaskItem next = DB.Tasks.FirstOrDefault(x =>
-                    x.TaskItemID != task.TaskItemID
-                    && x.ListID == task.ListID
-                    && x.Order == task.Order + 1
-                    && x.ParentID == task.ParentID
-                    );
+                TaskItem next = (from x in DB.Tasks
+                                 where x.TaskItemID != task.TaskItemID
+                                    && x.ListID == task.ListID
+                                    && x.Order > task.Order
+                                    && x.ParentID == task.ParentID
+                                 orderby x.Order ascending
+                                 select x).FirstOrDefault();
 
-                next.Order -= 1;
-                task.Order += 1;
+                if (next == null)
+                    return false;
+
+                int tmp = task.Order;
+                task.Order = next.Order;
+                next.Order = tmp;
 
                 DB.SaveChanges();
                 
-                //RenumberTasks(task.ListID, task.ParentID);
-
+                
                 return true;
             }
 
@@ -331,7 +358,7 @@ namespace ToDo.Client
                 item.Description = details;
                 item.Priority = priority.Value;
                 item.Parent = parent;
-                item.Order = Workspace.API.GetNextOrder(list, parent);
+                //item.Order = Workspace.API.GetNextOrder(list, parent);
                 //item.DueDate = dueDate;
                 item.Created = item.Updated = DateTime.Now;
                 SetFrequency(item, frequency, dueDate);
@@ -339,7 +366,8 @@ namespace ToDo.Client
                 Workspace.Instance.Tasks.Add(item);
                 Workspace.Instance.SaveChanges();
 
-                SetCompleted(item, completed);
+                //Will also set the order
+                SetCompletedAndOrder(item, completed);
 
                 foreach (var comment in comments)
                 {
@@ -365,7 +393,8 @@ namespace ToDo.Client
 
                 if (parentChanged)
                 {
-                    existing.Order = Workspace.API.GetNextOrder(existing.List, parent);
+                    //FIXME: Is bug? Set twice
+                    //existing.Order = Workspace.API.GetNextOrder(existing.List, parent);
                     existing.Parent = parent;
                 }
 
@@ -395,7 +424,7 @@ namespace ToDo.Client
                         existing.ParentID);
                 }
 
-                SetCompleted(existing, completed);
+                SetCompletedAndOrder(existing, completed);
 
                 //Process Comments
 
@@ -491,11 +520,11 @@ namespace ToDo.Client
             }
 
             /// <summary>
-            /// Marks the Task as completed. Affects DB and item directly
+            /// Marks the Task as completed and sets the Order appropriately. Affects DB and item directly.
             /// </summary>
             /// <param name="task"></param>
             /// <param name="completed"></param>
-            private static void SetCompleted(TaskItem task, DateTime? completed)
+            private static void SetCompletedAndOrder(TaskItem task, DateTime? completed)
             {
                 if (completed != null)
                 {

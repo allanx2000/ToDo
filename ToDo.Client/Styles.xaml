@@ -19,7 +19,7 @@
                 <TextBlock Style="{Binding TextStyle}" Text="{Binding DisplayName}"/>
             </Label>
             
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Visibility="{Binding IncompletedRow}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="120"/>
                     <ColumnDefinition Width="*" MinWidth="120"/>
@@ -42,7 +42,6 @@
                 </StackPanel>
                 
             </Grid>
-            
         </Grid>
     </HierarchicalDataTemplate>
 
