@@ -106,17 +106,40 @@ namespace ToDo.Client
 
             public static void MarkIncomplete(TaskItem task)
             {
-                task.Completed = null;
-                task.Updated = DateTime.Now;
-                task.Order = GetNextOrder(task.List, task.Parent);
+                DoMarkIncomplete(task);
+
                 Workspace.instance.SaveChanges();
+                //RenumberTasks(task.ListID, task.ParentID);
+            }
+
+            private static void DoMarkIncomplete(TaskItem task)
+            {
+                if (task.Completed == null)
+                {
+                    task.Completed = null;
+                    task.Updated = DateTime.Now;
+                    task.Order = GetNextOrder(task.List, task.Parent);
+                }
+                
+                /*
+                if (task.Children != null)
+                {
+                    foreach (var c in task.Children)
+                    {
+                        if (c.Completed == null)
+                            DoMarkCompleted(c, completed);
+                    }
+                }*/
             }
 
             private static void DoMarkCompleted(TaskItem task, DateTime completed)
             {
-                task.Completed = completed;
-                task.Updated = DateTime.Now;
-                task.Order = NullOrder;
+                if (task.Completed == null)
+                {
+                    task.Completed = completed;
+                    task.Updated = DateTime.Now;
+                    task.Order = NullOrder;
+                }
 
                 if (task.Children != null)
                 {
