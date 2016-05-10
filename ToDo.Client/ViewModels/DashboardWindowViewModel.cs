@@ -44,7 +44,7 @@ namespace ToDo.Client.ViewModels
             quickListSource = new CollectionViewSource();
             quickListSource.Source = quickList;
 
-            SelectedListOrder = Alphabetical;
+            SelectedListOrder = Remaining;
             SelectedQuickListType = ComingDue;
 
 
@@ -535,6 +535,21 @@ namespace ToDo.Client.ViewModels
             loader.Show();
 
             window.Close();
+        }
+
+        public ICommand LogsViewerCommand
+        {
+            get
+            {
+                return new CommandHelper(ShowLogsViewerWindow);
+            }
+        }
+
+        private void ShowLogsViewerWindow()
+        {
+            var window = new LogsViewerWindow();
+            window.ShowDialog();
+            
         }
 
         public ICommand ExportImportCommand

@@ -8,9 +8,9 @@
         mc:Ignorable="d"
         Title="ToDo" Height="850" MinHeight="850" Width="900" Unloaded="Window_Unloaded">
     <Window.Resources>
-        
+
         <DataTemplate x:Key="comingDue">
-            <DockPanel>            
+            <DockPanel>
                 <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
                 <Label DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
             </DockPanel>
@@ -68,8 +68,14 @@
                     <Setter Property="Padding" Value="5"/>
                 </Style>
             </Menu.Resources>
-            <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
-            <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
+            <MenuItem>
+                <MenuItem.Header>
+                    <TextBlock Width="40" Text="File" TextAlignment="Center" VerticalAlignment="Center"/>
+                </MenuItem.Header>
+                <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
+                <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
+            </MenuItem>
+            <MenuItem Header="Logs Viewer" Command="{Binding LogsViewerCommand}"/>
         </Menu>
 
         <GroupBox Grid.Row="1" Grid.Column="0" 
@@ -112,7 +118,7 @@
                         <ComboBox Width="200" HorizontalAlignment="Left" 
                                   ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickListType}"/>
                     </StackPanel>
-                    
+
                     <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
                         <Button Command="{Binding SelectInTasksCommand}">Select in Tasks</Button>
                         <Label Width="30"/>

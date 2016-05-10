@@ -114,27 +114,17 @@ namespace ToDo.Client
 
             private static void DoMarkIncomplete(TaskItem task)
             {
-                if (task.Completed == null)
+                if (task.Completed != null)
                 {
                     task.Completed = null;
                     task.Updated = DateTime.Now;
                     task.Order = GetNextOrder(task.List, task.Parent);
                 }
-                
-                /*
-                if (task.Children != null)
-                {
-                    foreach (var c in task.Children)
-                    {
-                        if (c.Completed == null)
-                            DoMarkCompleted(c, completed);
-                    }
-                }*/
             }
 
-            private static void DoMarkCompleted(TaskItem task, DateTime completed)
+            private static void DoMarkCompleted(TaskItem task, DateTime completed, bool first = false)
             {
-                if (task.Completed == null)
+                if (task.Completed == null || first)
                 {
                     task.Completed = completed;
                     task.Updated = DateTime.Now;
@@ -152,7 +142,7 @@ namespace ToDo.Client
             }
             public static void MarkCompleted(TaskItem task, DateTime dateTime)
             {
-                DoMarkCompleted(task, dateTime);
+                DoMarkCompleted(task, dateTime, true);
 
                 Workspace.Instance.SaveChanges();
 
@@ -420,9 +410,9 @@ namespace ToDo.Client
                     //existing.Order = Workspace.API.GetNextOrder(existing.List, parent);
                     existing.Parent = parent;
                 }
-
+                
                 DB.SaveChanges(); //For Renumbering
-
+                
                 //Impacts DB directly/immediately
                 bool listChanged = newList != null && newList.TaskListID != existing.ListID;
 
