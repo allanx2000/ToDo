@@ -161,6 +161,10 @@
       <DependentUpon>ExportImportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Export\Exporter.cs" />
+    <Compile Include="ViewModels\LogsViewerViewModel.cs" />
+    <Compile Include="LogsViewerWindow.xaml.cs">
+      <DependentUpon>LogsViewerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ParentSelectWindow.xaml.cs">
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
     </Compile>
@@ -215,6 +219,10 @@
       <DependentUpon>LoadWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="LogsViewerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ParentSelectWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
