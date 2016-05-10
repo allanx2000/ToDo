@@ -161,6 +161,7 @@
       <DependentUpon>ExportImportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Export\Exporter.cs" />
+    <Compile Include="ViewModels\DateStyleConverter.cs" />
     <Compile Include="ViewModels\LogsViewerViewModel.cs" />
     <Compile Include="LogsViewerWindow.xaml.cs">
       <DependentUpon>LogsViewerWindow.xaml</DependentUpon>

@@ -1,40 +1,15 @@
 ﻿using Innouvous.Utils.MVVM;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using ToDo.Client.Core.Tasks;
-using System.Globalization;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace ToDo.Client.ViewModels
 {
-    public class DateStyleConverter : IValueConverter
-    {
-        public static List<DateTime> Dates = new List<DateTime>();
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is DateTime)
-            {
-                DateTime dt = (DateTime) value;
-
-                if (Dates.Contains(dt))
-                    return FontWeights.ExtraBlack;
-            }
-
-            return FontWeights.Normal;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 
     public class LogsViewerViewModel : ViewModel
     {
@@ -143,8 +118,13 @@ namespace ToDo.Client.ViewModels
             {
                 var log = GetLog(SelectedTask.Data, SelectedDate.Value);
                 if (log != null)
+                {
                     YesSelected = log.Completed;
+                    return;
+                }
             }
+
+            YesSelected = false;
         }
 
         private TaskLog GetLog(TaskItem task, DateTime date)
@@ -154,6 +134,14 @@ namespace ToDo.Client.ViewModels
                                     && x.Date == date).FirstOrDefault();
 
             return log;
+        }
+
+        public ICommand CloseCommand
+        {
+            get
+            {
+                return new CommandHelper(() => window.Close());
+            }
         }
     }
 }

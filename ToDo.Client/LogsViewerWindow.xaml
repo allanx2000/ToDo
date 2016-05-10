@@ -8,7 +8,7 @@
         xmlns:converter ="clr-namespace:ToDo.Client.ViewModels"
 Title="LogsViewerWindow" SizeToContent="Height" ResizeMode="NoResize" Width="700">
     <Window.Resources>
-        <converter:DateStyleConverter x:Key="DateConvertor"/>
+        <converter:DateStyleConverter x:Key="DateConverter"/>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -22,7 +22,25 @@ Title="LogsViewerWindow" SizeToContent="Height" ResizeMode="NoResize" Width="700
         </Grid.ColumnDefinitions>
 
         <GroupBox Header="Tasks" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
-            <ListBox ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}"/>
+            <ListBox ItemsSource="{Binding Tasks}" SelectedItem="{Binding SelectedTask}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <Label FontWeight="Bold" Content="{Binding Name}"/>
+                            <StackPanel Orientation="Horizontal">
+                                <Label FontWeight="Bold">List: </Label>
+                                <Label Width="80">
+                                    <TextBlock Text="{Binding Path=Data.List.Title}"/>
+                                </Label>
+
+                                <Label FontWeight="Bold">Repeats: </Label>
+                                <Label Content="{Binding FrequencyText}" />
+                            </StackPanel>
+
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </GroupBox>
 
         <Grid Grid.Row="1" Grid.Column="1" Margin="10">
@@ -36,15 +54,16 @@ Title="LogsViewerWindow" SizeToContent="Height" ResizeMode="NoResize" Width="700
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
-            <Calendar Grid.Row="1" Grid.Column="0" Name="Calendar" SelectedDate="{Binding SelectedDate}" SelectionMode="SingleDate">
+            
+            <!--CalendarDayButtonStyle="{Binding Converter={StaticResource DateConvertor}}"-->
+            <Calendar Grid.Row="1" Grid.Column="0" Name="Calendar" 
+                      SelectedDate="{Binding SelectedDate}" SelectionMode="SingleDate">
                 <Calendar.CalendarDayButtonStyle>
                     <Style TargetType="CalendarDayButton">
-                        <Setter Property="FontWeight" Value="{Binding Converter={StaticResource DateConvertor}}"/>
-                        
+                        <Setter Property="FontWeight" Value="{Binding Converter={StaticResource DateConverter}, ConverterParameter=FontWeight}"/>
+                        <Setter Property="Background" Value="{Binding Converter={StaticResource DateConverter}, ConverterParameter=Color}"/>
                     </Style>
                 </Calendar.CalendarDayButtonStyle>
-                
             </Calendar>
 
             <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
@@ -60,7 +79,8 @@ Title="LogsViewerWindow" SizeToContent="Height" ResizeMode="NoResize" Width="700
                 </Button>
             </StackPanel>
 
-            <Button Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0 25 0 10">Close</Button>
+            <Button Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Center" Margin="0 25 0 10"
+                    Command="{Binding CloseCommand}">Close</Button>
         </Grid>
     </Grid>
 </Window>
