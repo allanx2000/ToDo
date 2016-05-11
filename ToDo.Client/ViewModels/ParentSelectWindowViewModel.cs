@@ -29,7 +29,8 @@ namespace ToDo.Client.ViewModels
 
             viewsource = new CollectionViewSource();
             viewsource.Source = tasks;
-            viewsource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
+            //viewsource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
+            SortDescriptions.SetSortDescription(viewsource.SortDescriptions, SortDescriptions.TaskItemsOrder);
 
             Workspace.API.LoadList(listId, tasks, currentTaskId);
             

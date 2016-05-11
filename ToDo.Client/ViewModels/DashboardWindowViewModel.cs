@@ -38,8 +38,7 @@ namespace ToDo.Client.ViewModels
 
             tasksViewSource = new CollectionViewSource();
             tasksViewSource.Source = tasks;
-            tasksViewSource.SortDescriptions.Add(new SortDescription("IsComplete", ListSortDirection.Ascending));
-            tasksViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
+            SortDescriptions.SetSortDescription(tasksViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
 
             quickListSource = new CollectionViewSource();
             quickListSource.Source = quickList;

@@ -175,6 +175,7 @@
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\ExportImportViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
+    <Compile Include="ViewModels\SortDescriptions.cs" />
     <Compile Include="ViewModels\Stats.cs" />
     <Compile Include="ViewModels\TaskItemViewModel.cs" />
     <Compile Include="ViewModels\TaskListViewModel.cs" />

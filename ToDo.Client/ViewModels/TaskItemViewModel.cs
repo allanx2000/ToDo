@@ -18,9 +18,10 @@ namespace ToDo.Client.ViewModels
     {
         private static Style Complete, Incomplete;
 
+
         static TaskItemViewModel()
         {
-            //Create Styles
+            #region Create Styles
             var bold = FontWeights.Bold;
             //var current = Application.Current.FindResource(typeof(Label)) as Style;
 
@@ -31,6 +32,8 @@ namespace ToDo.Client.ViewModels
 
             Incomplete = new Style(typeof(TextBlock));
             Incomplete.Setters.Add(new Setter(TextBlock.FontWeightProperty, bold));
+            #endregion
+
         }
 
         private static readonly SolidColorBrush Green = new SolidColorBrush(Colors.DarkGreen);
@@ -46,7 +49,11 @@ namespace ToDo.Client.ViewModels
             if (data.Children != null)
             {
                 children = new List<TaskItemViewModel>();
-                foreach (var c in data.Children)
+
+                var ordered = data.Children;
+                //.OrderBy(x => x.Order > 0).OrderBy(x => x.Order);
+
+                foreach (var c in ordered )
                 {
                     var vm = new TaskItemViewModel(c);
                     vm.Parent = this;
@@ -57,7 +64,7 @@ namespace ToDo.Client.ViewModels
 
             childrenViewSource = new CollectionViewSource();
             childrenViewSource.Source = children;
-            childrenViewSource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
+            SortDescriptions.SetSortDescription(childrenViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
         }
 
         #region Properties

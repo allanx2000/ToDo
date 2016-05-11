@@ -18,15 +18,13 @@ namespace ToDo.Client.ViewModels
         private ObservableCollection<TaskItemViewModel> tasks = new ObservableCollection<TaskItemViewModel>();
         private Window window;
         
-        public DateStyleConverter Converter { get; private set; }
-        
         public LogsViewerViewModel(Window window, System.Windows.Controls.Calendar calendar) //TODO: Should use callback to UI instead?
         {
             this.window = window;
             this.calendar = calendar;
 
-            Converter = new DateStyleConverter();
-
+            calendar.DisplayDateEnd = DateTime.Today.AddDays(-1);
+               
             tasksView = new CollectionViewSource();
             tasksView.Source = tasks;
             LoadTasksList();
@@ -34,7 +32,7 @@ namespace ToDo.Client.ViewModels
 
         private void LoadTasksList()
         {
-            var list = (from t in Workspace.Instance.TasksLog select t.Task).Distinct();
+            var list = (from t in Workspace.Instance.TasksLog select t.Task).Distinct().OrderBy(x => x.Title);
 
             tasks.Clear();
             foreach (var t in list)
@@ -67,14 +65,15 @@ namespace ToDo.Client.ViewModels
             {
                 int taskId = SelectedTask.Data.TaskItemID;
 
-                var logs = Workspace.Instance.TasksLog
+                var completedDates = Workspace.Instance.TasksLog
                     .Where(x => x.TaskID == taskId && x.Completed)
-                    .OrderBy(x => x.Date);
+                    .OrderBy(x => x.Date)
+                    .Select( x=> x.Date);
 
-                calendar.DisplayDateEnd = calendar.DisplayDate = DateTime.Today;
-
-                DateStyleConverter.Dates = (from d in logs select d.Date).ToList();
-
+                DateStyleConverter.Dates = completedDates.ToList();
+                //(from d in completedDays select d.Date).ToList();
+                
+                //Redraw Calendar
                 var tmp = calendar.CalendarDayButtonStyle;
                 calendar.CalendarDayButtonStyle = null;
                 calendar.CalendarDayButtonStyle = tmp;
@@ -93,7 +92,7 @@ namespace ToDo.Client.ViewModels
             {
                 selectedDate = value;
 
-                UpdateDetails();
+                UpdateRadioBoxes();
 
                 RaisePropertyChanged();
             }
@@ -105,18 +104,31 @@ namespace ToDo.Client.ViewModels
             set
             {
                 yesSelected = value;
+                
                 RaisePropertyChanged();
                 RaisePropertyChanged("NoSelected");
+                
+                SetCompleted(value);
+            }
+        }
+
+        private void SetCompleted(bool completed)
+        {
+            if (SelectedTask != null && SelectedDate != null)
+            {
+                Workspace.API.LogCompleted(SelectedDate.Value, SelectedTask.Data.TaskItemID, completed);
+                UpdateCalendar();
             }
         }
 
         public bool NoSelected { get { return !yesSelected; } }
 
-        private void UpdateDetails()
+        private void UpdateRadioBoxes()
         {
             if (SelectedDate != null && SelectedTask != null)
             {
                 var log = GetLog(SelectedTask.Data, SelectedDate.Value);
+
                 if (log != null)
                 {
                     YesSelected = log.Completed;

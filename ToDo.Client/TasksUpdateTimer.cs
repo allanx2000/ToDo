@@ -68,12 +68,9 @@ namespace ToDo.Client
 
             foreach (var t in matches)
             {
-                TaskLog log = new TaskLog() {
-                    Date = yesterday,
-                    TaskID = t.TaskItemID };
+                bool completed = t.Completed.HasValue ? true : false;
 
-                log.Completed = t.Completed.HasValue;
-                Workspace.Instance.TasksLog.Add(log);
+                Workspace.API.LogCompleted(yesterday, t.TaskItemID, completed, false);
 
                 var next = Workspace.API.CalculateNextReminder(t.Frequency, t.DueDate.Value);
                 t.DueDate = next;
