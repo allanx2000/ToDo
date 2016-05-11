@@ -162,9 +162,9 @@
     </Compile>
     <Compile Include="Export\Exporter.cs" />
     <Compile Include="ViewModels\DateStyleConverter.cs" />
-    <Compile Include="ViewModels\LogsViewerViewModel.cs" />
-    <Compile Include="LogsViewerWindow.xaml.cs">
-      <DependentUpon>LogsViewerWindow.xaml</DependentUpon>
+    <Compile Include="ViewModels\HistoryViewerViewModel.cs" />
+    <Compile Include="HistoryWindow.xaml.cs">
+      <DependentUpon>HistoryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ParentSelectWindow.xaml.cs">
       <DependentUpon>ParentSelectWindow.xaml</DependentUpon>
@@ -221,7 +221,7 @@
       <DependentUpon>LoadWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="LogsViewerWindow.xaml">
+    <Page Include="HistoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

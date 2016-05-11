@@ -10,13 +10,14 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Media;
+using ToDo.Client.Core.Tasks;
 
 namespace ToDo.Client.ViewModels
 {
     //TODO: Move to Converters folder
     public class DateStyleConverter : IValueConverter
     {
-        public static List<DateTime> Dates = new List<DateTime>();
+        public static List<TaskLog> Logs;
 
         private static Style Bolded;
 
@@ -28,24 +29,30 @@ namespace ToDo.Client.ViewModels
         }
 
         private static FontWeight HighlightWeight = FontWeights.Bold;
-        private static SolidColorBrush HighlightColor = new SolidColorBrush(Colors.LightGreen);
+        private static SolidColorBrush GreenColor = new SolidColorBrush(Colors.LightGreen);
+        private static SolidColorBrush RedColor = new SolidColorBrush(Colors.IndianRed);
 
         private static FontWeight NormalWeight = FontWeights.Normal;
         private static SolidColorBrush NormalColor = new SolidColorBrush(Colors.Transparent);
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value is DateTime && parameter is string)
+            if (Logs != null && value is DateTime && parameter is string)
             {
                 DateTime dt = (DateTime)value;
-                bool contains = Dates.Contains(dt);
+                var entry = Logs.FirstOrDefault(x => x.Date == dt);
 
                 switch ((string)parameter)
                 {
                     case "Color":
-                        return contains ? HighlightColor : NormalColor;
+                        if (entry == null)
+                            return NormalColor;
+                        else if (entry.Completed)
+                            return GreenColor;
+                        else
+                            return RedColor;
                     case "FontWeight":
-                        return contains ? HighlightWeight : NormalWeight;
+                        return entry != null ? HighlightWeight : NormalWeight;
                 }
             }
 

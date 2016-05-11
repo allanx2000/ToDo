@@ -18,14 +18,14 @@ namespace ToDo.Client
     /// <summary>
     /// Interaction logic for LogsViewerWindow.xaml
     /// </summary>
-    public partial class LogsViewerWindow : Window
+    public partial class HistoryViewerWindow : Window
     {
-        private readonly LogsViewerViewModel vm;
-        public LogsViewerWindow()
+        private readonly HistoryViewerViewModel vm;
+        public HistoryViewerWindow()
         {
             InitializeComponent();
 
-            vm = new LogsViewerViewModel(this, Calendar);
+            vm = new HistoryViewerViewModel(this, Calendar);
             this.DataContext = vm;
 
 

@@ -60,8 +60,8 @@ namespace ToDo.Client.ViewModels
 
         private void TasksUpdateTimer_OnTasksUpdated()
         {
-            TasksChanged();
-
+            App.Current.Dispatcher.Invoke(TasksChanged);
+            
             /*
             foreach (var t in tasks)
             {
@@ -536,17 +536,17 @@ namespace ToDo.Client.ViewModels
             window.Close();
         }
 
-        public ICommand LogsViewerCommand
+        public ICommand HistoryViewerCommand
         {
             get
             {
-                return new CommandHelper(ShowLogsViewerWindow);
+                return new CommandHelper(ShowHistoryViewerWindow);
             }
         }
 
-        private void ShowLogsViewerWindow()
+        private void ShowHistoryViewerWindow()
         {
-            var window = new LogsViewerWindow();
+            var window = new HistoryViewerWindow();
             window.ShowDialog();
             
         }
