@@ -279,6 +279,10 @@
       <Project>{8f93514e-288c-4852-acc6-e6dfd2bc9407}</Project>
       <Name>Innouvous.Utils.ResourceDictionaries</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Visual Studio 2013\Projects\Innouvous.Utils\Innouvous.Utils.SingleInstance\Innouvous.Utils.SingleInstance.csproj">
+      <Project>{2a6b9c5e-d317-4fa5-8571-fc8c25e1d379}</Project>
+      <Name>Innouvous.Utils.SingleInstance</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="sqlite3.dll">
