@@ -16,11 +16,10 @@ namespace ToDo.Client.ViewModels
         {
             this.window = window;
 
-            NeedsReload = false;
+            DatabaseUpdated = false;
         }
 
-        //Needs to reload lists and tasks
-        public bool NeedsReload { get; private set; }
+        public bool DatabaseUpdated { get; private set; }
 
         #region Export
         private string exportPath;
@@ -133,7 +132,7 @@ namespace ToDo.Client.ViewModels
                 
                 MessageBoxFactory.ShowInfo("Database has been imported.", "Imported");
 
-                NeedsReload = true;
+                DatabaseUpdated = true;
             }
             catch (Exception e)
             {
@@ -162,7 +161,7 @@ namespace ToDo.Client.ViewModels
                 DB.Tasks.RemoveRange(DB.Tasks);
                 DB.TasksLog.RemoveRange(DB.TasksLog);
 
-                NeedsReload = true;
+                DatabaseUpdated = true;
             }
         }
 

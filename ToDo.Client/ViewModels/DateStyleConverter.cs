@@ -18,22 +18,17 @@ namespace ToDo.Client.ViewModels
     public class DateStyleConverter : IValueConverter
     {
         public static List<TaskLog> Logs;
-
-        private static Style Bolded;
-
-        static DateStyleConverter()
-        {
-            Bolded = new Style(typeof(CalendarDayButton));
-            Bolded.Setters.Add(new Setter(Controls.Calendar.FontWeightProperty, FontWeights.Bold));
-            Bolded.Setters.Add(new Setter(Controls.Calendar.BackgroundProperty, new SolidColorBrush(Colors.LightGreen)));
-        }
-
+        
         private static FontWeight HighlightWeight = FontWeights.Bold;
         private static SolidColorBrush GreenColor = new SolidColorBrush(Colors.LightGreen);
         private static SolidColorBrush RedColor = new SolidColorBrush(Colors.IndianRed);
 
         private static FontWeight NormalWeight = FontWeights.Normal;
         private static SolidColorBrush NormalColor = new SolidColorBrush(Colors.Transparent);
+
+        static DateStyleConverter()
+        {
+        }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -57,18 +52,6 @@ namespace ToDo.Client.ViewModels
             }
 
             return null;
-
-            /*
-            if (value is DateTime)
-            {
-                DateTime dt = (DateTime)value;
-
-                if (Dates.Contains(dt))
-                    return FontWeights.ExtraBlack;
-            }
-
-            return FontWeights.Normal;
-            */
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

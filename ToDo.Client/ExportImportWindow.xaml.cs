@@ -18,6 +18,6 @@ namespace ToDo.Client
             this.DataContext = vm;
         }
 
-        public bool NeedsRefresh { get { return vm.NeedsReload; } }
+        public bool NeedsRefresh { get { return vm.DatabaseUpdated; } }
     }
 }

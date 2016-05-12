@@ -19,6 +19,11 @@ namespace ToDo.Client.ViewModels
         private static Style Complete, Incomplete;
 
 
+        private static readonly SolidColorBrush Green = new SolidColorBrush(Colors.DarkGreen);
+        private static readonly SolidColorBrush Orange = new SolidColorBrush(Colors.Orange);
+        private static readonly SolidColorBrush Red = new SolidColorBrush(Colors.Red);
+        private static readonly SolidColorBrush Black = new SolidColorBrush(Colors.Black);
+
         static TaskItemViewModel()
         {
             #region Create Styles
@@ -36,11 +41,6 @@ namespace ToDo.Client.ViewModels
 
         }
 
-        private static readonly SolidColorBrush Green = new SolidColorBrush(Colors.DarkGreen);
-        private static readonly SolidColorBrush Orange = new SolidColorBrush(Colors.Orange);
-        private static readonly SolidColorBrush Red = new SolidColorBrush(Colors.Red);
-        private static readonly SolidColorBrush Black = new SolidColorBrush(Colors.Black);
-
         public TaskItemViewModel(TaskItem item)
         {
             data = item;
@@ -51,7 +51,6 @@ namespace ToDo.Client.ViewModels
                 children = new List<TaskItemViewModel>();
 
                 var ordered = data.Children;
-                //.OrderBy(x => x.Order > 0).OrderBy(x => x.Order);
 
                 foreach (var c in ordered )
                 {
@@ -61,7 +60,8 @@ namespace ToDo.Client.ViewModels
                     children.Add(vm);
                 }
             }
-
+            
+            //Set Children SortDescription
             childrenViewSource = new CollectionViewSource();
             childrenViewSource.Source = children;
             SortDescriptions.SetSortDescription(childrenViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
@@ -159,8 +159,6 @@ namespace ToDo.Client.ViewModels
             get { return Data.Comments == null ? 0 : Data.Comments.Count; }
         }
 
-
-
         private bool isExpanded;
         public bool IsExpanded
         {
@@ -175,6 +173,26 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        private bool selected = false;
+        public bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                selected = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string DaysOld
+        {
+            get
+            {
+                var days = Convert.ToInt32(Math.Round((DateTime.Today - Data.Updated).TotalDays));
+                return days + " days";
+            }
+        }
+
         #region Completed/DueDate
 
         public string CompletedDate
@@ -184,6 +202,8 @@ namespace ToDo.Client.ViewModels
                 return data.Completed == null ? "No" : data.Completed.Value.ToShortDateString();
             }
         }
+
+
         public string DueDate
         {
             get
@@ -220,21 +240,9 @@ namespace ToDo.Client.ViewModels
                 return color;
             }
         }
-
-        private bool selected = false;
-        public bool Selected
-        {
-            get { return selected; }
-            set
-            {
-                selected = value;
-                RaisePropertyChanged();
-            }
-        }
-
+        
         #endregion
-
-
+        
         #endregion
     }
 }

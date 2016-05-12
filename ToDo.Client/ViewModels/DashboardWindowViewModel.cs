@@ -5,11 +5,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using ToDo.Client.Core.Tasks;
@@ -33,19 +30,11 @@ namespace ToDo.Client.ViewModels
         {
             this.window = window;
 
-            listsViewSource = new CollectionViewSource();
-            listsViewSource.Source = lists;
+            InitializeViewSources();
 
-            tasksViewSource = new CollectionViewSource();
-            tasksViewSource.Source = tasks;
-            SortDescriptions.SetSortDescription(tasksViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
-
-            quickListSource = new CollectionViewSource();
-            quickListSource.Source = quickList;
-
+            //Default Values
             SelectedListOrder = Remaining;
             SelectedQuickListType = ComingDue;
-
 
             ReloadLists();
             UpdateStats();
@@ -56,6 +45,19 @@ namespace ToDo.Client.ViewModels
             TasksUpdateTimer.OnTasksUpdated += TasksUpdateTimer_OnTasksUpdated;
             TasksUpdateTimer.UpdateTasks();
             TasksUpdateTimer.StartTimer();
+        }
+
+        private void InitializeViewSources()
+        {
+            listsViewSource = new CollectionViewSource();
+            listsViewSource.Source = lists;
+
+            tasksViewSource = new CollectionViewSource();
+            tasksViewSource.Source = tasks;
+            SortDescriptions.SetSortDescription(tasksViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
+
+            quickListSource = new CollectionViewSource();
+            quickListSource.Source = quickList;
         }
 
         private void TasksUpdateTimer_OnTasksUpdated()
@@ -80,12 +82,12 @@ namespace ToDo.Client.ViewModels
         public const string Alphabetical = "Alphabetical";
         public const string Type = "Type";
         public const string Remaining = "Remaining Tasks";
-
+        
         private static readonly List<string> listOrder = new List<string>()
         {
             Alphabetical,
             Type,
-            Remaining
+            Remaining,
         };
 
         private string selectedListOrder;
@@ -130,12 +132,16 @@ namespace ToDo.Client.ViewModels
             }
 
             RefreshListsView();
-            //listsViewSource.View.Refresh();
         }
 
         #endregion
 
-        private void ReloadLists()
+        /// <summary>
+        /// Loads all the Lists from DB, converting to ListViewModel
+        /// Called on all list updates
+        /// TODO: Maybe can just refresh existing viewmodels on info update, rather than reloading
+        /// </summary>
+        private void ReloadLists() //TODO: bool refreshOnly = false;
         {
             lists.Clear();
 
@@ -254,8 +260,6 @@ namespace ToDo.Client.ViewModels
         }
 
         private TaskItemViewModel selectedTaskViewModel;
-
-
         public TaskItemViewModel SelectedTaskViewModel
         {
             get { return selectedTaskViewModel; }
@@ -269,27 +273,12 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        //private TaskItem selectedTask;
         public TaskItem SelectedTask
         {
             get { return SelectedTaskViewModel == null ? null : SelectedTaskViewModel.Data; } //selectedTask; 
-            /*
-            set
-            {
-                selectedTask = value;
-                RaisePropertyChanged();
-
-                //UpdateDetails();
-            }*/
-
+        
         }
-        /* Not needed
-        private void UpdateDetails()
-        {
-            //throw new NotImplementedException();
-        }
-        */
-
+        
         public ICommand AddSubTaskCommand
         {
             get
@@ -365,9 +354,7 @@ namespace ToDo.Client.ViewModels
             LoadTasks();
             RefreshListsView();
             UpdateQuickList();
-            //RefreshQuickList();
-            UpdateStats();
-            
+            UpdateStats();    
         }
 
         private void RefreshQuickList()
@@ -383,8 +370,7 @@ namespace ToDo.Client.ViewModels
             int? prevTask = SelectedTask == null ? null : (int?)SelectedTask.TaskItemID;
 
             Workspace.API.LoadList(SelectedList.Data.TaskListID, tasks, prevTask);
-
-
+            
             SelectedList.Update();
 
         }
@@ -466,14 +452,13 @@ namespace ToDo.Client.ViewModels
 
                 Workspace.API.DeleteTask(SelectedTask);
 
-                //LoadTasks();
                 TasksChanged();
 
                 if (pid != null)
                     ExpandAndSelect(tasks, pid.Value);
 
                 //Need to update list as well
-                RefreshListsView();
+                //TODO Duplicate: RefreshListsView();
             }
             catch (Exception e)
             {
@@ -598,14 +583,16 @@ namespace ToDo.Client.ViewModels
         private const string Repeating = "Repeating";
         private const string ComingDue = "Coming Due";
         private const string Completed = "Completed";
+        public const string Aging = "Aging";
 
         private static readonly List<string> quickLists = new List<string>()
         {
             ComingDue,
             Completed,
-            Repeating
+            Repeating,
+            Aging
         };
-
+        
         public List<string> QuickLists
         {
             get { return quickLists; }
@@ -641,6 +628,7 @@ namespace ToDo.Client.ViewModels
 
             IEnumerable<TaskItem> query = null;
 
+            //The ViewOrder is set by the order returned
             switch (SelectedQuickListType)
             {
                 case ComingDue:
@@ -661,6 +649,12 @@ namespace ToDo.Client.ViewModels
                     query = from i in Workspace.Instance.Tasks
                             where i.Frequency != TaskFrequency.No
                             orderby (int) i.Frequency ascending
+                            select i;
+                    break;
+                case Aging:
+                    query = from i in Workspace.Instance.Tasks
+                            where i.Completed == null
+                            orderby i.Updated ascending
                             select i;
                     break;
                 default:

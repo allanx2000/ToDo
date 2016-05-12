@@ -38,17 +38,14 @@ namespace ToDo.Client.Export
             sw.Close();
             
         }
-
+        
         private static XmlSerializer GetSerializer()
         {
             return new XmlSerializer(typeof(Bundle));
         }
 
-        public static void Import(string importPath) //, out List<string> errors
+        public static void Import(string importPath)
         {
-            //errors = new List<string>();
-
-            //TODO: out List of errors
             //TODO: verify duplicate names not allowed?
 
             var xser = GetSerializer();
@@ -60,8 +57,9 @@ namespace ToDo.Client.Export
                 sr.Close();
             }
 
-            //Old ID, new Id
-            Dictionary<int,int> lists = new Dictionary<int, int>();
+            //Lookups Old ID, new Id
+            Dictionary<int,int> listsLookup = new Dictionary<int, int>();
+            Dictionary<int, int> tasksLookup = new Dictionary<int, int>();
 
             var DB = Workspace.Instance;
 
@@ -71,7 +69,7 @@ namespace ToDo.Client.Export
                 var exists = DB.Lists.FirstOrDefault(x => x.Title == l.Title);
 
                 if (exists != null)
-                    lists.Add(l.TaskListID, exists.TaskListID);
+                    listsLookup.Add(l.TaskListID, exists.TaskListID);
                 else
                 {
                     int oldId = l.TaskListID;
@@ -80,14 +78,16 @@ namespace ToDo.Client.Export
                     DB.Lists.Add(l);
                     DB.SaveChanges();
 
-                    lists.Add(oldId, l.TaskListID);
+                    listsLookup.Add(oldId, l.TaskListID);
                 }
             }
 
             //Tasks
-            Dictionary<int, int> tasks = new Dictionary<int, int>();
-            
+
             List<TaskItem> sortedTasks = new List<TaskItem>();
+
+            //Order by Root first, then ParentID asc so lookup will always have the needed values
+            /*
             var tmp = from t in bundle.Tasks
                       where t.ParentID == null
                       select t;
@@ -98,34 +98,40 @@ namespace ToDo.Client.Export
                   orderby t.ParentID ascending
                   select t;
             sortedTasks.AddRange(tmp);
+            */
+
+            //TODO: Test
+            sortedTasks = (from t in bundle.Tasks
+                          orderby t.ParentID == null, t.ParentID ascending
+                          select t).ToList();
 
             foreach (var t in sortedTasks)
             {
-                t.ListID = lists[t.ListID];
+                t.ListID = listsLookup[t.ListID];
 
-                var exists = DB.Tasks.FirstOrDefault(x => x.Title == t.Title && x.ListID == x.ListID);
+                var exists = DB.Tasks.FirstOrDefault(x => x.Title == t.Title);
 
                 if (exists != null)
-                    tasks.Add(t.TaskItemID, exists.TaskItemID);
+                    tasksLookup.Add(t.TaskItemID, exists.TaskItemID);
                 else
                 {
                     int oldId = t.TaskItemID;
                     t.TaskItemID = 0;
 
                     if (t.ParentID != null)
-                        t.ParentID = tasks[t.ParentID.Value];
+                        t.ParentID = tasksLookup[t.ParentID.Value];
 
                     DB.Tasks.Add(t);
                     DB.SaveChanges();
 
-                    tasks.Add(oldId, t.TaskItemID);
+                    tasksLookup.Add(oldId, t.TaskItemID);
                 }
             }
 
             //Logs
             foreach (var l in bundle.Log)
             {
-                l.TaskID = tasks[l.TaskID];
+                l.TaskID = tasksLookup[l.TaskID];
 
                 var existing = DB.TasksLog.FirstOrDefault(
                     x => x.TaskID == l.TaskID
@@ -140,7 +146,7 @@ namespace ToDo.Client.Export
             //Comments
             foreach (var c in bundle.Comments)
             {
-                c.OwnerId = tasks[c.OwnerId];               
+                c.OwnerId = tasksLookup[c.OwnerId];               
                 var existing = DB.Comments.FirstOrDefault(x =>
                     x.OwnerId == c.OwnerId
                     && x.Text == c.Text);
@@ -150,7 +156,6 @@ namespace ToDo.Client.Export
                     DB.Comments.Add(c);
                 }
             }
-
         }
     }
 }

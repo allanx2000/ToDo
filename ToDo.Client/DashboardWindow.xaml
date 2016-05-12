@@ -9,6 +9,14 @@
         Title="ToDo" Height="850" MinHeight="850" Width="900" Unloaded="Window_Unloaded">
     <Window.Resources>
 
+        <!-- QuickList DataTemplates -->
+        <DataTemplate x:Key="aging">
+            <DockPanel>
+                <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
+                <Label DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding DaysOld}" />
+            </DockPanel>
+        </DataTemplate>
+        
         <DataTemplate x:Key="comingDue">
             <DockPanel>
                 <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
@@ -30,7 +38,6 @@
             </DockPanel>
         </DataTemplate>
 
-
         <Style x:Key="QuickListSelector" TargetType="{x:Type ListBox}">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding SelectedQuickListType}" Value="Coming Due">
@@ -42,8 +49,13 @@
                 <DataTrigger Binding="{Binding SelectedQuickListType}" Value="Repeating">
                     <Setter Property="ItemTemplate" Value="{StaticResource repeating}" />
                 </DataTrigger>
+                <DataTrigger Binding="{Binding SelectedQuickListType}" Value="Aging">
+                    <Setter Property="ItemTemplate" Value="{StaticResource aging}" />
+                </DataTrigger>
             </Style.Triggers>
         </Style>
+        <!-- ______________ -->
+        
     </Window.Resources>
     <Grid>
         <Grid.Resources>

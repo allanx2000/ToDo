@@ -39,6 +39,12 @@ namespace ToDo.Client
                 return query;
             }
 
+            /// <summary>
+            /// Loads the List's TaskItems into the given collection
+            /// </summary>
+            /// <param name="listId"></param>
+            /// <param name="collection"></param>
+            /// <param name="selected"></param>
             public static void LoadList(int listId, ObservableCollection<TaskItemViewModel> collection, int? selected = null)
             {
                 collection.Clear();

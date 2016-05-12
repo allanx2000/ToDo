@@ -175,56 +175,10 @@ namespace ToDo.Client.ViewModels
                 TaskList newList = new TaskList(Name, Description, ConvertType(SelectedListType));
 
                 if (existing != null)
-                {
                     Workspace.API.UpdateList(existing, Name, Description);
-                }
                 else
                     Workspace.API.InsertList(Name, Description, ConvertType(SelectedListType));
-                /*
-                if (string.IsNullOrEmpty(Name))
-                    throw new Exception("Name cannot be empty");
-
-                var duplicate = (from l in Workspace.Instance.Lists
-                            where l.Title == Name select l).FirstOrDefault();
-
-                if (duplicate != null)
-                {
-                    if (existing != null && duplicate.TaskListID == existing.TaskListID)
-                    {
-                        //OK
-                    }
-                    else
-                    {
-                        throw new Exception("A list by the same name already exists");
-                    }
-                }
-
-                DateTime now = DateTime.Now;
-
-                if (existing == null)
-                {
-                    
-                    TaskList list = new TaskList()
-                    {
-                        Title = Name,
-                        Description = Description,
-                        Type = ConvertType(SelectedListType),
-                        Created = now,
-                        LastUpdated = now
-                    };
-
-                    Workspace.Instance.Lists.Add(list);
-                }
-                else
-                {
-                    existing.Title = Name;
-                    existing.Description = Description;
-                    existing.LastUpdated = now;
-                }
-
-                Workspace.Instance.SaveChanges();
-                */
-
+                
                 Cancelled = false;
                 window.Close();
             }

@@ -18,44 +18,11 @@ namespace ToDo.Client.ViewModels
 {
     public class EditTaskWindowViewModel : ViewModel
     {
-        static List<int> PrioritiesList;
+        //static List<int> PrioritiesList;
 
         private TaskItem parent;
         private TaskItem existing;
-
-        private TaskList selectedList;
         private TaskList originalList; //Used to track if changed
-        public TaskList SelectedList
-        {
-            get { return selectedList; }
-            set
-            {
-                if (originalList == null)
-                    originalList = value;
-
-                if (SelectedList != value)
-                {
-                    SetParent(null);
-
-                    selectedList = value;
-                    RaisePropertyChanged();
-                }
-            }
-        }
-
-        private List<TaskList> lists;
-        public List<TaskList> Lists
-        {
-            get
-            {
-                if (lists == null)
-                {
-                    lists = Workspace.Instance.Lists.OrderBy(x => x.Title).ToList();
-                }
-
-                return lists;
-            }
-        }
 
         private Window window;
 
@@ -101,14 +68,14 @@ namespace ToDo.Client.ViewModels
                 return;
 
             SelectedList = existing.List;
-            
+
             Name = existing.Title;
             Details = existing.Description;
             Priority = existing.Priority;
 
             HasCompleted = existing.Completed != null;
             Completed = existing.Completed;
-            
+
             DueDate = existing.DueDate;
             HasDueDate = existing.DueDate != null;
 
@@ -125,9 +92,42 @@ namespace ToDo.Client.ViewModels
             }
             else comments = new ObservableCollection<CommentViewModel>();
         }
-        
-        #region Properties
 
+
+        #region Properties
+        private TaskList selectedList;
+        public TaskList SelectedList
+        {
+            get { return selectedList; }
+            set
+            {
+                if (originalList == null)
+                    originalList = value;
+
+                if (SelectedList != value)
+                {
+                    SetParent(null);
+
+                    selectedList = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private List<TaskList> lists;
+        public List<TaskList> Lists
+        {
+            get
+            {
+                if (lists == null)
+                {
+                    lists = Workspace.Instance.Lists.OrderBy(x => x.Title).ToList();
+                }
+
+                return lists;
+            }
+        }
+        
         /// <summary>
         /// Window Title
         /// </summary>
@@ -166,20 +166,7 @@ namespace ToDo.Client.ViewModels
         #endregion
 
         #region Frequency/Repeat
-
-        private DateTime? startDate;
-
-        public DateTime? StartDate
-        {
-            get { return startDate; }
-            set
-            {
-                startDate = value;
-                RaisePropertyChanged();
-            }
-        }
-
-
+        
         private string selectedFrequency = TaskFrequency.No.ToString();
         public string SelectedFrequency
         {
@@ -265,23 +252,7 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
-
-        public List<int> Priorities
-        {
-            get
-            {
-                if (PrioritiesList == null)
-                {
-                    PrioritiesList = new List<int>();
-
-                    for (int i = 1; i <= 5; i++)
-                        PrioritiesList.Add(i);
-                }
-
-                return PrioritiesList;
-            }
-        }
-
+        
         public string ParentText
         {
             get
@@ -289,7 +260,6 @@ namespace ToDo.Client.ViewModels
                 return parent == null ? "(None)" : parent.Title;
             }
         }
-
 
         public string name, details;
 
@@ -344,7 +314,6 @@ namespace ToDo.Client.ViewModels
             get { return hasCompleted; }
             set
             {
-                //TODO: Need to add a DatePicker?
                 hasCompleted = value;
 
                 if (!hasCompleted)

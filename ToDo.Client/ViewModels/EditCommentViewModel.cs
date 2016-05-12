@@ -15,7 +15,13 @@ namespace ToDo.Client.ViewModels
     {
         private Comment existing;
         private Window window;
-        
+
+
+        private bool IsEdit
+        {
+            get { return existing != null; }
+        }
+
         public EditCommentViewModel(Window window, Comment existing = null)
         {
             this.window = window;
@@ -56,12 +62,7 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
-
-        private bool IsEdit
-        {
-            get { return existing != null; }
-        }
-
+        
         public Visibility DateVisibility
         {
             get
@@ -134,16 +135,6 @@ namespace ToDo.Client.ViewModels
 
                 Cancelled = false;
                 window.Close();
-                
-
-
-                /* TODO: Should be done from EditTask
-                if (IsEdit)
-                    Workspace.API.UpdateComment(existing, Comment);
-                else
-                    Workspace.API.InsertComment(taskId, Comment);
-                */
-
             }
             catch (Exception e)
             {

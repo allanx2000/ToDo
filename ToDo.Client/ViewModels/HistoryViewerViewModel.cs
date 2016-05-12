@@ -65,7 +65,6 @@ namespace ToDo.Client.ViewModels
         public bool TaskSelected { get { return selectedTask != null; } }
 
         private TaskItemViewModel selectedTask;
-        
         public TaskItemViewModel SelectedTask
         {
             get { return selectedTask; }
@@ -80,6 +79,9 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the Calendar highlighting the log dates
+        /// </summary>
         private void UpdateCalendar()
         {
             if (SelectedTask != null)
@@ -91,8 +93,6 @@ namespace ToDo.Client.ViewModels
                     .OrderBy(x => x.Date);
 
                 DateStyleConverter.Logs = logDates.ToList();
-
-                //(from d in completedDays select d.Date).ToList();
                 
                 //Redraw Calendar
                 var tmp = calendar.CalendarDayButtonStyle;
@@ -101,8 +101,9 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private DateTime? selectedDate;
-            
+        #region Deprecated
+        //TODO: Remove
+        private DateTime? selectedDate;           
         public DateTime? SelectedDate
         {
             get
@@ -168,6 +169,7 @@ namespace ToDo.Client.ViewModels
 
             return log;
         }
+        #endregion
 
         public ICommand CloseCommand
         {
