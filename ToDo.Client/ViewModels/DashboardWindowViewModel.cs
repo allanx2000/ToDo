@@ -71,7 +71,7 @@ namespace ToDo.Client.ViewModels
         public const string Alphabetical = "Alphabetical";
         public const string Type = "Type";
         public const string Remaining = "Remaining Tasks";
-        
+
         private static readonly List<string> listOrder = new List<string>()
         {
             Alphabetical,
@@ -130,15 +130,21 @@ namespace ToDo.Client.ViewModels
         /// Called on all list updates
         /// TODO: Maybe can just refresh existing viewmodels on info update, rather than reloading
         /// </summary>
-        private void ReloadLists() //TODO: bool refreshOnly = false;
+        private void ReloadLists(bool refreshOnly = false)
         {
-            lists.Clear();
-
-            foreach (var list in Workspace.API.GetLists())
+            if (refreshOnly)
             {
-                lists.Add(new TaskListViewModel(list));
+                foreach (var l in lists)
+                    l.RefreshViewModel();
             }
+            else {
+                lists.Clear();
 
+                foreach (var list in Workspace.API.GetLists())
+                {
+                    lists.Add(new TaskListViewModel(list));
+                }
+            }
             RaisePropertyChanged("Lists");
         }
 
@@ -226,7 +232,7 @@ namespace ToDo.Client.ViewModels
                 return;
             }
             else
-                ReloadLists();
+                ReloadLists(true);
         }
 
         #endregion
@@ -265,9 +271,9 @@ namespace ToDo.Client.ViewModels
         public TaskItem SelectedTask
         {
             get { return SelectedTaskViewModel == null ? null : SelectedTaskViewModel.Data; } //selectedTask; 
-        
+
         }
-        
+
         public ICommand AddSubTaskCommand
         {
             get
@@ -294,7 +300,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return new CommandHelper(() =>EditTask(SelectedTask));
+                return new CommandHelper(() => EditTask(SelectedTask));
             }
         }
 
@@ -343,7 +349,7 @@ namespace ToDo.Client.ViewModels
             LoadTasks();
             RefreshListsView();
             UpdateQuickList();
-            UpdateStats();    
+            UpdateStats();
         }
 
         private void RefreshQuickList()
@@ -359,7 +365,7 @@ namespace ToDo.Client.ViewModels
             int? prevTask = SelectedTask == null ? null : (int?)SelectedTask.TaskItemID;
 
             Workspace.API.LoadList(SelectedList.Data.TaskListID, tasks, prevTask);
-            
+
             SelectedList.Update();
 
         }
@@ -396,7 +402,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return new CommandHelper(() =>MarkCompleted(SelectedTask));
+                return new CommandHelper(() => MarkCompleted(SelectedTask));
             }
         }
 
@@ -522,7 +528,7 @@ namespace ToDo.Client.ViewModels
         {
             var window = new HistoryViewerWindow();
             window.ShowDialog();
-            
+
         }
 
         public ICommand ExportImportCommand
@@ -581,7 +587,7 @@ namespace ToDo.Client.ViewModels
             Repeating,
             Aging
         };
-        
+
         public List<string> QuickLists
         {
             get { return quickLists; }
@@ -610,7 +616,7 @@ namespace ToDo.Client.ViewModels
                 return quickListSource.View;
             }
         }
-        
+
         private void UpdateQuickList()
         {
             quickList.Clear();
@@ -636,7 +642,7 @@ namespace ToDo.Client.ViewModels
                 case Repeating:
                     query = from i in Workspace.Instance.Tasks
                             where i.Frequency != TaskFrequency.No
-                            orderby (int) i.Frequency ascending
+                            orderby (int)i.Frequency ascending
                             select i;
                     break;
                 case Aging:

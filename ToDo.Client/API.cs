@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ToDo.Client.Core.Lists;
 using ToDo.Client.Core.Tasks;
 using ToDo.Client.ViewModels;
@@ -70,28 +68,6 @@ namespace ToDo.Client
                 DB.SaveChanges();
             }
 
-            public static void LogCompleted(DateTime date, int taskId, bool completed, bool saveToDB = true)
-            {
-                var existing = DB.TasksLog.FirstOrDefault(x => x.Date == date && x.TaskID == taskId);
-
-                if (existing != null)
-                    existing.Completed = completed;
-                else
-                {
-                    TaskLog log = new TaskLog()
-                    {
-                        Date = date,
-                        TaskID = taskId,
-                        Completed = completed
-                    };
-
-                    DB.TasksLog.Add(log);
-                }
-
-                if (saveToDB)
-                    DB.SaveChanges();
-            }
-
             public static void InsertList(string name, string description, ListType type)
             {
                 ValidateTaskList(name, description, type: type);
@@ -134,15 +110,14 @@ namespace ToDo.Client
 
             public static void MarkIncomplete(TaskItem task)
             {
+                //Bubble up incomplete
                 while (task != null)
                 {
                     DoMarkIncomplete(task);
                     task = task.Parent;
                 }
 
-
                 Workspace.instance.SaveChanges();
-                //RenumberTasks(task.ListID, task.ParentID);
             }
 
             private static void DoMarkIncomplete(TaskItem task)
@@ -166,6 +141,7 @@ namespace ToDo.Client
                     task.Order = NullOrder;
                 }
 
+                //Bubble down Complete
                 if (task.Children != null)
                 {
                     foreach (var c in task.Children)
@@ -193,9 +169,7 @@ namespace ToDo.Client
                     .Where(x => x.TaskItemID == itemId);
 
                 var item = query.FirstOrDefault();
-
-                //var comments = DB.Comments.Where(x => x.OwnerId == item.TaskItemID).ToList();
-
+                
                 return item;
             }
 
@@ -265,13 +239,13 @@ namespace ToDo.Client
                 }
 
                 //Renumber others
-
                 tasks = (from t in DB.Tasks
                          where t.ParentID == parentId
                          && t.Completed == null
                          && t.ListID == listId
                          orderby t.Order ascending
                          select t).ToList();
+
                 int ctr = 1;
                 foreach (var t in tasks)
                 {
@@ -322,7 +296,6 @@ namespace ToDo.Client
                 return order + 1;
             }
 
-            //TODO?: Add Order to TaskList and change both to use IOrderable (expose the Order property)
             public static bool MoveUp(TaskItem task)
             {
                 //For fixing ordering
@@ -346,8 +319,7 @@ namespace ToDo.Client
                 task.Order = tmp;
 
                 DB.SaveChanges();
-
-
+                
                 return true;
             }
 
@@ -376,8 +348,7 @@ namespace ToDo.Client
                 next.Order = tmp;
 
                 DB.SaveChanges();
-
-
+                
                 return true;
             }
 
@@ -404,15 +375,12 @@ namespace ToDo.Client
                 item.Description = details;
                 item.Priority = priority.Value;
                 item.Parent = parent;
-                //item.Order = Workspace.API.GetNextOrder(list, parent);
-                //item.DueDate = dueDate;
                 item.Created = item.Updated = DateTime.Now;
                 SetFrequency(item, frequency, dueDate);
 
                 Workspace.Instance.Tasks.Add(item);
                 Workspace.Instance.SaveChanges();
 
-                //Will also set the order
                 SetCompletedAndOrder(item, completed);
 
                 foreach (var comment in comments)
@@ -439,8 +407,6 @@ namespace ToDo.Client
 
                 if (parentChanged)
                 {
-                    //FIXME: Is bug? Set twice
-                    //existing.Order = Workspace.API.GetNextOrder(existing.List, parent);
                     existing.Parent = parent;
                 }
 
@@ -473,7 +439,6 @@ namespace ToDo.Client
                 SetCompletedAndOrder(existing, completed);
 
                 //Process Comments
-
                 foreach (var c in comments.Where(x => x.Owner == null))
                     c.Owner = existing;
 
@@ -633,36 +598,7 @@ namespace ToDo.Client
             }
 
             #endregion
-
-            private static bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
-            {
-                foreach (var t in tasks)
-                {
-                    if (t.Data.TaskItemID == id)
-                    {
-                        TaskItemViewModel parent = t.Parent;
-
-                        while (parent != null)
-                        {
-                            parent.IsExpanded = true;
-                            parent = parent.Parent;
-                        }
-
-                        t.Selected = true;
-
-                        return true;
-                    }
-                    else if (t.Children != null)
-                    {
-                        bool expanded = Expand(t.Children, id);
-                        if (expanded)
-                            return true;
-                    }
-                }
-
-                return false;
-            }
-
+         
             #region Reminders
             public static DateTime CalculateLastReminder(TaskFrequency frequency, DateTime referenceDate)
             {
@@ -712,6 +648,28 @@ namespace ToDo.Client
 
             #region Task Logging
 
+            public static void LogCompleted(DateTime date, int taskId, bool completed, bool saveToDB = true)
+            {
+                var existing = DB.TasksLog.FirstOrDefault(x => x.Date == date && x.TaskID == taskId);
+
+                if (existing != null)
+                    existing.Completed = completed;
+                else
+                {
+                    TaskLog log = new TaskLog()
+                    {
+                        Date = date,
+                        TaskID = taskId,
+                        Completed = completed
+                    };
+
+                    DB.TasksLog.Add(log);
+                }
+
+                if (saveToDB)
+                    DB.SaveChanges();
+            }
+
             public static IEnumerable<TaskLog> GetTaskLogs(DateTime start, DateTime end)
             {
                 return (from i in Instance.TasksLog
@@ -736,6 +694,35 @@ namespace ToDo.Client
             */
 
             #endregion
+
+            private static bool Expand(IEnumerable<TaskItemViewModel> tasks, int id)
+            {
+                foreach (var t in tasks)
+                {
+                    if (t.Data.TaskItemID == id)
+                    {
+                        TaskItemViewModel parent = t.Parent;
+
+                        while (parent != null)
+                        {
+                            parent.IsExpanded = true;
+                            parent = parent.Parent;
+                        }
+
+                        t.Selected = true;
+
+                        return true;
+                    }
+                    else if (t.Children != null)
+                    {
+                        bool expanded = Expand(t.Children, id);
+                        if (expanded)
+                            return true;
+                    }
+                }
+
+                return false;
+            }
 
         }
     }

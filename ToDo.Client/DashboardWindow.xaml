@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ToDo.Client"
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
-        Title="ToDo" Height="850" MinHeight="850" Width="900" Unloaded="Window_Unloaded">
+        Title="ToDo" Height="850" MinHeight="850" Width="1200"  MinWidth="1200" Unloaded="Window_Unloaded">
     <Window.Resources>
 
         <!-- QuickList DataTemplates -->
@@ -16,7 +16,7 @@
                 <Label DockPanel.Dock="Right" HorizontalAlignment="Right" Content="{Binding DaysOld}" />
             </DockPanel>
         </DataTemplate>
-        
+
         <DataTemplate x:Key="comingDue">
             <DockPanel>
                 <Label DockPanel.Dock="Left" Content="{Binding Name}"/>
@@ -55,7 +55,7 @@
             </Style.Triggers>
         </Style>
         <!-- ______________ -->
-        
+
     </Window.Resources>
     <Grid>
         <Grid.Resources>
@@ -63,12 +63,11 @@
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*" MinHeight="150"/>
-            <RowDefinition Height="3*" MinHeight="600"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MinWidth="260"/>
+            <ColumnDefinition Width="280"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
@@ -90,127 +89,143 @@
             <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
         </Menu>
 
-        <GroupBox Grid.Row="1" Grid.Column="0" 
-                  Header="Stats">
-            <Grid >
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            
+            <GroupBox Grid.Row="0" Grid.Column="0" Header="Stats">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource GridField}" >Completed:</Label>
-                <Label Grid.Row="0" Grid.Column="1" Content="{Binding TotalCompleted}"/>
-                <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}" >Remaining:</Label>
-                <Label Grid.Row="1" Grid.Column="1" Content="{Binding TotalRemaining}"/>
-                <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}" >Overdue:</Label>
-                <Label Grid.Row="2" Grid.Column="1" Content="{Binding TotalOverdue}"/>
-            </Grid>
-        </GroupBox>
+                    <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource GridField}" >Completed:</Label>
+                    <Label Grid.Row="0" Grid.Column="1" Content="{Binding TotalCompleted}"/>
+                    <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}" >Remaining:</Label>
+                    <Label Grid.Row="1" Grid.Column="1" Content="{Binding TotalRemaining}"/>
+                    <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}" >Overdue:</Label>
+                    <Label Grid.Row="2" Grid.Column="1" Content="{Binding TotalOverdue}"/>
+                </Grid>
+                
+                
+            </GroupBox>
 
-        <GroupBox Grid.Row="1" Grid.Column="1" 
+            <GroupBox Grid.Row="1" Grid.Column="0" Header="Lists">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel LastChildFill="True" Grid.Row="0">
+                        <Label DockPanel.Dock="Left">Order By:</Label>
+                        <ComboBox ItemsSource="{Binding ListOrder}" SelectedItem="{Binding SelectedListOrder}"/>
+                    </DockPanel>
+
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Label Grid.Row="0" FontWeight="Bold" Foreground="{Binding NameColor}">
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </Label>
+
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Grid.Column="0">Completed:</Label>
+                                        <Label Grid.Column="1" Content="{Binding Completed}"/>
+                                        <Label Grid.Column="2">Remaining:</Label>
+                                        <Label Grid.Column="3" Content="{Binding Remaining}"/>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+                        <Button Command="{Binding AddListCommand}">Add</Button>
+                        <Button Command="{Binding EditListCommand}">Edit</Button>
+                        <Button Command="{Binding DeleteListCommand}">Delete</Button>
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Quick List-->
+            <GroupBox Grid.Row="0" Grid.ColumnSpan="2" 
                   Header="Quick Lists">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <DockPanel HorizontalAlignment="Stretch">
-                    <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
-                        <Label>Type:</Label>
-                        <ComboBox Width="200" HorizontalAlignment="Left" 
+                    <!--TODO: Change to Grid-->
+                    <DockPanel HorizontalAlignment="Stretch">
+                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                            <Label>Type:</Label>
+                            <ComboBox Width="200" HorizontalAlignment="Left" 
                                   ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickListType}"/>
-                    </StackPanel>
+                        </StackPanel>
 
-                    <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Command="{Binding SelectInTasksCommand}">Select in Tasks</Button>
-                        <Label Width="30"/>
-                        <Button Command="{Binding EditQuickListItemCommand}">Edit</Button>
-                        <Button Command="{Binding MarkQuickListItemCompletedCommand}">Mark Completed</Button>
-                    </StackPanel>
-                </DockPanel>
+                        <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <Button Command="{Binding SelectInTasksCommand}">Select in Tasks</Button>
+                            <Label Width="30"/>
+                            <Button Command="{Binding EditQuickListItemCommand}">Edit</Button>
+                            <Button Command="{Binding MarkQuickListItemCompletedCommand}">Mark Completed</Button>
+                        </StackPanel>
+                    </DockPanel>
 
-                <!--TODO: Need separate style-->
-                <ListBox Grid.Row="1"
+                    <ListBox Grid.Row="1"
                          HorizontalContentAlignment="Stretch"
                         Style="{StaticResource QuickListSelector}"
                         ItemsSource="{Binding QuickListView}"
                         SelectedItem="{Binding SelectedQuickListItem}"
                         DisplayMemberPath="Name"
                         >
-                </ListBox>
+                    </ListBox>
 
-            </Grid>
-        </GroupBox>
+                </Grid>
+            </GroupBox>
 
-        <GroupBox Grid.Row="2" Grid.Column="0" Header="Lists">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <DockPanel LastChildFill="True" Grid.Row="0">
-                    <Label DockPanel.Dock="Left">Order By:</Label>
-                    <ComboBox ItemsSource="{Binding ListOrder}" SelectedItem="{Binding SelectedListOrder}"/>
-                </DockPanel>
-
-                <ListBox Grid.Row="1" ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-
-                                <Label Grid.Row="0" FontWeight="Bold" Foreground="{Binding NameColor}">
-                                    <TextBlock Text="{Binding Name}"/>
-                                </Label>
-
-                                <Grid Grid.Row="1">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <Label Grid.Column="0">Completed:</Label>
-                                    <Label Grid.Column="1" Content="{Binding Completed}"/>
-                                    <Label Grid.Column="2">Remaining:</Label>
-                                    <Label Grid.Column="3" Content="{Binding Remaining}"/>
-                                </Grid>
-                            </Grid>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-
-                <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" DockPanel.Dock="Bottom">
-                    <Button Command="{Binding AddListCommand}">Add</Button>
-                    <Button Command="{Binding EditListCommand}">Edit</Button>
-                    <Button Command="{Binding DeleteListCommand}">Delete</Button>
-                </StackPanel>
-            </Grid>
-        </GroupBox>
-
-        <Grid Grid.Row="2" Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-
-            <GroupBox Grid.Row="0" Header="Tasks">
+            <!-- Tasks -->
+            <GroupBox Grid.Row="1" Grid.Column="0" Header="Tasks">
                 <DockPanel LastChildFill="True">
 
                     <StackPanel DockPanel.Dock="Right">
@@ -246,7 +261,8 @@
                 </DockPanel>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="Details" ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <!-- Details -->
+            <GroupBox Grid.Row="1" Grid.Column="1" Header="Details" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                     <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" DataContext="{Binding SelectedTaskViewModel}">
                         <Grid.ColumnDefinitions>
@@ -293,6 +309,8 @@
                     </Grid>
                 </ScrollViewer>
             </GroupBox>
+
         </Grid>
+
     </Grid>
 </Window>
