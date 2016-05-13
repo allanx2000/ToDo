@@ -49,7 +49,7 @@ namespace ToDo.Client.ViewModels
 
         private void LoadTasksList()
         {
-            var list = (from t in Workspace.Instance.TasksLog select t.Task).Distinct().OrderBy(x => x.Title);
+            var list = (from t in Workspace.Instance.TasksLog select t.Task).Distinct().OrderBy(x => x.Name);
 
             tasks.Clear();
             foreach (var t in list)

@@ -63,7 +63,7 @@ namespace ToDo.Client
             {
                 ValidateTaskList(title, description, existing.TaskListID);
 
-                existing.Title = title;
+                existing.Name = title;
                 existing.Description = description;
                 existing.LastUpdated = DateTime.Now;
 
@@ -103,13 +103,13 @@ namespace ToDo.Client
                 DB.SaveChanges();
             }
 
-            private static void ValidateTaskList(string title, string description, int? id = null, ListType? type = null)
+            private static void ValidateTaskList(string name, string description, int? id = null, ListType? type = null)
             {
-                if (string.IsNullOrEmpty(title))
+                if (string.IsNullOrEmpty(name))
                     throw new Exception("Name cannot be empty.");
 
                 var duplicate = (from l in Workspace.Instance.Lists
-                                 where l.Title == title
+                                 where l.Name == name
                                  select l).FirstOrDefault();
 
                 if (duplicate != null)
@@ -400,7 +400,7 @@ namespace ToDo.Client
 
                 TaskItem item = new TaskItem();
                 item.List = list;
-                item.Title = title;
+                item.Name = title;
                 item.Description = details;
                 item.Priority = priority.Value;
                 item.Parent = parent;
@@ -428,7 +428,7 @@ namespace ToDo.Client
             {
                 ValidateTaskValues(title, priority, frequency, dueDate, existing.TaskItemID);
 
-                existing.Title = title;
+                existing.Name = title;
                 existing.Description = details;
                 existing.Priority = priority.Value;
                 existing.Updated = DateTime.Now;
@@ -609,12 +609,12 @@ namespace ToDo.Client
                     return Workspace.API.CalculateNextReminder(frequency, startDate);
             }
 
-            private static void ValidateTaskValues(string title, int? priority,
+            private static void ValidateTaskValues(string name, int? priority,
                 TaskFrequency frequency, DateTime? startDate,
                 int? id = null)
             {
-                //Title
-                var existing = Workspace.Instance.Tasks.FirstOrDefault(x => x.Title == title);
+                //Name
+                var existing = Workspace.Instance.Tasks.FirstOrDefault(x => x.Name == name);
                 if (existing != null)
                 {
                     if (id == null || existing.TaskItemID != id)

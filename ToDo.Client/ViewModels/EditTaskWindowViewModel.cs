@@ -28,6 +28,16 @@ namespace ToDo.Client.ViewModels
 
         public bool Cancelled { get; private set; }
 
+        // Window Title
+        public string Title
+        {
+            get
+            {
+                return (existing != null ? "Edit" : "Add") + " Task";
+            }
+        }
+
+
         private void Initialize(Window window)
         {
             Cancelled = true;
@@ -69,7 +79,7 @@ namespace ToDo.Client.ViewModels
 
             SelectedList = existing.List;
 
-            Name = existing.Title;
+            Name = existing.Name;
             Details = existing.Description;
             Priority = existing.Priority;
 
@@ -121,24 +131,13 @@ namespace ToDo.Client.ViewModels
             {
                 if (lists == null)
                 {
-                    lists = Workspace.Instance.Lists.OrderBy(x => x.Title).ToList();
+                    lists = Workspace.Instance.Lists.OrderBy(x => x.Name).ToList();
                 }
 
                 return lists;
             }
         }
         
-        /// <summary>
-        /// Window Title
-        /// </summary>
-        public string Title
-        {
-            get
-            {
-                return (existing != null ? "Edit" : "Add") + " Task";
-            }
-        }
-
         #region Comments
 
         private CollectionViewSource commentsSource;
@@ -257,7 +256,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return parent == null ? "(None)" : parent.Title;
+                return parent == null ? "(None)" : parent.Name;
             }
         }
 

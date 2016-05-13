@@ -39,6 +39,7 @@ namespace ToDo.Client.ViewModels
             comment = existing.Text;
 
             RaisePropertyChanged("Title");
+
             RaisePropertyChanged("Comment");
             RaisePropertyChanged("DateVisibility");
             RaisePropertyChanged("CreatedDate");

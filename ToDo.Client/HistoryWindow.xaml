@@ -30,7 +30,7 @@ Title="History Viewer" SizeToContent="Height" ResizeMode="NoResize" Width="550">
                             <StackPanel Orientation="Horizontal">
                                 <Label FontWeight="Bold">List: </Label>
                                 <Label Width="80">
-                                    <TextBlock Text="{Binding Path=Data.List.Title}"/>
+                                    <TextBlock Text="{Binding Path=Data.List.Name}"/>
                                 </Label>
 
                                 <Label FontWeight="Bold">Repeats: </Label>

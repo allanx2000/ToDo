@@ -17,6 +17,14 @@ namespace ToDo.Client.ViewModels
         private TaskList existing;
 
         public bool Cancelled { get; private set; }
+        
+        public string Title
+        {
+            get
+            {
+                return (!HasExisting ? "Add" : "Edit") + " List";
+            }
+        }
 
         public EditListWindowViewModel(Window window, TaskList existing = null)
         {
@@ -31,11 +39,12 @@ namespace ToDo.Client.ViewModels
         private void LoadTaskList(TaskList list)
         {
             existing = list;
-            Name = existing.Title;
+            Name = existing.Name;
             Description = existing.Description;
             SelectedListType = ConvertType(existing.Type);
 
             RaisePropertyChanged("Title");
+
             RaisePropertyChanged("CanEditType");
         }
 
@@ -111,15 +120,7 @@ namespace ToDo.Client.ViewModels
                 return HasExisting ? false : true;
             }
         }
-
-        public string Title
-        {
-            get
-            {
-                return (!HasExisting ? "Add" : "Edit") + " List";
-            }
-        }
-
+        
         private const string Project = "Project";
         private const string ToDo = "To Do List";
 

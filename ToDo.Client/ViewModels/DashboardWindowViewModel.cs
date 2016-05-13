@@ -634,9 +634,8 @@ namespace ToDo.Client.ViewModels
                 case ComingDue:
                     query = from i in Workspace.Instance.Tasks
                             where i.DueDate != null
-                            //&& i.DueDate < DateTime.Today.AddDays(7)
                             && i.Completed == null
-                            orderby i.DueDate ascending, i.Title ascending
+                            orderby i.DueDate ascending, i.Name ascending
                             select i;
                     break;
                 case Completed:

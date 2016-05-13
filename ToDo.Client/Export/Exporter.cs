@@ -66,7 +66,7 @@ namespace ToDo.Client.Export
             //Lists
             foreach (var l in bundle.Lists)
             {
-                var exists = DB.Lists.FirstOrDefault(x => x.Title == l.Title);
+                var exists = DB.Lists.FirstOrDefault(x => x.Name == l.Name);
 
                 if (exists != null)
                     listsLookup.Add(l.TaskListID, exists.TaskListID);
@@ -87,29 +87,15 @@ namespace ToDo.Client.Export
             List<TaskItem> sortedTasks = new List<TaskItem>();
 
             //Order by Root first, then ParentID asc so lookup will always have the needed values
-            /*
-            var tmp = from t in bundle.Tasks
-                      where t.ParentID == null
-                      select t;
-            sortedTasks.AddRange(tmp);
-
-            tmp = from t in bundle.Tasks
-                  where t.ParentID != null
-                  orderby t.ParentID ascending
-                  select t;
-            sortedTasks.AddRange(tmp);
-            */
-
-            //TODO: Test
             sortedTasks = (from t in bundle.Tasks
-                          orderby t.ParentID == null, t.ParentID ascending
+                          orderby t.ParentID == null descending, t.ParentID ascending
                           select t).ToList();
 
             foreach (var t in sortedTasks)
             {
                 t.ListID = listsLookup[t.ListID];
 
-                var exists = DB.Tasks.FirstOrDefault(x => x.Title == t.Title);
+                var exists = DB.Tasks.FirstOrDefault(x => x.Name == t.Name);
 
                 if (exists != null)
                     tasksLookup.Add(t.TaskItemID, exists.TaskItemID);

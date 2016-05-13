@@ -17,7 +17,7 @@ namespace ToDo.Client.Core.Tasks
         public int TaskItemID { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
 
         [Required]

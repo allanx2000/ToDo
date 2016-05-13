@@ -41,19 +41,19 @@
 
         <Label Grid.Row="0" Grid.Column="0"  Style="{StaticResource GridField}">List:</Label>
         <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Lists}" SelectedItem="{Binding SelectedList}" 
-                  DisplayMemberPath="Title" Width="200" HorizontalAlignment="Left"/>
+                  DisplayMemberPath="Name" Width="200" HorizontalAlignment="Left"/>
 
         <Label Style="{StaticResource GridField}" Grid.Row="1" Grid.Column="0">Name:</Label>
         <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Name}"/>
 
-        <Label Style="{StaticResource GridField}" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top">Details:</Label>
-        <TextBox  Grid.Row="2" Grid.Column="1"
+        <GroupBox Header="Description" Grid.Row="2" Grid.ColumnSpan="2">
+            <TextBox  Grid.Row="2" Grid.Column="1"
                   Text="{Binding Details}" AcceptsReturn="True" 
                   Style="{StaticResource MultilineTextBox}"
                   Margin="5"
                  ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  />
-
+        </GroupBox>
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" >Parent:</Label>
         <!--Style="{Binding GridField}"-->
         <DockPanel LastChildFill="True" Grid.Row="3" Grid.Column="1">
@@ -71,7 +71,7 @@
                   SelectedItem="{Binding Priority}" ItemsSource="{Binding Priorities}"/>
         -->
 
-        <Grid Grid.Row="5" Grid.Column="1">
+        <Grid Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Center">
             <Grid.Resources>
                 <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
                     <Setter Property="Width" Value="80"/>

@@ -116,7 +116,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return (Data.Completed != null? "" : Data.Order + ". ") + data.Title;
+                return (Data.Completed != null? "" : Data.Order + ". ") + data.Name;
             }
         }
 
@@ -124,7 +124,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return Data.Title;
+                return Data.Name;
             }
         }
 

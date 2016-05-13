@@ -17,7 +17,7 @@ namespace ToDo.Client.Core.Lists
 
         public TaskList(string name, string description, ListType type)
         {
-            Title = name;
+            Name = name;
             Description = description;
             Type = type;
         }
@@ -26,7 +26,7 @@ namespace ToDo.Client.Core.Lists
         public int TaskListID { get; set; }
 
         [Required]
-        public string Title { get; set; }
+        public string Name { get; set; }
         public string Description { get; set; }
 
         public DateTime Created { get; set; }

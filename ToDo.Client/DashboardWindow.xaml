@@ -174,7 +174,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
-                                <Label Grid.Row="0" FontWeight="Bold" Foreground="{Binding TitleColor}">
+                                <Label Grid.Row="0" FontWeight="Bold" Foreground="{Binding NameColor}">
                                     <TextBlock Text="{Binding Name}"/>
                                 </Label>
 

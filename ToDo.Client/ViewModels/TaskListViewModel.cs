@@ -41,7 +41,7 @@ namespace ToDo.Client.ViewModels
         {
             get
             {
-                return Data.Title;
+                return Data.Name;
             }
         }
 
@@ -63,7 +63,7 @@ namespace ToDo.Client.ViewModels
 
         public ListType Type { get { return Data.Type; } }
 
-        public SolidColorBrush TitleColor
+        public SolidColorBrush NameColor
         {
             get
             {
