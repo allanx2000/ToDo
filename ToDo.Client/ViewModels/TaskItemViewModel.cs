@@ -46,13 +46,23 @@ namespace ToDo.Client.ViewModels
             data = item;
 
             //Create children view models
+            CreateChildrenViewModels();
+
+            //Set Children SortDescription
+            childrenViewSource = new CollectionViewSource();
+            childrenViewSource.Source = children;
+            SortDescriptions.SetSortDescription(childrenViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
+        }
+
+        private void CreateChildrenViewModels()
+        {
             if (data.Children != null)
             {
                 children = new List<TaskItemViewModel>();
 
                 var ordered = data.Children;
 
-                foreach (var c in ordered )
+                foreach (var c in ordered)
                 {
                     var vm = new TaskItemViewModel(c);
                     vm.Parent = this;
@@ -60,11 +70,6 @@ namespace ToDo.Client.ViewModels
                     children.Add(vm);
                 }
             }
-            
-            //Set Children SortDescription
-            childrenViewSource = new CollectionViewSource();
-            childrenViewSource.Source = children;
-            SortDescriptions.SetSortDescription(childrenViewSource.SortDescriptions, SortDescriptions.TaskItemsOrder);
         }
 
         #region Properties

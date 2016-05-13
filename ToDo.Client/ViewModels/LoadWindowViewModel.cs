@@ -42,7 +42,7 @@ namespace ToDo.Client.ViewModels
 
         private void BrowseForPath()
         {
-            var fd = Innouvous.Utils.DialogsUtility.CreateFolderBrowser();
+            var fd = DialogsUtility.CreateFolderBrowser();
             fd.ShowDialog();
 
             if (!String.IsNullOrEmpty(fd.SelectedPath))
@@ -64,6 +64,7 @@ namespace ToDo.Client.ViewModels
         {
             try
             {
+                //TODO: Change to just db file?
                 if (string.IsNullOrEmpty(WorkspacePath))
                     throw new Exception("The path cannot be empty.");
 

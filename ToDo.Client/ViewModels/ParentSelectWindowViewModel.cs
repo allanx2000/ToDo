@@ -18,7 +18,7 @@ namespace ToDo.Client.ViewModels
         private ObservableCollection<TaskItemViewModel> tasks = new ObservableCollection<TaskItemViewModel>();
         private CollectionViewSource viewsource;
         private Window window;
-        private int? currentTaskId; //Prevent looping
+        private int? currentTaskId; //Prevent circular reference
         
         public ParentSelectWindowViewModel(int listId, int? currentTaskId, Window window)
         {
@@ -29,11 +29,10 @@ namespace ToDo.Client.ViewModels
 
             viewsource = new CollectionViewSource();
             viewsource.Source = tasks;
-            //viewsource.SortDescriptions.Add(new SortDescription("Order", ListSortDirection.Ascending));
             SortDescriptions.SetSortDescription(viewsource.SortDescriptions, SortDescriptions.TaskItemsOrder);
 
             Workspace.API.LoadList(listId, tasks, currentTaskId);
-            
+           
         }
 
         public bool Cancelled { get; private set; }

@@ -63,17 +63,6 @@ namespace ToDo.Client.ViewModels
         private void TasksUpdateTimer_OnTasksUpdated()
         {
             App.Current.Dispatcher.Invoke(TasksChanged);
-            
-            /*
-            foreach (var t in tasks)
-            {
-                t.RefreshViewModel();
-            }
-
-            foreach (var l in lists)
-            {
-                l.Update();
-            }*/
         }
 
         #region Lists
