@@ -263,7 +263,12 @@
 
             <!-- Details -->
             <GroupBox Grid.Row="1" Grid.Column="1" Header="Details">
-                <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" DataContext="{Binding SelectedTaskViewModel}">
+                <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" 
+                      DataContext="{Binding SelectedTaskViewModel}">
+                    <Grid.Resources>
+                        <ResourceDictionary Source="Styles.xaml"/>
+                    </Grid.Resources>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -276,11 +281,12 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Label Grid.ColumnSpan="4" FontWeight="Bold">
-                        <TextBlock Text="{Binding Name, FallbackValue=Name}"/>
+                        <TextBlock FontSize="15" Text="{Binding Name, FallbackValue=Name}"/>
                     </Label>
 
                     <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Priority:</Label>
@@ -289,35 +295,24 @@
                     <Label Grid.Row="1" Grid.Column="2" Style="{StaticResource GridField}">Repeats:</Label>
                     <Label Grid.Row="1" Grid.Column="3" Content="{Binding FrequencyText}"/>
 
-                    <!--
-                        <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Comments:</Label>
-                        <Label Grid.Row="2" Grid.Column="3" Content="{Binding CommentsCount}"/>
-                        -->
-
                     <Label Grid.Row="2" Grid.Column="0" Style="{StaticResource GridField}">Due Date:</Label>
                     <Label Grid.Row="2" Grid.Column="1"  Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
                     <Label Grid.Row="2" Grid.Column="2" Style="{StaticResource GridField}">Completed:</Label>
                     <Label Grid.Row="2" Grid.Column="3" Content="{Binding CompletedDate}"/>
-                    <ScrollViewer Grid.Row="3" Grid.ColumnSpan="4" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ScrollViewer Grid.Row="3" Grid.ColumnSpan="4" ScrollViewer.VerticalScrollBarVisibility="Auto">
                         <Label VerticalAlignment="Top">
-                            <TextBlock Text="{Binding DescriptionText}"/>
+                            <TextBlock TextWrapping="WrapWithOverflow" Text="{Binding DescriptionText}"/>
                         </Label>
                     </ScrollViewer>
 
-
-                    <GroupBox Header="Comments" Grid.Row="4" Grid.ColumnSpan="4">
-                        <GroupBox.Resources>
-                            <ResourceDictionary Source="Styles.xaml"/>
-                        </GroupBox.Resources>
-
-                        <ListBox ItemsSource="{Binding Comments}" 
+                    <TextBlock Margin="0 10" FontWeight="Bold" Grid.Row="4" Grid.ColumnSpan="4">Comments:</TextBlock>
+                        <ListBox Grid.Row="5" Grid.ColumnSpan="4" ItemsSource="{Binding Comments}" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     HorizontalContentAlignment="Stretch"
                                      ItemTemplate="{StaticResource CommentsView}">
 
                         </ListBox>
-                    </GroupBox>
                 </Grid>
             </GroupBox>
 
