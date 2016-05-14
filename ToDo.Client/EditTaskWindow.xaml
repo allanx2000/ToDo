@@ -104,6 +104,10 @@
 
 
         <GroupBox Grid.Row="6" Grid.ColumnSpan="2" Header="Comments">
+            <GroupBox.Resources>
+                <ResourceDictionary Source="Styles.xaml"/>
+            </GroupBox.Resources>
+
             <DockPanel LastChildFill="True">
                 <StackPanel VerticalAlignment="Center" DockPanel.Dock="Right">
                     <Button Command="{Binding NewCommentCommand}">New</Button>
@@ -115,7 +119,9 @@
                 <ListBox ScrollViewer.VerticalScrollBarVisibility="Auto"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          HorizontalContentAlignment="Stretch"
+                         ItemTemplate="{StaticResource CommentsView}"
                          ItemsSource="{Binding CommentsView}" SelectedItem="{Binding SelectedComment}">
+                    <!--
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <DockPanel LastChildFill="True">
@@ -129,6 +135,7 @@
                             </DockPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
+                    -->
                 </ListBox>
 
             </DockPanel>

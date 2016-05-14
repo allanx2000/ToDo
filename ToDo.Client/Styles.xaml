@@ -7,7 +7,6 @@
         <Setter Property="IsSelected" Value="{Binding Selected}"/>
     </Style>
 
-
     <HierarchicalDataTemplate x:Key="TreeViewDataTemplate" ItemsSource="{Binding ChildrenView}">
         <Grid>
             <Grid.RowDefinitions>
@@ -18,7 +17,7 @@
             <Label>
                 <TextBlock Style="{Binding TextStyle}" Text="{Binding DisplayName}"/>
             </Label>
-            
+
             <Grid Grid.Row="1" Visibility="{Binding IncompletedRow}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="120"/>
@@ -32,7 +31,7 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Label>Repeats: </Label>
+                    <Label>Repeats:</Label>
                     <Label Content="{Binding FrequencyText}"/>
                 </StackPanel>
 
@@ -40,9 +39,20 @@
                     <Label>Due Date:</Label>
                     <Label Content="{Binding DueDate}" Foreground="{Binding DueDateColor}"/>
                 </StackPanel>
-                
+
             </Grid>
         </Grid>
     </HierarchicalDataTemplate>
+
+    <DataTemplate x:Key="CommentsView">
+        <DockPanel LastChildFill="True">
+            <Label DockPanel.Dock="Bottom" HorizontalAlignment="Right"
+                                       Content="{Binding Created}"/>
+            <Label>
+                <TextBlock TextWrapping="Wrap" Text="{Binding Text}"/>
+            </Label>
+        </DockPanel>
+    </DataTemplate>
+
 
 </ResourceDictionary>

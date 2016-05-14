@@ -630,25 +630,25 @@ namespace ToDo.Client.ViewModels
                     query = from i in Workspace.Instance.Tasks
                             where i.DueDate != null
                             && i.Completed == null
-                            orderby i.DueDate ascending, i.Name ascending
+                            orderby i.DueDate ascending, i.Priority descending, i.Name ascending
                             select i;
                     break;
                 case Completed:
                     query = from i in Workspace.Instance.Tasks
                             where i.Completed != null
-                            orderby i.Completed descending
+                            orderby i.Completed descending, i.Priority descending, i.Name ascending
                             select i;
                     break;
                 case Repeating:
                     query = from i in Workspace.Instance.Tasks
                             where i.Frequency != TaskFrequency.No
-                            orderby (int)i.Frequency ascending
+                            orderby (int)i.Frequency ascending, i.Priority descending, i.Name ascending
                             select i;
                     break;
                 case Aging:
                     query = from i in Workspace.Instance.Tasks
                             where i.Completed == null
-                            orderby i.Updated ascending
+                            orderby i.Updated ascending, i.Name ascending
                             select i;
                     break;
                 default:

@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
+using ToDo.Client.Core;
 using ToDo.Client.Core.Tasks;
 using ToDo.Client.Properties;
 
@@ -73,6 +74,15 @@ namespace ToDo.Client.ViewModels
         }
 
         #region Properties
+
+        public List<CommentViewModel> Comments
+        {
+            get
+            {
+                return Data.Comments == null ? null
+                    : (from c in Data.Comments select new CommentViewModel(c)).ToList();
+            }
+        }
 
         public CollectionViewSource childrenViewSource;
         public ICollectionView ChildrenView
