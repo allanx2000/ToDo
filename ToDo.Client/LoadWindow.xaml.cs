@@ -29,5 +29,18 @@ namespace ToDo.Client
             vm =  new LoadWindowViewModel(this);
             this.DataContext = vm;
         }
+
+        /// <summary>
+        /// Fully exits app if quit without loading
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            if (Workspace.Instance == null)
+            {
+                Environment.Exit(0);
+            }
+        }
     }
 }

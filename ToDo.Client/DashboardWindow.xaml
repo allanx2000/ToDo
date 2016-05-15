@@ -87,6 +87,7 @@
                 <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
             </MenuItem>
             <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
+            <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
         </Menu>
 
         <Grid Grid.Row="1" Grid.Column="0">

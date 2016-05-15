@@ -531,6 +531,22 @@ namespace ToDo.Client.ViewModels
 
         }
 
+        public ICommand CleanerCommand
+        {
+            get { return new CommandHelper(ShowCleaner); }
+        }
+
+        private void ShowCleaner()
+        {
+            var window = new CleanerWindow();
+            window.ShowDialog();
+
+            if (window.Cleaned)
+                TasksChanged();
+        }
+
+
+
         public ICommand ExportImportCommand
         {
             get

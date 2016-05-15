@@ -1,0 +1,44 @@
+﻿<Window x:Class="ToDo.Client.CleanerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ToDo.Client"
+        mc:Ignorable="d"
+        Title="CleanerWindow" Width="500" SizeToContent="Height">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="15*"/>
+        </Grid.ColumnDefinitions>
+
+        <Calendar Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
+                   DisplayDateStart="{Binding StartDate, Mode=OneWay}" SelectedDate="{Binding SelectedDate}" />
+
+        <GroupBox Header="Tasks" Grid.Row="0" Grid.Column="1" >
+        <DockPanel LastChildFill="True">
+            <Button DockPanel.Dock="Bottom" HorizontalAlignment="Center"
+                    Command="{Binding DeleteCommand}">Clean</Button>
+
+                <ListBox ItemsSource="{Binding Tasks}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel LastChildFill="True">
+                                <Label DockPanel.Dock="Right" Content="{Binding CompletedDate}"/>
+                                <Label>
+                                    <TextBlock TextWrapping="Wrap" Text="{Binding Name}"/>
+                                </Label>
+                            </DockPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </GroupBox>
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Command="{Binding CloseCommand}">Close</Button>
+    </Grid>
+</Window>

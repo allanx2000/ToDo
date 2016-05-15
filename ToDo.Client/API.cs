@@ -358,8 +358,10 @@ namespace ToDo.Client
                     return false;
                 else if ((parent1 != null && parent2 == null) || (parent2 != null && parent1 == null))
                     return true;
-                else 
-                    return parent1.TaskItemID == parent2.TaskItemID;
+                else
+                {
+                    return parent1.TaskItemID != parent2.TaskItemID;
+                }
             }
 
             public static void InsertTask(TaskList list, string title, string details, int? priority,
@@ -407,6 +409,8 @@ namespace ToDo.Client
 
                 if (parentChanged)
                 {
+                    CheckParentChild(existing, parent);
+
                     existing.Parent = parent;
                 }
 
@@ -452,6 +456,33 @@ namespace ToDo.Client
                     DB.SaveChanges();
                 }
 
+            }
+
+            /// <summary>
+            /// Check for cyclic relationship
+            /// </summary>
+            /// <param name="oldParent"></param>
+            /// <param name="newParent"></param>
+            private static void CheckParentChild(TaskItem item, TaskItem newParent)
+            {
+                if (IsChild(newParent.TaskItemID, item.Children))
+                    throw new Exception("The new parent causes a cyclic relationship");
+            }
+
+            //TODO: Refactor... there is similar code somewhere?
+            private static bool IsChild(int matchId, List<TaskItem> children)
+            {
+                if (children == null)
+                    return false;
+
+                foreach (TaskItem t in children)
+                {
+                    if (t.TaskItemID == matchId 
+                        || IsChild(matchId, t.Children))
+                        return true;
+                }
+
+                return false;
             }
 
             /// <summary>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
         mc:Ignorable="d" ResizeMode="NoResize"
-        Title="Select Database" SizeToContent="Height" Width="400">
+        Title="Select Database" SizeToContent="Height" Width="400" Closed="Window_Closed">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
