@@ -25,8 +25,14 @@ namespace ToDo.Client
         {
             InitializeComponent();
 
-            vm = new DashboardWindowViewModel(this);
+            vm = new DashboardWindowViewModel(this, OnClosing);
             this.DataContext = vm;
+        }
+
+        private void OnClosing()
+        {
+            NotifyIcon.Icon = null;
+            NotifyIcon.Visibility = Visibility.Collapsed;
         }
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -42,7 +48,6 @@ namespace ToDo.Client
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             e.Cancel = true;
-
             vm.Close();
         }
 

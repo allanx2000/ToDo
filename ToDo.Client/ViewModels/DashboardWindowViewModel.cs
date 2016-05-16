@@ -26,9 +26,12 @@ namespace ToDo.Client.ViewModels
         private ObservableCollection<TaskItemViewModel> quickList = new ObservableCollection<TaskItemViewModel>();
         private CollectionViewSource quickListSource;
 
-        public DashboardWindowViewModel(Window window)
+        private Action onQuit;
+
+        public DashboardWindowViewModel(Window window, Action onQuit)
         {
             this.window = window;
+            this.onQuit = onQuit;
 
             InitializeViewSources();
 
@@ -508,19 +511,26 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        private WindowState previousState;
+        //private WindowState previousState;
         public void Close(bool minimize = true)
         {
             if (minimize)
             {
+                /*
                 var state = window.WindowState;
 
                 previousState = state == WindowState.Minimized ? WindowState.Normal : window.WindowState;
                 window.WindowState = WindowState.Minimized;
                 window.ShowInTaskbar = false;
+                */
+
+                window.Hide();
             }
             else
             {
+                if (onQuit != null)
+                    onQuit.Invoke();
+
                 TasksUpdateTimer.StopTimer();
                 Environment.Exit(0);
             }
@@ -538,11 +548,18 @@ namespace ToDo.Client.ViewModels
         {
             if (window.WindowState == WindowState.Minimized)
             {
+                /*
                 window.WindowState = previousState;
                 window.Activate();
 
                 window.ShowInTaskbar = true;
+                */
+
             }
+            
+            window.Show();
+            window.WindowState = WindowState.Normal;
+
         }
 
         #endregion
