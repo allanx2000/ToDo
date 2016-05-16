@@ -37,7 +37,19 @@ namespace ToDo.Client
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
-            TasksUpdateTimer.StopTimer();
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            e.Cancel = true;
+
+            vm.Close();
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+                vm.Close();
         }
     }
 }

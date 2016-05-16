@@ -6,9 +6,15 @@
         xmlns:local="clr-namespace:ToDo.Client"
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
-        Title="ToDo" Height="850" MinHeight="850" Width="1200"  MinWidth="1200" Unloaded="Window_Unloaded">
+        xmlns:tb="http://www.hardcodet.net/taskbar" 
+        Title="ToDo" Height="850" MinHeight="850" Width="1200"  MinWidth="1200" Unloaded="Window_Unloaded" Closing="Window_Closing" StateChanged="Window_StateChanged">
     <Window.Resources>
 
+        <ContextMenu x:Key="NotifyMenu">
+            <MenuItem Header="Show" Command="{Binding ShowCommand}" />
+            <MenuItem Header="Quit" Command="{Binding QuitCommand}" />
+        </ContextMenu>
+        
         <!-- QuickList DataTemplates -->
         <DataTemplate x:Key="aging">
             <DockPanel>
@@ -70,10 +76,13 @@
             <ColumnDefinition Width="280"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
+        
+        <tb:TaskbarIcon IconSource="icon_t.ico" ToolTipText="ToDo" 
+                        ContextMenu="{StaticResource NotifyMenu}" MenuActivation="LeftOrRightClick"
+                        DoubleClickCommand="{Binding ShowCommand}"/>
 
         <!--Menu Bar -->
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Background="Transparent"
-              >
+        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Background="Transparent">
             <Menu.Resources>
                 <Style TargetType="MenuItem">
                     <Setter Property="Padding" Value="5"/>
@@ -85,6 +94,9 @@
                 </MenuItem.Header>
                 <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
                 <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
+                <Separator/>
+                <MenuItem Command="{Binding QuitCommand}" Header="Exit"/>
+
             </MenuItem>
             <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
             <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>

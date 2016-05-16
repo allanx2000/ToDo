@@ -498,6 +498,55 @@ namespace ToDo.Client.ViewModels
 
         #region Misc
 
+        #region Notify Icon
+        
+        public ICommand QuitCommand
+        {
+            get
+            {
+                return new CommandHelper(() => Close(false));
+            }
+        }
+
+        private WindowState previousState;
+        public void Close(bool minimize = true)
+        {
+            if (minimize)
+            {
+                var state = window.WindowState;
+
+                previousState = state == WindowState.Minimized ? WindowState.Normal : window.WindowState;
+                window.WindowState = WindowState.Minimized;
+                window.ShowInTaskbar = false;
+            }
+            else
+            {
+                TasksUpdateTimer.StopTimer();
+                Environment.Exit(0);
+            }
+        }
+
+        public ICommand ShowCommand
+        {
+            get
+            {
+                return new CommandHelper(ShowWindow);
+            }
+        }
+
+        private void ShowWindow()
+        {
+            if (window.WindowState == WindowState.Minimized)
+            {
+                window.WindowState = previousState;
+                window.Activate();
+
+                window.ShowInTaskbar = true;
+            }
+        }
+
+        #endregion
+
         public ICommand ChangeDBCommand
         {
             get { return new CommandHelper(ChangeDB); }
