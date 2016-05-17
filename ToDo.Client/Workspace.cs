@@ -16,6 +16,13 @@ namespace ToDo.Client
 
         private static Workspace instance;
 
+        /*
+        public static async Task LoadWorkspaceAsync(string workspacePath, string dbFile)
+        {
+            LoadWorkspace(workspacePath, dbFile);
+        }
+        */
+
         public static void LoadWorkspace(string workspacePath, string dbFile)
         {
             try

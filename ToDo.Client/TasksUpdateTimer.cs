@@ -64,6 +64,7 @@ namespace ToDo.Client
 
             var matches = Workspace.Instance.Tasks
                 .Where(x => x.Frequency != TaskFrequency.No 
+                        //&& x.DueDate != null
                         && yesterday >= x.DueDate).ToList();
 
             foreach (var t in matches)

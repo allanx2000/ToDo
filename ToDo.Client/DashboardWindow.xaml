@@ -299,7 +299,7 @@
                     </Grid.RowDefinitions>
 
                     <Label Grid.ColumnSpan="4" FontWeight="Bold">
-                        <TextBlock FontSize="15" Text="{Binding Name, FallbackValue=Name}"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="14" Text="{Binding Name, FallbackValue=Name}"/>
                     </Label>
 
                     <Label Grid.Row="1" Grid.Column="0" Style="{StaticResource GridField}">Priority:</Label>

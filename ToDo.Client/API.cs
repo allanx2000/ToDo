@@ -57,12 +57,14 @@ namespace ToDo.Client
                     Expand(collection, selected.Value);
             }
 
-            public static void UpdateList(TaskList existing, string title, string description)
+            public static void UpdateList(TaskList existing, string title, string description, ListType type)
             {
-                ValidateTaskList(title, description, existing.TaskListID);
+                ValidateTaskList(title, description, type, existing.TaskListID);
 
                 existing.Name = title;
                 existing.Description = description;
+                existing.Type = type;
+
                 existing.LastUpdated = DateTime.Now;
 
                 DB.SaveChanges();
@@ -70,7 +72,7 @@ namespace ToDo.Client
 
             public static void InsertList(string name, string description, ListType type)
             {
-                ValidateTaskList(name, description, type: type);
+                ValidateTaskList(name, description, type);
 
                 var data = new TaskList(name, description, type);
                 data.Created = data.LastUpdated = DateTime.Now;
@@ -79,7 +81,7 @@ namespace ToDo.Client
                 DB.SaveChanges();
             }
 
-            private static void ValidateTaskList(string name, string description, int? id = null, ListType? type = null)
+            private static void ValidateTaskList(string name, string description, ListType type, int? id = null)
             {
                 if (string.IsNullOrEmpty(name))
                     throw new Exception("Name cannot be empty.");
@@ -93,9 +95,6 @@ namespace ToDo.Client
                     if (!id.HasValue || duplicate.TaskListID != id.Value)
                         throw new Exception("A list by the same name already exists.");
                 }
-
-                if (id == null && type == null)
-                    throw new Exception("Project Type must be defined.");
             }
 
             public static void DeleteList(TaskList list)
@@ -465,7 +464,9 @@ namespace ToDo.Client
             /// <param name="newParent"></param>
             private static void CheckParentChild(TaskItem item, TaskItem newParent)
             {
-                if (IsChild(newParent.TaskItemID, item.Children))
+                if (item == null || newParent == null)
+                    return;
+                else if (IsChild(newParent.TaskItemID, item.Children))
                     throw new Exception("The new parent causes a cyclic relationship");
             }
 

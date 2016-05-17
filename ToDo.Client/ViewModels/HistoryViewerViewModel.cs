@@ -136,11 +136,14 @@ namespace ToDo.Client.ViewModels
 
         private void SetCompleted(bool completed)
         {
+            //Deprecated, no changing
+            /*
             if (SelectedTask != null && SelectedDate != null)
             {
                 Workspace.API.LogCompleted(SelectedDate.Value, SelectedTask.Data.TaskItemID, completed);
                 UpdateCalendar();
             }
+            */
         }
 
         public bool NoSelected { get { return !yesSelected; } }

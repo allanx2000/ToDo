@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -60,11 +61,51 @@ namespace ToDo.Client.ViewModels
             return Path.Combine(folder, DatabaseFile);
         }
 
+        /*Obsolete
+        async Task AsyncLoad()
+        {
+            var title = window.Title;
+            window.Title = "Loading...";
+
+            if (string.IsNullOrEmpty(WorkspacePath))
+                throw new Exception("The path cannot be empty.");
+
+            string dbFile = GetDbFilePath(WorkspacePath);
+
+            if (!Directory.Exists(WorkspacePath))
+            {
+                Directory.CreateDirectory(WorkspacePath);
+            }
+            else
+                ValidateWorkspace(workspacePath);
+
+            var loadDb = Workspace.LoadWorkspaceAsync(workspacePath, dbFile);
+
+            window.Title = "Loading";
+            while (!loadDb.IsCompleted)
+            {
+                window.Title += "|";
+                Thread.Sleep(10);
+            }
+            
+            await loadDb;
+
+            Settings.LastPath = WorkspacePath;
+            Settings.Save();
+
+            DashboardWindow dashboard = new DashboardWindow();
+            dashboard.Show();
+            window.Close();
+
+
+            
+        }
+        */
+
         public void Load()
         {
             try
             {
-                //TODO: Change to just db file?
                 if (string.IsNullOrEmpty(WorkspacePath))
                     throw new Exception("The path cannot be empty.");
 
@@ -78,14 +119,14 @@ namespace ToDo.Client.ViewModels
                     ValidateWorkspace(workspacePath);
 
                 Workspace.LoadWorkspace(workspacePath, dbFile);
-
+                
                 Settings.LastPath = WorkspacePath;
                 Settings.Save();
 
                 DashboardWindow dashboard = new DashboardWindow();
                 dashboard.Show();
                 window.Close();
-
+                
             }
             catch (Exception e)
             {

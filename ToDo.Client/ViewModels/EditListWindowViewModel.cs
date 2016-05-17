@@ -112,7 +112,7 @@ namespace ToDo.Client.ViewModels
                 RaisePropertyChanged();
             }
         }
-
+        /*
         public bool CanEditType
         {
             get
@@ -120,10 +120,12 @@ namespace ToDo.Client.ViewModels
                 return HasExisting ? false : true;
             }
         }
+        */
         
         private const string Project = "Project";
         private const string ToDo = "To Do List";
 
+        //TODO: Change to manager, allow loading
         private readonly List<string> listTypes = new List<string>()
         {
             Project,
@@ -175,10 +177,11 @@ namespace ToDo.Client.ViewModels
             {
                 TaskList newList = new TaskList(Name, Description, ConvertType(SelectedListType));
 
+                var type = ConvertType(SelectedListType);
                 if (existing != null)
-                    Workspace.API.UpdateList(existing, Name, Description);
+                    Workspace.API.UpdateList(existing, Name, Description, type);
                 else
-                    Workspace.API.InsertList(Name, Description, ConvertType(SelectedListType));
+                    Workspace.API.InsertList(Name, Description, type);
                 
                 Cancelled = false;
                 window.Close();
