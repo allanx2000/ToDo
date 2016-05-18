@@ -511,19 +511,11 @@ namespace ToDo.Client.ViewModels
             }
         }
 
-        //private WindowState previousState;
         public void Close(bool minimize = true)
         {
             if (minimize)
             {
-                /*
-                var state = window.WindowState;
-
-                previousState = state == WindowState.Minimized ? WindowState.Normal : window.WindowState;
                 window.WindowState = WindowState.Minimized;
-                window.ShowInTaskbar = false;
-                */
-
                 window.Hide();
             }
             else

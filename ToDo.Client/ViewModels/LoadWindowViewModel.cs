@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using ToDo.Client.Core.Lists;
 
 namespace ToDo.Client.ViewModels
@@ -17,8 +18,10 @@ namespace ToDo.Client.ViewModels
     {
         private readonly Properties.Settings Settings = Properties.Settings.Default;
 
-        private string workspacePath; 
+        private string workspacePath;
         private Window window;
+
+        private readonly Dispatcher GUI = App.Current.Dispatcher;
 
         public LoadWindowViewModel(Window window)
         {
@@ -61,47 +64,6 @@ namespace ToDo.Client.ViewModels
             return Path.Combine(folder, DatabaseFile);
         }
 
-        /*Obsolete
-        async Task AsyncLoad()
-        {
-            var title = window.Title;
-            window.Title = "Loading...";
-
-            if (string.IsNullOrEmpty(WorkspacePath))
-                throw new Exception("The path cannot be empty.");
-
-            string dbFile = GetDbFilePath(WorkspacePath);
-
-            if (!Directory.Exists(WorkspacePath))
-            {
-                Directory.CreateDirectory(WorkspacePath);
-            }
-            else
-                ValidateWorkspace(workspacePath);
-
-            var loadDb = Workspace.LoadWorkspaceAsync(workspacePath, dbFile);
-
-            window.Title = "Loading";
-            while (!loadDb.IsCompleted)
-            {
-                window.Title += "|";
-                Thread.Sleep(10);
-            }
-            
-            await loadDb;
-
-            Settings.LastPath = WorkspacePath;
-            Settings.Save();
-
-            DashboardWindow dashboard = new DashboardWindow();
-            dashboard.Show();
-            window.Close();
-
-
-            
-        }
-        */
-
         public void Load()
         {
             try
@@ -118,21 +80,58 @@ namespace ToDo.Client.ViewModels
                 else
                     ValidateWorkspace(workspacePath);
 
-                Workspace.LoadWorkspace(workspacePath, dbFile);
-                
-                Settings.LastPath = WorkspacePath;
-                Settings.Save();
+                LoadWorkspaceAsync(dbFile);
 
-                DashboardWindow dashboard = new DashboardWindow();
-                dashboard.Show();
-                window.Close();
-                
             }
             catch (Exception e)
             {
                 MessageBoxFactory.ShowError(e);
 
             }
+        }
+
+        private void LoadWorkspaceAsync(string dbFile)
+        {
+            //window.Title = "Loading";
+
+            Thread th = new Thread(() =>
+            {
+                try
+                {
+                    //Timer timer = new Timer(OnLoadTimer, null, 0, 10);
+
+                    GUI.Invoke(() => window.IsEnabled = false);
+
+                    Workspace.LoadWorkspace(workspacePath, dbFile);
+
+                    Settings.LastPath = WorkspacePath;
+                    Settings.Save();
+
+                    GUI.Invoke(() =>
+                    {
+                        DashboardWindow dashboard = new DashboardWindow();
+                        dashboard.Show();
+                        window.Close();
+                    });
+
+                    //timer.Change(Timeout.Infinite, Timeout.Infinite);
+                }
+                catch (Exception e)
+                {
+                    GUI.Invoke(() => MessageBoxFactory.ShowError(e));
+                }
+                finally
+                {
+                    GUI.Invoke(() => window.IsEnabled = true);
+                }
+            });
+
+            th.Start();
+        }
+
+        private void OnLoadTimer(object state)
+        {
+            App.Current.Dispatcher.Invoke(() => window.Title += ".");
         }
 
         private void ValidateWorkspace(string workspacePath)
