@@ -11,6 +11,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using ToDo.Client.Core.Lists;
+using AdornedControl;
 
 namespace ToDo.Client.ViewModels
 {
@@ -23,12 +24,13 @@ namespace ToDo.Client.ViewModels
 
         private readonly Dispatcher GUI = App.Current.Dispatcher;
 
-        public LoadWindowViewModel(Window window)
+        public LoadWindowViewModel(Window window, AdornedControl.AdornedControl spinner)
         {
             this.window = window;
+            this.spinner = spinner;
             workspacePath = Settings.LastPath;
         }
-
+        
         public string WorkspacePath
         {
             get { return workspacePath; }
@@ -59,6 +61,8 @@ namespace ToDo.Client.ViewModels
         }
 
         private const string DatabaseFile = "db.sqlite";
+        private AdornedControl.AdornedControl spinner;
+
         private string GetDbFilePath(string folder)
         {
             return Path.Combine(folder, DatabaseFile);
@@ -92,16 +96,14 @@ namespace ToDo.Client.ViewModels
 
         private void LoadWorkspaceAsync(string dbFile)
         {
-            //window.Title = "Loading";
+            spinner.IsAdornerVisible = true;
+            window.IsEnabled = false;
 
             Thread th = new Thread(() =>
             {
                 try
                 {
-                    //Timer timer = new Timer(OnLoadTimer, null, 0, 10);
-
-                    GUI.Invoke(() => window.IsEnabled = false);
-
+                    
                     Workspace.LoadWorkspace(workspacePath, dbFile);
 
                     Settings.LastPath = WorkspacePath;
@@ -114,7 +116,6 @@ namespace ToDo.Client.ViewModels
                         window.Close();
                     });
 
-                    //timer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
                 catch (Exception e)
                 {
@@ -122,7 +123,11 @@ namespace ToDo.Client.ViewModels
                 }
                 finally
                 {
-                    GUI.Invoke(() => window.IsEnabled = true);
+                    GUI.Invoke(() =>
+                    {
+                        window.IsEnabled = true;
+                        spinner.IsAdornerVisible = false;
+                    });
                 }
             });
 

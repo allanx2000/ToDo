@@ -26,8 +26,10 @@ namespace ToDo.Client
         {
             InitializeComponent();
 
-            vm =  new LoadWindowViewModel(this);
+            vm =  new LoadWindowViewModel(this, Spinner);
             this.DataContext = vm;
+
+            //Spinner.IsAdornerVisible = true;
         }
 
         /// <summary>
