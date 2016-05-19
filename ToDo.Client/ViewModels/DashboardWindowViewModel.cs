@@ -540,18 +540,11 @@ namespace ToDo.Client.ViewModels
         {
             if (window.WindowState == WindowState.Minimized)
             {
-                /*
-                window.WindowState = previousState;
-                window.Activate();
-
-                window.ShowInTaskbar = true;
-                */
-
+                window.Show();
+                window.WindowState = WindowState.Normal;
             }
-            
-            window.Show();
-            window.WindowState = WindowState.Normal;
-
+            else //Just in background
+                window.Activate();
         }
 
         #endregion
