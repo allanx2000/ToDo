@@ -31,5 +31,7 @@ namespace ToDo.Client
 
             this.DataContext = vm;
         }
+
+        public bool HotKeyChanged { get { return vm.Changed; } }
     }
 }

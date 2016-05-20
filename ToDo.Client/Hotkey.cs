@@ -30,6 +30,14 @@ namespace ToDo.Client
             return str;
         }
 
+        public string DisplayName
+        {
+            get
+            {
+                return string.Join(" + ", Modifier.ToString(), Key.ToString());
+            }
+        }
+
         
         public static Hotkey Deserialize(string str)
         {
@@ -42,6 +50,7 @@ namespace ToDo.Client
             return new Hotkey(mod, key);
         }
 
+        #region Hotkey "Manager"
 
         private const string ShowAppKey = "ShowApp";
 
@@ -94,6 +103,24 @@ namespace ToDo.Client
                 }
             }
         }
+
+        public static Hotkey GetDefaultShowWindowHotkey()
+        {
+            if (Settings.HotkeyEnabled == true //Need?
+                && !string.IsNullOrEmpty(Settings.Hotkey))
+            {
+                try
+                {
+                    var hk = Hotkey.Deserialize(Settings.Hotkey);
+                    return hk;
+                }
+                catch { }
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 
 }

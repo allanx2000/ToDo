@@ -505,6 +505,18 @@ namespace ToDo.Client.ViewModels
 
         #region Misc
 
+        public string HotKeyText
+        {
+            get
+            {
+                var hk = Hotkey.GetDefaultShowWindowHotkey();
+                if (hk == null)
+                    return "No Hotkey Set";
+                else
+                    return "CTRL + " + hk.DisplayName;
+            }
+        }
+
         public ICommand SetHotkeyCommand
         {
             get
@@ -517,6 +529,9 @@ namespace ToDo.Client.ViewModels
         {
             var window = new HotKeySettingsWindow(ShowWindow);
             window.ShowDialog();
+
+            if (window.HotKeyChanged)
+                RaisePropertyChanged("HotkeyText");
         }
 
         #region Notify Icon

@@ -82,31 +82,36 @@
                         DoubleClickCommand="{Binding ShowCommand}"/>
 
         <!--Menu Bar -->
-        <Menu Grid.Row="0" Grid.ColumnSpan="2" Margin="5" Background="Transparent">
-            <Menu.Resources>
-                <Style TargetType="MenuItem">
-                    <Setter Property="Padding" Value="5"/>
-                </Style>
-            </Menu.Resources>
-            <MenuItem>
-                <MenuItem.Header>
-                    <TextBlock Width="40" Text="File" TextAlignment="Center" VerticalAlignment="Center"/>
-                </MenuItem.Header>
-                <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
-                <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
-                <Separator/>
-                <MenuItem Command="{Binding QuitCommand}" Header="Exit"/>
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" LastChildFill="True">
+            <Menu Margin="5" Background="Transparent">
+                <Menu.Resources>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Padding" Value="5"/>
+                    </Style>
+                </Menu.Resources>
+                <MenuItem>
+                    <MenuItem.Header>
+                        <TextBlock Width="40" Text="File" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </MenuItem.Header>
+                    <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
+                    <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
+                    <Separator/>
+                    <MenuItem Command="{Binding QuitCommand}" Header="Exit"/>
 
-            </MenuItem>
-            <MenuItem Header="Tools">
-                <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
-                <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
-            </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Tools">
+                    <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
+                    <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
+                </MenuItem>
 
-            <MenuItem Header="Settings">
-                <MenuItem Header="Global Hotkey" Command="{Binding SetHotkeyCommand}"/>
-            </MenuItem>
-        </Menu>
+                <MenuItem Header="Settings">
+                    <MenuItem Header="Global Hotkey" Command="{Binding SetHotkeyCommand}"/>
+                </MenuItem>
+            </Menu>
+            <Label FontWeight="Bold" DockPanel.Dock="Right" Content="{Binding HotKeyText, FallbackValue=Hotkey}"/>
+            
+            <Label/>
+        </DockPanel>
 
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.RowDefinitions>
