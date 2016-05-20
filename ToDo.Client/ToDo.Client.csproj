@@ -28,7 +28,7 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>15</ApplicationRevision>
+    <ApplicationRevision>17</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -141,6 +141,14 @@
       <HintPath>..\packages\Microsoft.Extensions.Primitives.1.0.0-rc1-final\lib\net451\Microsoft.Extensions.Primitives.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NHotkey, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHotkey.1.2.1\lib\net20\NHotkey.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NHotkey.Wpf, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NHotkey.Wpf.1.2.1\lib\net35\NHotkey.Wpf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Remotion.Linq, Version=2.0.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.0.1\lib\net45\Remotion.Linq.dll</HintPath>
       <Private>True</Private>
@@ -204,8 +212,12 @@
       <DependentUpon>ExportImportWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Export\Exporter.cs" />
+    <Compile Include="Hotkey.cs" />
     <Compile Include="LoadingWait.xaml.cs">
       <DependentUpon>LoadingWait.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HotKeySettingsWindow.xaml.cs">
+      <DependentUpon>HotKeySettingsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\CleanerViewModel.cs" />
     <Compile Include="ViewModels\DateStyleConverter.cs" />
@@ -221,6 +233,7 @@
     <Compile Include="ViewModels\EditCommentViewModel.cs" />
     <Compile Include="ViewModels\EditTaskWindowViewModel.cs" />
     <Compile Include="ViewModels\ExportImportViewModel.cs" />
+    <Compile Include="ViewModels\HotKeySettingsViewModel.cs" />
     <Compile Include="ViewModels\ParentSelectWindowViewModel.cs" />
     <Compile Include="ViewModels\SortDescriptions.cs" />
     <Compile Include="ViewModels\Stats.cs" />
@@ -281,6 +294,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ParentSelectWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HotKeySettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

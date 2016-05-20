@@ -1,5 +1,6 @@
 ﻿using Innouvous.Utils;
 using Innouvous.Utils.MVVM;
+using NHotkey.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +11,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using ToDo.Client.Core.Tasks;
+using NHotkey;
 
 namespace ToDo.Client.ViewModels
 {
@@ -39,6 +41,8 @@ namespace ToDo.Client.ViewModels
             SelectedListOrder = Remaining;
             SelectedQuickListType = ComingDue;
 
+            Hotkey.SetDefaultShowWindowHotkey(ShowWindow);
+
             ReloadLists();
             UpdateStats();
 
@@ -49,7 +53,7 @@ namespace ToDo.Client.ViewModels
             TasksUpdateTimer.UpdateTasks();
             TasksUpdateTimer.StartTimer();
         }
-
+        
         private void InitializeViewSources()
         {
             listsViewSource = new CollectionViewSource();
@@ -67,7 +71,7 @@ namespace ToDo.Client.ViewModels
         {
             App.Current.Dispatcher.Invoke(TasksChanged);
         }
-
+        
         #region Lists
 
         #region Ordering
@@ -501,8 +505,22 @@ namespace ToDo.Client.ViewModels
 
         #region Misc
 
+        public ICommand SetHotkeyCommand
+        {
+            get
+            {
+                return new CommandHelper(ShowHotkeySettings);
+            }
+        }
+
+        private void ShowHotkeySettings()
+        {
+            var window = new HotKeySettingsWindow(ShowWindow);
+            window.ShowDialog();
+        }
+
         #region Notify Icon
-        
+
         public ICommand QuitCommand
         {
             get

@@ -98,8 +98,14 @@
                 <MenuItem Command="{Binding QuitCommand}" Header="Exit"/>
 
             </MenuItem>
-            <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
-            <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
+            <MenuItem Header="Tools">
+                <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
+                <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
+            </MenuItem>
+
+            <MenuItem Header="Settings">
+                <MenuItem Header="Global Hotkey" Command="{Binding SetHotkeyCommand}"/>
+            </MenuItem>
         </Menu>
 
         <Grid Grid.Row="1" Grid.Column="0">
