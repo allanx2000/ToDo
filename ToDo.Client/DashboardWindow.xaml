@@ -110,8 +110,11 @@
                     <MenuItem Header="Global Hotkey" Command="{Binding SetHotkeyCommand}"/>
                 </MenuItem>
             </Menu>
-            <Label FontWeight="Bold" DockPanel.Dock="Right" Content="{Binding HotKeyText, FallbackValue=Hotkey}"/>
-
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Label FontWeight="Bold" >Hotkey:</Label>
+                <Label MinWidth="100" Content="{Binding HotKeyText, FallbackValue=Hotkey}"/>
+            </StackPanel>
+            
             <Label/>
         </DockPanel>
 

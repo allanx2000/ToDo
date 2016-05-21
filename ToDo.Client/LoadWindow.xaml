@@ -8,6 +8,9 @@
         mc:Ignorable="d" ResizeMode="NoResize"
         Title="Select Database" SizeToContent="Height" Width="400" Closed="Window_Closed">
 
+    <Window.InputBindings>
+        <KeyBinding Key="Return" Command="{Binding LoadCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
