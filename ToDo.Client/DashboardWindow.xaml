@@ -14,7 +14,7 @@
             <MenuItem Header="Show" Command="{Binding ShowCommand}" />
             <MenuItem Header="Quit" Command="{Binding QuitCommand}" />
         </ContextMenu>
-        
+
         <!-- QuickList DataTemplates -->
         <DataTemplate x:Key="aging">
             <DockPanel>
@@ -63,6 +63,10 @@
         <!-- ______________ -->
 
     </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding MinimizeCommand}"/>
+    </Window.InputBindings>
     <Grid>
         <Grid.Resources>
             <ResourceDictionary Source="Styles.xaml"/>
@@ -74,42 +78,40 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="43*"/>
+            <ColumnDefinition Width="869*"/>
         </Grid.ColumnDefinitions>
-        
+
         <tb:TaskbarIcon Name="NotifyIcon" IconSource="icon_t.ico" ToolTipText="ToDo" 
                         ContextMenu="{StaticResource NotifyMenu}" MenuActivation="LeftOrRightClick"
                         DoubleClickCommand="{Binding ShowCommand}"/>
 
         <!--Menu Bar -->
-        <DockPanel Grid.Row="0" Grid.ColumnSpan="2" LastChildFill="True">
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="3" LastChildFill="True">
             <Menu Margin="5" Background="Transparent">
                 <Menu.Resources>
                     <Style TargetType="MenuItem">
                         <Setter Property="Padding" Value="5"/>
                     </Style>
                 </Menu.Resources>
-                <MenuItem>
-                    <MenuItem.Header>
-                        <TextBlock Width="40" Text="File" TextAlignment="Center" VerticalAlignment="Center"/>
-                    </MenuItem.Header>
+                <MenuItem Header="_File">
                     <MenuItem Command="{Binding ChangeDBCommand}" Header="Change DB"/>
                     <MenuItem Command="{Binding ExportImportCommand}" Header="Export/Import"/>
                     <Separator/>
                     <MenuItem Command="{Binding QuitCommand}" Header="Exit"/>
-
                 </MenuItem>
-                <MenuItem Header="Tools">
+
+                <MenuItem Header="_Tools">
                     <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
                     <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
                 </MenuItem>
 
-                <MenuItem Header="Settings">
+                <MenuItem Header="_Settings">
                     <MenuItem Header="Global Hotkey" Command="{Binding SetHotkeyCommand}"/>
                 </MenuItem>
             </Menu>
             <Label FontWeight="Bold" DockPanel.Dock="Right" Content="{Binding HotKeyText, FallbackValue=Hotkey}"/>
-            
+
             <Label/>
         </DockPanel>
 
@@ -196,7 +198,7 @@
 
         </Grid>
 
-        <Grid Grid.Row="1" Grid.Column="1">
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="2*"/>
@@ -292,7 +294,7 @@
                     <Grid.Resources>
                         <ResourceDictionary Source="Styles.xaml"/>
                     </Grid.Resources>
-                    
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
@@ -330,13 +332,13 @@
                     </ScrollViewer>
 
                     <TextBlock Margin="0 10" FontWeight="Bold" Grid.Row="4" Grid.ColumnSpan="4">Comments:</TextBlock>
-                        <ListBox Grid.Row="5" Grid.ColumnSpan="4" ItemsSource="{Binding Comments}" 
+                    <ListBox Grid.Row="5" Grid.ColumnSpan="4" ItemsSource="{Binding Comments}" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"
                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                     HorizontalContentAlignment="Stretch"
                                      ItemTemplate="{StaticResource CommentsView}">
 
-                        </ListBox>
+                    </ListBox>
                 </Grid>
             </GroupBox>
 

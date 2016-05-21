@@ -544,6 +544,14 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        public ICommand MinimizeCommand
+        {
+            get
+            {
+                return new CommandHelper(() => Close());
+            }
+        }
+
         public void Close(bool minimize = true)
         {
             if (minimize)
