@@ -12,7 +12,6 @@ namespace ToDo.Client.ViewModels
 {
     public class CleanerViewModel : ViewModel
     {
-        Window window;
 
         private readonly Workspace DB = Workspace.Instance;
 
@@ -33,7 +32,8 @@ namespace ToDo.Client.ViewModels
                 else
                 {
                     return (from t in DB.Tasks
-                            where t.Completed != null
+                            where t.Completed != null 
+                                && t.Frequency == Core.Tasks.TaskFrequency.No
                             select t).Min(x => x.Completed).Value.AddDays(1);
                 }
             }
@@ -60,7 +60,9 @@ namespace ToDo.Client.ViewModels
                 return;
 
             var query = from t in DB.Tasks
-                        where t.Completed != null && t.Completed < date.Value && t.ParentID == null
+                        where t.Completed != null 
+                            && t.Completed < date.Value && t.ParentID == null
+                            && t.Frequency == Core.Tasks.TaskFrequency.No
                         orderby t.Completed descending
                         select t;
 
