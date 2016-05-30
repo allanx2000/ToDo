@@ -203,8 +203,9 @@
 
         <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*" MinHeight="200"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="2*" MinHeight="400"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -253,8 +254,10 @@
                 </Grid>
             </GroupBox>
 
+            <GridSplitter Grid.Row="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="5" Cursor="Hand" MouseEnter="GridSplitter_MouseEnter" MouseLeave="GridSplitter_MouseLeave" />
+
             <!-- Tasks -->
-            <GroupBox Grid.Row="1" Grid.Column="0" Header="Tasks">
+            <GroupBox Grid.Row="2" Grid.Column="0" Header="Tasks">
                 <DockPanel LastChildFill="True">
 
                     <StackPanel DockPanel.Dock="Right">
@@ -289,9 +292,9 @@
 
                 </DockPanel>
             </GroupBox>
-
+            
             <!-- Details -->
-            <GroupBox Grid.Row="1" Grid.Column="1" Header="Details">
+            <GroupBox Grid.Row="2" Grid.Column="1" Header="Details">
                 <Grid Visibility="{Binding RelativeSource={RelativeSource AncestorLevel=1, AncestorType=GroupBox}, Path=DataContext.DetailsVisible}" 
                       DataContext="{Binding SelectedTaskViewModel}">
                     <Grid.Resources>

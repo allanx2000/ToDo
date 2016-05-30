@@ -56,5 +56,15 @@ namespace ToDo.Client
             if (WindowState == WindowState.Minimized)
                 vm.Close();
         }
+
+        private void GridSplitter_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.SizeNS;
+        }
+
+        private void GridSplitter_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
     }
 }

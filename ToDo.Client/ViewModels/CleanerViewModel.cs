@@ -12,7 +12,6 @@ namespace ToDo.Client.ViewModels
 {
     public class CleanerViewModel : ViewModel
     {
-
         private readonly Workspace DB = Workspace.Instance;
 
         private Action<bool> onClose; //shouldReload
