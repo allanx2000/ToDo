@@ -105,7 +105,7 @@
 
                 <MenuItem Header="_Tools">
                     <MenuItem Header="History Viewer" Command="{Binding HistoryViewerCommand}"/>
-                    <MenuItem Header="Cleaner" Command="{Binding CleanerCommand}"/>
+                    <MenuItem Header="Tasks Cleaner" Command="{Binding CleanerCommand}"/>
                 </MenuItem>
 
                 <MenuItem Header="_Settings">
