@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:ToDo.Client"
         xmlns:ac="clr-namespace:AdornedControl;assembly=AdornedControl"
         mc:Ignorable="d" ResizeMode="NoResize"
-        Title="Select Database" SizeToContent="Height" Width="400" Closed="Window_Closed">
+        Title="Select Database" SizeToContent="Height" Width="400" Closed="Window_Closed"
+        WindowStartupLocation="CenterScreen">
 
     <Window.InputBindings>
         <KeyBinding Key="Return" Command="{Binding LoadCommand}"/>

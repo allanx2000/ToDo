@@ -7,7 +7,9 @@
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
         xmlns:tb="http://www.hardcodet.net/taskbar" 
-        Title="ToDo" Height="850" MinHeight="850" Width="1200"  MinWidth="1200" Unloaded="Window_Unloaded" Closing="Window_Closing" StateChanged="Window_StateChanged">
+        Title="ToDo" Height="850" MinHeight="850" Width="1200"  MinWidth="1200" 
+        Unloaded="Window_Unloaded" Closing="Window_Closing" StateChanged="Window_StateChanged"
+         WindowStartupLocation="CenterScreen">
     <Window.Resources>
 
         <ContextMenu x:Key="NotifyMenu">
@@ -77,9 +79,9 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280"/>
-            <ColumnDefinition Width="43*"/>
-            <ColumnDefinition Width="869*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="9*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <tb:TaskbarIcon Name="NotifyIcon" IconSource="icon_t.ico" ToolTipText="ToDo" 
@@ -203,14 +205,14 @@
 
         <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="200"/>
+                <RowDefinition Height="*" MinHeight="220"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="2*" MinHeight="400"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="350"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
             <!--Quick List-->
@@ -224,23 +226,29 @@
 
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <!--TODO: Change to Grid-->
-                    <DockPanel HorizontalAlignment="Stretch">
-                        <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
                             <Label>Type:</Label>
                             <ComboBox Width="200" HorizontalAlignment="Left" 
                                   ItemsSource="{Binding QuickLists}" SelectedItem="{Binding SelectedQuickListType}"/>
                         </StackPanel>
 
-                        <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
-                            <Button Command="{Binding SelectInTasksCommand}">Select in Tasks</Button>
+                        <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Orientation="Vertical">
+                        <StackPanel.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="TextBlock.TextAlignment" Value="Center"/>
+                            </Style>
+                        </StackPanel.Resources>
+                            <Button Command="{Binding SelectInTasksCommand}">
+                            <TextBlock>Select <LineBreak/> in Tasks</TextBlock> </Button>
                             <Label Width="30"/>
                             <Button Command="{Binding EditQuickListItemCommand}">Edit</Button>
-                            <Button Command="{Binding MarkQuickListItemCompletedCommand}">Mark Completed</Button>
+                            <Button Command="{Binding MarkQuickListItemCompletedCommand}">
+                            <TextBlock>Mark <LineBreak/> Completed</TextBlock></Button>
                         </StackPanel>
-                    </DockPanel>
 
                     <ListBox Grid.Row="1"
                          HorizontalContentAlignment="Stretch"

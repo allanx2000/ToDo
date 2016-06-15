@@ -403,40 +403,56 @@ namespace ToDo.Client
                 existing.Updated = DateTime.Now;
                 SetFrequency(existing, frequency, dueDate);
 
-                bool parentChanged = HasTaskParentChanged(parent, existing.Parent);
-                int? oldParentId = existing.ParentID; //Used for renumbering further below
-
-                if (parentChanged)
-                {
-                    CheckParentChild(existing, parent);
-
-                    existing.Parent = parent;
-                }
-
-                DB.SaveChanges(); //For Renumbering
-
+                             
                 //Impacts DB directly/immediately
                 bool listChanged = newList != null && newList.TaskListID != existing.ListID;
+
+                bool parentChanged = HasTaskParentChanged(parent, existing.Parent);
 
                 if (parentChanged)
                 {
                     int listId = existing.ListID;
+                    int? oldParentId = existing.ParentID;
 
-                    Workspace.API.RenumberTasks(listId,
-                        oldParentId);
+                    CheckParentChild(existing, parent);
+
+                    existing.Parent = parent;
+
+                    DB.SaveChanges();
 
                     Workspace.API.RenumberTasks(listId,
                         existing.ParentID); //This is now the new one
+                    
+                    Workspace.API.RenumberTasks(listId,
+                        oldParentId);
+                    
+                    DB.SaveChanges();
                 }
 
                 if (listChanged)
                 {
-                    existing.ListID = newList.TaskListID;
+                    int oldListId = existing.ListID;
+                    int newListId = newList.TaskListID;
+
+                    existing.ListID = newListId;
 
                     DB.SaveChanges();
 
-                    Workspace.API.RenumberTasks(newList.TaskListID,
+                    Workspace.API.RenumberTasks(newListId,
                         existing.ParentID);
+
+                    Workspace.API.RenumberTasks(oldListId, null);
+                    
+                    DB.SaveChanges();
+
+
+                    //Move Children
+                    if (existing.Children != null)
+                    {
+                        SetList(existing, newListId);
+
+                        DB.SaveChanges();
+                    }
                 }
 
                 SetCompletedAndOrder(existing, completed);
@@ -446,15 +462,6 @@ namespace ToDo.Client
                     c.Owner = existing;
 
                 ProcessComments(existing.Comments, comments);
-
-                //Move Children
-                if (listChanged && existing.Children != null)
-                {
-                    SetList(existing, newList.TaskListID);
-
-                    DB.SaveChanges();
-                }
-
             }
 
             /// <summary>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ToDo.Client"
         mc:Ignorable="d"
-        Title="{Binding Title, FallbackValue='Edit Task'}" Height="600" Width="600">
+        Title="{Binding Title, FallbackValue='Edit Task'}" SizeToContent="Height" Width="600">
     <Grid>
         <Grid.Resources>
             <Style TargetType="DatePicker" BasedOn="{StaticResource {x:Type DatePicker}}">
@@ -50,8 +50,8 @@
             <TextBox  Grid.Row="2" Grid.Column="1"
                   Text="{Binding Details}" AcceptsReturn="True" 
                   Style="{StaticResource MultilineTextBox}"
-                  Margin="5"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                  Margin="5" TextWrapping="Wrap"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                  />
         </GroupBox>
         <Label Grid.Row="3" Grid.Column="0" HorizontalAlignment="Right" >Parent:</Label>

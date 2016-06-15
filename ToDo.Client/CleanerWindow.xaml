@@ -13,13 +13,21 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10*"/>
-            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Calendar Grid.Row="0" Grid.Column="0" VerticalAlignment="Center"
-                   DisplayDateStart="{Binding StartDate, Mode=OneWay}" SelectedDate="{Binding SelectedDate}" />
-
+        <StackPanel Grid.Row="0" Grid.Column="0">
+            <Label>
+                <TextBlock TextWrapping="Wrap">Remove completed tasks <LineBreak/> older than:
+                </TextBlock>
+            </Label>
+            <Calendar Margin="10" DisplayDateStart="{Binding StartDate, Mode=OneWay}" DisplayDate="{Binding SelectedDate}" SelectedDate="{Binding SelectedDate}" />
+            <StackPanel Orientation="Horizontal">
+                <Label>Total Tasks: </Label>
+                <Label Content="{Binding TasksCount, FallbackValue=0}"/>
+            </StackPanel>
+        </StackPanel>
         <GroupBox Header="Tasks" Grid.Row="0" Grid.Column="1" >
         <DockPanel LastChildFill="True">
             <Button DockPanel.Dock="Bottom" HorizontalAlignment="Center"

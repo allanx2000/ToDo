@@ -1,4 +1,5 @@
-﻿using Innouvous.Utils.MVVM;
+﻿using Innouvous.Utils;
+using Innouvous.Utils.MVVM;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -53,6 +54,14 @@ namespace ToDo.Client.ViewModels
             }
         }
 
+        public int TasksCount
+        {
+            get
+            {
+                return tasks.Count;
+            }
+        }
+
         private void LoadTasks(DateTime? date)
         {
             if (date == null)
@@ -75,6 +84,8 @@ namespace ToDo.Client.ViewModels
 
                 tasks.Add(new TaskItemViewModel(t));
             }
+
+            RaisePropertyChanged("TasksCount");
             
         }
 
@@ -83,11 +94,7 @@ namespace ToDo.Client.ViewModels
         {
             get { return tasks; }
         }
-
-        public int Count
-        {
-            get { return tasks.Count; }
-        }
+        
 
         public ICommand DeleteCommand
         {
@@ -112,6 +119,8 @@ namespace ToDo.Client.ViewModels
             SelectedDate = StartDate;
 
             shouldReload = true;
+
+            MessageBoxFactory.ShowInfo(TasksCount + " tasks deleted.", "Tasks Deleted");
         }
 
         public ICommand CloseCommand
