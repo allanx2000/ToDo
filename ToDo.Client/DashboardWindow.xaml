@@ -7,7 +7,7 @@
         xmlns:vm="clr-namespace:ToDo.Client.ViewModels"
         mc:Ignorable="d"
         xmlns:tb="http://www.hardcodet.net/taskbar" 
-        Title="ToDo" Height="850" MinHeight="850" Width="1200"  MinWidth="1200" 
+        Title="ToDo" Height="700" Width="1000"  
         Unloaded="Window_Unloaded" Closing="Window_Closing" StateChanged="Window_StateChanged"
          WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -205,9 +205,9 @@
 
         <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" MinHeight="220"/>
+                <RowDefinition Height="2*" />
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="2*" MinHeight="400"/>
+                <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
